@@ -39,35 +39,35 @@
     </div>
   </header>
 
-  <ng-container *ngIf="isResourceRoute()">
+  <ng-container *ngIf="isManagerRoute()">
       <nav class="navbar navbar-collapse ms-2 row">
     <ul class="nav nav-pills gap-4">
       <li class="nav-item">
-        <a class="nav-link text-white" href="#" role="button" routerLinkActive="active" routerLink="/admin/dashboard"
+        <a class="nav-link text-white" href="#" role="button" routerLinkActive="active" [routerLink]="[getManagerBaseRoute(), 'dashboard']"
           [routerLinkActiveOptions]="{ exact: true }">
           <i class="fa-solid fa-objects-column me-2"></i> Dashboard
         </a>
       </li>
 
       <li class="nav-item">
-        <a class="nav-link text-white" href="#" role="button" routerLinkActive="active" routerLink="/admin/exam"
+        <a class="nav-link text-white" href="#" role="button" routerLinkActive="active" [routerLink]="[getManagerBaseRoute(),'project-list']"
           [routerLinkActiveOptions]="{ exact: true }">
-          <i class="fa-regular fa-file-pen me-2"></i> Exam
+          <i class="fa-regular fa-file-pen me-2"></i> Project List
         </a>
       </li>
 
       <li class="nav-item">
         <a class="nav-link text-white" role="button" routerLinkActive="active"
-          routerLink="/admin/question-bank" [routerLinkActiveOptions]="{ exact: true }">
-          <i class="far fa-notes me-2"></i> Question Bank
+          [routerLink]="[getManagerBaseRoute(),'resource']" [routerLinkActiveOptions]="{ exact: true }">
+          <i class="far fa-notes me-2"></i> Resource
         </a>
       </li>
 
 
       <li class="nav-item dropdown">
         <a class="nav-link text-white" href="#" id="coursesDropdown" role="button" routerLinkActive="active"
-          routerLink="/admin/students" [routerLinkActiveOptions]="{ exact: true }">
-          <i class="fa-light fa-user-graduate me-2"></i>Students
+           [routerLink]="[getManagerBaseRoute(),'time-sheet']" [routerLinkActiveOptions]="{ exact: true }">
+          <i class="fa-light fa-user-graduate me-2"></i>Time Sheet
         </a>
       </li>
 
@@ -87,38 +87,23 @@
   </ng-container>
 
 
-   <ng-container *ngIf="isManagerRoute()">
+   <ng-container *ngIf="isResourceRoute()">
       <nav class="navbar navbar-collapse ms-2 row">
     <ul class="nav nav-pills gap-4">
       <li class="nav-item">
-        <a class="nav-link text-white" href="#" role="button" routerLinkActive="active" routerLink="/student/dashboard"
+        <a class="nav-link text-white" href="#" role="button" routerLinkActive="active" routerLink="/resource/dashboard"
           [routerLinkActiveOptions]="{ exact: true }">
           <i class="fa-solid fa-objects-column me-2"></i> Dashboard
         </a>
       </li>
 
       <li class="nav-item">
-        <a class="nav-link text-white" href="#" role="button" routerLinkActive="active" routerLink="/student/exams"
+        <a class="nav-link text-white" href="#" role="button" routerLinkActive="active" routerLink="/resource/time-sheet"
           [routerLinkActiveOptions]="{ exact: true }">
-          <i class="fa-regular fa-file-pen me-2"></i> Exams
+          <i class="fa-regular fa-file-pen me-2"></i> Time Sheet
         </a>
       </li>
-
-      <li class="nav-item">
-        <a class="nav-link text-white" role="button" routerLinkActive="active"
-          routerLink="/student/student-history" [routerLinkActiveOptions]="{ exact: true }">
-          <i class="far fa-notes me-2"></i> Results
-        </a>
-      </li>
-
-      <!-- Regular Pills -->
-
-
     </ul>
-
   </nav>
-
   </ng-container>
-
-
 </div>

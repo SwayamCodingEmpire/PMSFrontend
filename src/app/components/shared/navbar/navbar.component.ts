@@ -101,12 +101,18 @@ export class NavbarComponent {
   }
 
     isManagerRoute(): boolean {
-    return this.router.url.startsWith('/delivery-manager') || this.router.url.startsWith('/project-manager ');
+    return this.router.url.startsWith('/delivery-manager') || this.router.url.startsWith('/project-manager');
   }
 
   isResourceRoute(): boolean {
     return this.router.url.startsWith('/resource');
   }
+
+  getManagerBaseRoute(): string {
+  const base = this.router.url.split('/')[1];
+  return base === 'project-manager' || base === 'delivery-manager' ? `/${base}` : '';
+}
+
 
 
 
