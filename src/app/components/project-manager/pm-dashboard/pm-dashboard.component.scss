@@ -1,0 +1,31 @@
+:host ::ng-deep {
+  .apexcharts-canvas {
+    margin: 0 auto;
+  }
+ 
+  .apexcharts-title-text {
+    font-weight: 600 !important;
+    fill: #495057 !important;
+  }
+ 
+  .apexcharts-legend-text {
+    color: #495057 !important;
+  }
+ 
+  .apexcharts-gridline {
+    stroke: #e9ecef !important;
+  }
+ 
+  .apexcharts-text {
+    fill: #ffffff !important;
+  }
+}
+ 
+.cozentus-bg{
+  background-color: #2e3c54 !important;
+}
+ 
+.square-btn {
+  width: 40px;
+  height: 40px;
+}

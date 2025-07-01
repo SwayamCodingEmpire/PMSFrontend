@@ -11,6 +11,7 @@ import { ProjectListComponent } from './components/delivery-manager/project-list
 import { ResourcesComponent } from './components/delivery-manager/resources/resources.component';
 import { ManagerTimesheetComponent } from './components/project-manager/manager-timesheet/manager-timesheet.component';
 import { AddProjectsComponent } from './components/delivery-manager/add-projects/add-projects.component';
+import {  AssignResourceAllocationComponent } from './components/project-manager/assign-resources/assign-resources.component';
 
 export const routes: Routes = [
 
@@ -54,7 +55,8 @@ export const routes: Routes = [
       { path : 'dashboard', component: PmDashboardComponent},
       { path : 'project-list', component: ProjectListComponent }, // Placeholder for project-list component
       { path : 'resource', component: ResourcesComponent }, // Placeholder for resource component
-      { path : 'time-sheet', component: ManagerTimesheetComponent } // Placeholder for time-sheet component
+      { path : 'time-sheet', component: ManagerTimesheetComponent }, // Placeholder for time-sheet component
+      { path:  'allocate-resources', component: AssignResourceAllocationComponent}
     ]
   }
 ];

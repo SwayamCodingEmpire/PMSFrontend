@@ -1,0 +1,49 @@
+.card {
+  border-radius: 1.1rem;
+  box-shadow: 0 4px 22px 0 rgba(60,140,215,0.07);
+}
+
+.project-summary {
+  background: #e6f3f7 !important;
+  border-radius: 1.2rem;
+}
+
+.search-sidebar {
+  background: linear-gradient(160deg,#f0f8fc 65%, #e2eef7 100%);
+  border-right: 2px solid #cde4ef;
+}
+
+.resource-table th, .resource-table td {
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+.resource-table  tr:hover {
+  background: #f0f8fa !important;
+  transition: background .2s;
+}
+.allocation-form-box {
+  background: #e9f7ef;
+  border-radius: 1rem;
+  box-shadow: 0 2px 16px rgba(20,178,133,0.07);
+}
+.btn-info, .btn-success {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.bg-success-light {
+  background: #e4f8ef !important;
+}
+
+.text-primary{
+  color: #2e3c54 !important;
+}
+
+.btn-outline-primary{
+  color: #2e3c54 !important;
+  border-color: #2e3c54 !important;
+}
+
+.btn-outline-primary::hover{
+  background-color: #e6f3f7 !important;
+}

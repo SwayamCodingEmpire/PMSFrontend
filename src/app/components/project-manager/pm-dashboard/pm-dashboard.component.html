@@ -1,1 +1,260 @@
-<p>pm-dashboard works!</p>
+<div class="container-fluid bg-light min-vh-100 py-4 px-3">
+  <!-- Header Section with Filters -->
+  <div class="row mb-4 align-items-center">
+    <div class="col-md-8">
+      <h5 class="text-dark fw-semibold mb-0 ms-3">
+       
+        Project Manager Dashboard
+      </h5>
+    </div>
+    <div class="col-md-4 text-end mt-3">
+      <select class="form-select"
+              style="max-width: 200px; display: inline-block;"
+              [value]="selectedTimeRange"
+              (change)="onTimeRangeChange($event)">
+        <option value="7">Last 7 Days</option>
+        <option value="30">Last 30 Days</option>
+        <option value="90">Last 90 Days</option>
+      </select>
+    </div>
+  </div>
+ 
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+ 
+  <!-- Dashboard Content -->
+  <ng-container *ngIf="!isLoading">
+   
+    <!-- KPI Cards Section -->
+    <div class="row mb-4">
+      <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card border-0 shadow-sm border-start border-4 border-success h-100">
+          <div class="card-body p-4 d-flex flex-column">
+            <div class="d-flex align-items-center">
+              <div class="d-flex align-items-center justify-content-center rounded-circle me-3 bg-success" style="width: 60px; height: 60px; flex-shrink: 0;">
+                <i class="fas fa-users text-white fs-3"></i>
+              </div>
+              <div class="flex-grow-1">
+                <h3 class="fs-2 fw-bold mb-1 text-dark">{{kpiData.totalActiveResources}}</h3>
+                <p class="text-muted mb-0 small">Total Active Resources</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card border-0 shadow-sm border-start border-4 border-primary h-100">
+          <div class="card-body p-4 d-flex flex-column">
+            <div class="d-flex align-items-center">
+              <div class="d-flex align-items-center justify-content-center rounded-circle me-3 bg-primary" style="width: 60px; height: 60px; flex-shrink: 0;">
+                <i class="fas fa-project-diagram text-white fs-3"></i>
+              </div>
+              <div class="flex-grow-1">
+                <h3 class="fs-2 fw-bold mb-1 text-dark">{{kpiData.totalActiveProjects}}</h3>
+                <p class="text-muted mb-0 small">Total Active Projects</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card border-0 shadow-sm border-start border-4 h-100" [ngClass]="{'border-warning': kpiData.upcomingDeadlines <= 2, 'border-danger': kpiData.upcomingDeadlines > 2}">
+          <div class="card-body p-4 d-flex flex-column">
+            <div class="d-flex align-items-center">
+              <div class="d-flex align-items-center justify-content-center rounded-circle me-3" [ngClass]="{'bg-warning': kpiData.upcomingDeadlines <= 2, 'bg-danger': kpiData.upcomingDeadlines > 2}" style="width: 60px; height: 60px; flex-shrink: 0;">
+                <i class="fas fa-clock text-white fs-3"></i>
+              </div>
+              <div class="flex-grow-1">
+                <h3 class="fs-2 fw-bold mb-1 text-dark">{{kpiData.upcomingDeadlines}}</h3>
+                <p class="text-muted mb-0 small">Upcoming Deadlines</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card border-0 shadow-sm border-start border-4 h-100" [ngClass]="{'border-secondary': kpiData.unallocatedResources <= 5, 'border-danger': kpiData.unallocatedResources > 5}">
+          <div class="card-body p-4 d-flex flex-column">
+            <div class="d-flex align-items-center">
+              <div class="d-flex align-items-center justify-content-center rounded-circle me-3" [ngClass]="{'bg-secondary': kpiData.unallocatedResources <= 5, 'bg-danger': kpiData.unallocatedResources > 5}" style="width: 60px; height: 60px; flex-shrink: 0;">
+                <i class="fas fa-user-slash text-white fs-3"></i>
+              </div>
+              <div class="flex-grow-1">
+                <h3 class="fs-2 fw-bold mb-1 text-dark">{{kpiData.unallocatedResources}}</h3>
+                <p class="text-muted mb-0 small">Unallocated Resources</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- Projects Table Section -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="card shadow-sm border-0">
+          <div class="card-header bg-white pb-0 border-0">
+            <h5 class="card-title mb-0 fw-semibold text-dark">
+              <i class="fas fa-list me-2 text-primary"></i>
+              Active Projects
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th class="text-uppercase small fw-semibold">Project Code</th>
+                    <th class="text-uppercase small fw-semibold">Project Name</th>
+                    <th class="text-uppercase small fw-semibold">Client</th>
+                    <th class="text-uppercase small fw-semibold">Start Date</th>
+                    <th class="text-uppercase small fw-semibold">End Date</th>
+                    <th class="text-uppercase small fw-semibold">Status</th>
+                    <!-- <th class="text-uppercase small fw-semibold">% Completion</th>
+                    <th class="text-uppercase small fw-semibold">Utilization %</th> -->
+                    <!-- <th class="text-uppercase small fw-semibold">Action</th> -->
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let project of projectsList">
+                    <td class="fw-bold align-middle">{{project.projectCode}}</td>
+                    <td class="align-middle">{{project.projectName}}</td>
+                    <td class="align-middle">{{project.client}}</td>
+                    <td class="align-middle">{{formatDate(project.startDate)}}</td>
+                    <td class="align-middle">{{formatDate(project.endDate)}}</td>
+                    <td class="align-middle">
+                      <span [class]="getStatusBadgeClass(project.status)">
+                        {{project.status | titlecase}}
+                      </span>
+                    </td>
+                    <!-- <td class="align-middle">
+                      <div class="progress" style="height: 20px;">
+                        <div [class]="getProgressBarClass(project.completionPercentage)"
+                             [style.width]="project.completionPercentage + '%'">
+                          {{project.completionPercentage}}%
+                        </div>
+                      </div>
+                    </td>
+                    <td class="align-middle">
+                      <span class="badge bg-light text-dark">{{project.utilization}}%</span>
+                    </td> -->
+                    <!-- <td class="align-middle">
+                      <button class="btn btn-sm btn-outline-primary "
+                              title="View Details">
+                        <i class="fas fa-eye"></i>
+                      </button>
+                    </td> -->
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- Charts Section -->
+    <div class="row mb-4">
+     
+      <div class="col-6">
+ 
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <apx-chart
+              [series]="projectStatusChart.series"
+              [chart]="projectStatusChart.chart"
+              [labels]="projectStatusChart.labels"
+              [colors]="projectStatusChart.colors"
+              [legend]="projectStatusChart.legend"
+              [title]="projectStatusChart.title">
+            </apx-chart>
+          </div>
+        </div>
+        </div>
+ 
+        <div class="col-6">
+        <div class="card  shadow-sm border-0">
+          <div class="card-body">
+            <apx-chart
+              [series]="resourceAllocationChart.series"
+              [chart]="resourceAllocationChart.chart"
+              [labels]="resourceAllocationChart.labels"
+              [colors]="resourceAllocationChart.colors"
+              [legend]="resourceAllocationChart.legend"
+              [title]="resourceAllocationChart.title">
+            </apx-chart>
+          </div>
+        </div>
+      </div>
+       
+       
+       
+      </div>
+ 
+     
+   
+ 
+    <!-- Top Performers Section -->
+    <div class="row">
+      <div class="col-12">
+        <div class="card shadow-sm border-0">
+          <div class="card-header bg-white pb-0 border-0">
+            <h5 class="card-title mb-0 fw-semibold text-dark">
+              <i class="fas fa-star me-2 text-warning"></i>
+              Top Performers
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th class="text-uppercase small fw-semibold">Resource Name</th>
+                    <th class="text-uppercase small fw-semibold">Primary Skill</th>
+                    <th class="text-uppercase small fw-semibold">Planner Utilization %</th>
+                    <th class="text-uppercase small fw-semibold">Actual Utilization %</th>
+                    <th class="text-uppercase small fw-semibold">Feedback Rating</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let performer of topPerformers">
+                    <td class="fw-bold align-middle">{{performer.resourceName}}</td>
+                    <td class="align-middle">{{performer.primarySkill}}</td>
+                    <td class="align-middle">
+                      <div class="progress" style="height: 20px;">
+                        <div class="progress-bar bg-success"
+                             [style.width]="performer.allocationPercentage + '%'">
+                          {{performer.allocationPercentage}}%
+                        </div>
+                      </div>
+                    </td>
+                    <td class="align-middle">
+                      <div class="progress" style="height: 20px;">
+                        <div class="progress-bar bg-info"
+                             [style.width]="performer.timesheetCompliance + '%'">
+                          {{performer.timesheetCompliance}}%
+                        </div>
+                      </div>
+                    </td>
+                    <td class="align-middle">
+                      <span class="text-warning fs-5">{{getStarRating(performer.feedbackRating)}}</span>
+                      <span class="fw-semibold ms-2 small">{{performer.feedbackRating}}</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+  </ng-container>
+</div>
