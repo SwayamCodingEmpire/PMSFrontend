@@ -1,0 +1,15 @@
+.card-glass {
+    background: rgba(255,255,255,0.90);
+    backdrop-filter: blur(2px);
+    box-shadow: 0 6px 32px rgba(0,0,0,0.04);
+    border-radius: 1.5rem;
+  }
+   
+  .pointer { cursor: pointer; }
+   
+  .table-action-btn:hover i { filter: brightness(1.2); }
+   
+  .dashboard-table tr { transition: background .2s; }
+  .dashboard-table tr.table-row-hover:hover td {
+    background: #e0ecf7 !important;
+  }

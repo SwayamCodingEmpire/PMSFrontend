@@ -33,11 +33,13 @@
             ],
             "styles": [
               "node_modules/ngx-toastr/toastr.css",
-                            "src/styles.scss",
-              "node_modules/bootstrap/dist/css/bootstrap.min.css"
+              "src/styles.scss",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/primeicons/primeicons.css",
+              "node_modules/bootstrap-icons/font/bootstrap-icons.css"
             ],
             "scripts": [
-                            "node_modules/apexcharts/dist/apexcharts.min.js",
+              "node_modules/apexcharts/dist/apexcharts.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js"
             ]
           },
@@ -97,11 +99,11 @@
             ],
             "styles": [
               "node_modules/ngx-toastr/toastr.css",
-                            "src/styles.scss",
+              "src/styles.scss",
               "node_modules/bootstrap/dist/css/bootstrap.min.css"
             ],
             "scripts": [
-                            "node_modules/apexcharts/dist/apexcharts.min.js",
+              "node_modules/apexcharts/dist/apexcharts.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js"
             ]
           }

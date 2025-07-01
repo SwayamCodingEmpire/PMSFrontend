@@ -1,1 +1,323 @@
-<p>dm-dashboard works!</p>
+<div class="container-fluid bg-light min-vh-100 py-4 px-3">
+  <!-- Header Section -->
+  <div class="row mb-4 align-items-center">
+    <div class="col-md-8">
+      <h5 class="text-dark fw-semibold mb-0 ms-3">
+        Delivery Manager Dashboard
+      </h5>
+    </div>
+  </div>
+ 
+  <!-- KPI Cards Section -->
+  <div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-3">
+      <div class="card border-0 shadow-sm border-start border-4 border-primary h-100">
+        <div class="card-body p-4 d-flex flex-column">
+          <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center justify-content-center rounded-circle me-3 bg-primary" style="width: 60px; height: 60px; flex-shrink: 0;">
+                <i class="fas fa-users text-white fs-3"></i>
+            </div>
+            <div class="flex-grow-1">
+              <h3 class="fs-2 fw-bold mb-1 text-dark">{{ activeResourceDisplay }}</h3>
+              <p class="text-muted mb-0 small">Active Resources</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="col-lg-3 col-md-6 mb-3">
+      <div class="card border-0 shadow-sm border-start border-4 border-success h-100">
+        <div class="card-body p-4 d-flex flex-column">
+          <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center justify-content-center rounded-circle me-3 bg-success" style="width: 60px; height: 60px; flex-shrink: 0;">
+                <i class="fa-light fa-people-group text-white fs-3"></i>
+            </div>
+            <div class="flex-grow-1">
+              <h3 class="fs-2 fw-bold mb-1 text-dark">{{ memberDisplay }}</h3>
+              <p class="text-muted mb-0 small">Members</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="col-lg-3 col-md-6 mb-3">
+      <div class="card border-0 shadow-sm border-start border-4 border-info h-100">
+        <div class="card-body p-4 d-flex flex-column">
+          <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center justify-content-center rounded-circle me-3 bg-info" style="width: 60px; height: 60px; flex-shrink: 0;">
+                <i class="fas fa-project-diagram text-white fs-3"></i>
+            </div>
+            <div class="flex-grow-1">
+              <h3 class="fs-2 fw-bold mb-1 text-dark">{{ projectDisplay }}</h3>
+              <p class="text-muted mb-0 small">Active Projects</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="col-lg-3 col-md-6 mb-3">
+      <div class="card border-0 shadow-sm border-start border-4 border-secondary h-100">
+        <div class="card-body p-4 d-flex flex-column">
+          <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center justify-content-center rounded-circle me-3 bg-secondary" style="width: 60px; height: 60px; flex-shrink: 0;">
+                <i class="fa-light fa-user-check text-white fs-3"></i>
+            </div>
+            <div class="flex-grow-1">
+              <h3 class="fs-2 fw-bold mb-1 text-dark">{{ availableManagers }}</h3>
+              <p class="text-muted mb-0 small">Total Managers</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- Main Content Area -->
+  <div class="row g-4">
+    <!-- Projects Table -->
+    <div class="col-xl-7 d-flex flex-column">
+      <div class="card shadow-sm border-0 flex-fill">
+        <div class="card-header bg-white pb-0 border-0">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0 fw-semibold text-dark">Project List</h5>
+            <div class="d-flex">
+              <div class="input-group input-group-sm" style="width: 200px;">
+                <span class="input-group-text bg-white"><i class="fa-light fa-magnifying-glass"></i></span>
+                <input type="text" class="form-control form-control-sm" placeholder="Search..." [(ngModel)]="searchTerm">
+              </div>
+              <button class="btn btn-sm btn-outline-secondary ms-2">
+                <i class="fa-light fa-filter"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th class="text-uppercase small fw-semibold">Code</th>
+                  <th class="text-uppercase small fw-semibold">Name</th>
+                  <th class="text-uppercase small fw-semibold">Customer</th>
+                  <th class="text-uppercase small fw-semibold">Manager</th>
+                  <th class="text-uppercase small fw-semibold">Status</th>
+                  <th class="text-uppercase small fw-semibold">Timeline</th>
+                  <th class="text-uppercase small fw-semibold">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let project of filteredProjects()" class="animate__animated animate__fadeIn">
+                  <td class="fw-semibold">{{ project.code }}</td>
+                  <td class="align-middle">{{ project.name }}</td>
+                  <td class="align-middle">{{ project.customer }}</td>
+                  <td class="align-middle">
+                    <div class="d-flex align-items-center">
+                      <div class="avatar-sm me-2">
+                        <span class="avatar-title rounded-circle bg-light text-dark">
+                          {{ project.manager.charAt(0) }}
+                        </span>
+                      </div>
+                      {{ project.manager }}
+                    </div>
+                  </td>
+                  <td class="align-middle">
+                    <span class="badge rounded-pill"
+                      [ngClass]="{
+                        'bg-success-light text-success': project.status === 'On Track',
+                        'bg-warning-light text-warning': project.status === 'At Risk',
+                        'bg-danger-light text-danger': project.status === 'Critical'
+                      }">
+                      <i class="bi bi-circle-fill me-1" style="font-size: 6px;"></i>
+                      {{ project.status }}
+                    </span>
+                  </td>
+                  <td class="align-middle">
+                    <div class="d-flex flex-column">
+                      <small class="text-muted">Start: {{ project.start }}</small>
+                      <small class="text-muted">End: {{ project.end }}</small>
+                    </div>
+                  </td>
+                  <td class="align-middle">
+                    <button class="btn btn-sm btn-light" (click)="viewProject(project)" title="View">
+                      <i class="fa-light fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-light ms-1" title="More">
+                      <i class="fa-light fa-ellipsis-vertical"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="filteredProjects().length === 0">
+                  <td colspan="7" class="text-center py-4 text-muted">
+                    <i class="bi bi-inbox fs-1"></i>
+                    <p class="mt-2 mb-0">No projects found</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+          <div class="text-muted small">
+            Showing <strong>{{ filteredProjects().length }}</strong> of <strong>{{ projects.length }}</strong> projects
+          </div>
+          <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-secondary"><i class="fa-light fa-chevron-left"></i></button>
+            <button class="btn btn-outline-secondary"><i class="fa-light fa-chevron-right"></i></button>
+          </div>
+        </div>
+      </div>
+ 
+      <!-- Projects By Month Chart -->
+      <div class="card shadow-sm border-0 mt-4">
+        <div class="card-header bg-white pb-0 border-0">
+          <h5 class="card-title mb-0 fw-semibold text-dark">
+            <i class="bi bi-bar-chart-fill me-2 text-primary"></i>
+            Projects By Month
+          </h5>
+        </div>
+        <div class="card-body">
+          <apx-chart
+            [series]="projectsByMonthChart.series"
+            [chart]="projectsByMonthChart.chart"
+            [xaxis]="projectsByMonthChart.xaxis"
+            [colors]="projectsByMonthChart.colors"
+            [dataLabels]="projectsByMonthChart.dataLabels || {}"
+            [legend]="projectsByMonthChart.legend || {}">
+          </apx-chart>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- Charts Section -->
+    <div class="col-xl-5">
+      <div class="row g-4">
+        <!-- Projects by Manager -->
+        <div class="col-12 d-flex">
+          <div class="card shadow-sm border-0 h-100 flex-fill">
+            <div class="card-header bg-white pb-0 border-0 d-flex justify-content-between align-items-center">
+              <h5 class="card-title mb-0 fw-semibold text-dark">Projects by Manager</h5>
+              <div class="dropdown">
+                <button class="btn btn-sm btn-link text-muted p-0" data-bs-toggle="dropdown">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li><a class="dropdown-item" href="#">Last 7 days</a></li>
+                  <li><a class="dropdown-item" href="#">Last 30 days</a></li>
+                  <li><a class="dropdown-item" href="#">Last 90 days</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="card-body">
+              <apx-chart
+                [series]="keyProjectsChart.series"
+                [chart]="keyProjectsChart.chart"
+                [labels]="keyProjectsChart.labels"
+                [colors]="keyProjectsChart.colors"
+                [legend]="keyProjectsChart.legend"
+                [plotOptions]="keyProjectsChart.plotOptions || {}"
+                [dataLabels]="keyProjectsChart.dataLabels || {}">
+              </apx-chart>
+            </div>
+          </div>
+        </div>
+ 
+        <!-- Project Status -->
+        <div class="col-md-6 d-flex">
+          <div class="card shadow-sm border-0 h-100 flex-fill">
+            <div class="card-header bg-white pb-0 border-0">
+              <h5 class="card-title mb-0 fw-semibold text-dark">Project Status</h5>
+            </div>
+            <div class="card-body">
+              <apx-chart
+                [series]="projectStatusChart.series"
+                [chart]="projectStatusChart.chart"
+                [labels]="projectStatusChart.labels"
+                [colors]="projectStatusChart.colors"
+                [legend]="projectStatusChart.legend"
+                [plotOptions]="projectStatusChart.plotOptions || {}">
+              </apx-chart>
+            </div>
+          </div>
+        </div>
+ 
+        <!-- Resource Activity -->
+        <div class="col-md-6 d-flex">
+          <div class="card shadow-sm border-0 h-100 flex-fill">
+            <div class="card-header bg-white pb-0 border-0">
+              <h5 class="card-title mb-0 fw-semibold text-dark">Resource Activity</h5>
+            </div>
+            <div class="card-body">
+              <apx-chart
+                [series]="usersActiveChart.series"
+                [chart]="usersActiveChart.chart"
+                [labels]="usersActiveChart.labels"
+                [colors]="usersActiveChart.colors"
+                [legend]="usersActiveChart.legend"
+                [plotOptions]="usersActiveChart.plotOptions || {}">
+              </apx-chart>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+  <!-- Project Detail Modal -->
+  <div *ngIf="showModal" class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5); z-index: 1050;">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="bi bi-clipboard2-check-fill text-primary me-2"></i>
+            {{ selectedProject?.name }}
+          </h5>
+          <button type="button" class="btn-close" (click)="closeModal()"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label text-muted">Project Code</label>
+              <p class="fw-semibold">{{ selectedProject?.code }}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label text-muted">Customer</label>
+              <p class="fw-semibold">{{ selectedProject?.customer }}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label text-muted">Project Manager</label>
+              <p class="fw-semibold">{{ selectedProject?.manager }}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label text-muted">Status</label>
+              <span class="badge rounded-pill"
+                [ngClass]="{
+                  'bg-success-light text-success': selectedProject?.status === 'On Track',
+                  'bg-warning-light text-warning': selectedProject?.status === 'At Risk',
+                  'bg-danger-light text-danger': selectedProject?.status === 'Critical'
+                }">
+                {{ selectedProject?.status }}
+              </span>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label text-muted">Start Date</label>
+              <p class="fw-semibold">{{ selectedProject?.start }}</p>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label text-muted">End Date</label>
+              <p class="fw-semibold">{{ selectedProject?.end }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" (click)="closeModal()">Close</button>
+          <!-- <button type="button" class="btn btn-primary">View Details</button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+   
+ 

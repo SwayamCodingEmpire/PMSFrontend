@@ -1,1 +1,166 @@
-<p>project-list works!</p>
+<div class="container-fluid px-4 resource-container">
+  <div class="row mb-3 align-items-center">
+    <div class="col text-color-secondary">
+      <h4 class="page-title mt-3">Project List</h4>
+    </div>
+  </div>
+
+  <div class="card shadow-sm rounded-4 border-0 resource-card">
+    <div class="card-body">
+      <div class="table-responsive mt-2">
+        <table class="table table-striped align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th scope="col">Project Code</th>
+              <th scope="col">Project Name</th>
+              <th scope="col">Customer Name</th>
+              <th scope="col">Currency</th>
+              <th scope="col">Start Date</th>
+              <th scope="col">End Date</th>
+              <th scope="col">Project Mgr</th>
+              <th scope="col" class="ps-5">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let proj of paginatedProjects">
+              <td>{{ proj.projectCode }}</td>
+              <td>{{ proj.projectName }}</td>
+              <td>{{ proj.customerName }}</td>
+              <td>{{ proj.currency }}</td>
+              <td>{{ proj.scheduleStartDate | date: 'mediumDate' }}</td>
+              <td>{{ proj.scheduleEndDate | date: 'mediumDate' }}</td>
+              <td>{{ proj.projectManager }}</td>
+              <td>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-sm icon-button" title="View" (click)="viewProjectDetails(proj)">
+                    <i class="fa-regular fa-eye icon-action"></i>
+                  </button>
+                  <button class="btn btn-sm icon-button" title="Edit" (click)="editProject(proj)">
+                    <i class="fa-regular fa-pen-to-square icon-action"></i>
+                  </button>
+
+                  <button class="btn btn-sm icon-button" title="Configure Mail" (click)="configureEmailProject(proj)">
+<i class="fa-solid fa-envelope-open-text"></i>                  </button>
+
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-end align-items-center mt-3">
+          <button class="btn btn-outline-secondary btn-sm me-2" (click)="prevPage()" [disabled]="currentPage === 1">
+            &laquo; Prev
+          </button>
+          <span class="me-2">Page {{ currentPage }} of {{ totalPages }}</span>
+          <button class="btn btn-outline-secondary btn-sm" (click)="nextPage()" [disabled]="currentPage === totalPages">
+            Next &raquo;
+          </button>
+        </div>
+
+        <ng-template #noData>
+          <div class="text-center text-muted mt-3">No projects found.</div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="projectDetailsModal" tabindex="-1" aria-labelledby="projectDetailsLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content rounded-4 shadow-lg border-0">
+      <!-- Header -->
+      <div class="modal-header text-white back-coz-color">
+        <h5 class="modal-title" id="projectDetailsLabel">
+          <i class="fa-regular fa-folder-open me-2"></i>Project Details
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body bg-light-subtle px-4 py-4 rounded-bottom-4" *ngIf="selectedProject">
+        <div class="row g-4">
+          <div class="col-md-6" *ngFor="let field of [
+              { icon: 'fa-code', label: 'Project Code', value: selectedProject.projectCode },
+              { icon: 'fa-diagram-project', label: 'Project Name', value: selectedProject.projectName },
+              { icon: 'fa-user-tie', label: 'Customer Name', value: selectedProject.customerName },
+              { icon: 'fa-money-bill-wave', label: 'Currency', value: selectedProject.currency },
+              { icon: 'fa-calendar-check', label: 'Start Date', value: (selectedProject.scheduleStartDate | date: 'mediumDate') },
+              { icon: 'fa-calendar-xmark', label: 'End Date', value: (selectedProject.scheduleEndDate | date: 'mediumDate') }
+            ]; let i = index">
+            <div class="info-card h-100">
+              <label><i class="fa-solid {{ field.icon }} me-1"></i> {{ field.label }}</label>
+              <div>{{ field.value }}</div>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <div class="info-card">
+              <label><i class="fa-solid fa-user-gear me-1"></i> Project Manager</label>
+              <div>{{ selectedProject.projectManager }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Email Modal -->
+<div class="modal fade" id="mailModal" tabindex="-1" aria-labelledby="mailModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content shadow-lg rounded-4">
+
+      <div class="modal-header  border-0 rounded-top-4 px-4 py-3 back-coz-color">
+        <h5 class="modal-title fw-semibold text-light " id="mailModalLabel"> Configure Mail Notifications</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body px-4 py-4">
+
+        <div class="row">
+          <!-- Warn Mail Section -->
+          <div class="col-md-6 border-end pe-4 ">
+            <h6 class="fw-bold text-secondary mb-3 "> Warn Mail</h6>
+            <div class="mb-3">
+              <label class="form-label">Date</label>
+              <input type="date" class="form-control rounded-3 shadow-sm" [(ngModel)]="warnMailDate">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Time</label>
+              <input type="time" class="form-control rounded-3 shadow-sm" [(ngModel)]="warnMailTime">
+            </div>
+          </div>
+
+          <!-- Reminder Mail Section -->
+          <div class="col-md-6 ps-4">
+            <h6 class="fw-bold text-secondary mb-3"> Reminder Mail</h6>
+            <div class="mb-3">
+              <label class="form-label">Date</label>
+              <input type="date" class="form-control rounded-3 shadow-sm" [(ngModel)]="reminderMailDate">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Time</label>
+              <input type="time" class="form-control rounded-3 shadow-sm" [(ngModel)]="reminderMailTime">
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer bg-light border-0 rounded-bottom-4 px-4 py-3 d-flex justify-content-between">
+        <span class="text-muted small">Make sure the timings are valid before sending the mail.</span>
+        <div>
+          <button type="button" class="btn btn-secondary px-4" (click)="sendEmail()">
+            <i class="fa-solid fa-paper-plane me-2"></i>Send Email
+          </button>
+          <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
