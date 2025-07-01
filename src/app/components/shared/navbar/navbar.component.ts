@@ -13,9 +13,9 @@ import { filter } from 'rxjs/operators';
   styleUrl: './navbar.component.scss'
 })
 export class NavbarComponent {
-    isDropdownOpen = false;
-  userName: string = 'Mohit Kumar';
-  userInitials: string = 'MK';
+  isDropdownOpen = false;
+  userName: string = 'Swayam Prakash Mohanty';
+  userInitials: string = 'SPM';
   option: boolean = false;
 
   constructor(private router: Router) {

@@ -1,0 +1,223 @@
+// Variables
+$primary-color: #2e3c54;
+$success-color: #28a745;
+$warning-color: #ffc107;
+$light-blue-bg: #e9f3f9;
+$gray-bg: #e0e0e0;
+
+// Progress Bar Enhancements
+.custom-progress {
+  height: 8px;
+}
+
+.custom-progress-bar {
+  transition: width 0.6s ease-in-out;
+  position: relative;
+  overflow: hidden;
+  background-color: $primary-color !important;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -50%;
+    height: 100%;
+    width: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    left: -50%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+// Step Navigation Styles
+.step-container {
+  position: relative;
+
+  &:first-child .step-circle::before {
+    display: none;
+  }
+
+  &:last-child .step-circle::after {
+    display: none;
+  }
+}
+
+.step-circle {
+  width: 32px;
+  height: 32px;
+  background-color: $gray-bg;
+  border-radius: 50%;
+  position: relative;
+  z-index: 1;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    background-color: $gray-bg;
+    z-index: -1;
+  }
+
+  &::before {
+    top: -40px;
+    height: 40px;
+  }
+
+  &::after {
+    bottom: -40px;
+    height: 40px;
+  }
+
+  &.step-completed {
+    background-color: $success-color;
+    color: white;
+
+    &::before,
+    &::after {
+      background-color: $success-color;
+    }
+  }
+
+  &.step-active {
+    background-color: $warning-color;
+  }
+}
+
+// Form Controls
+.form-floating-custom {
+  max-width: 350px;
+}
+
+.form-floating-wide {
+  max-width: 23rem;
+}
+
+// Search Container
+.search-container {
+  min-width: 250px;
+}
+
+.manager-search {
+  max-width: 250px;
+}
+
+// List Containers
+.customer-list-container,
+.manager-list-container {
+  max-height: 34vh;
+  overflow-y: auto;
+
+  @media (min-width: 768px) {
+    max-height: 45vh;
+  }
+}
+
+.manager-list-container {
+  max-height: 45vh;
+}
+
+// Card Interactions
+.customer-card,
+.manager-card {
+  transition: all 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+  }
+}
+
+.manager-card {
+  cursor: pointer;
+}
+
+// Background Colors
+.bg-light-blue {
+  background-color: $light-blue-bg;
+}
+
+// Custom Buttons
+.custom-outline-button {
+  border: 2px solid $primary-color;
+  color: $primary-color;
+  background-color: transparent;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: $primary-color;
+    color: white;
+    border-color: $primary-color;
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 0.2rem rgba(46, 60, 84, 0.25);
+  }
+}
+
+// Tab Buttons
+.tab-buttons {
+  .tab-button {
+    border: none;
+    background: transparent;
+    color: $primary-color;
+    font-weight: 500;
+    padding: 6px 16px;
+    position: relative;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+
+    &:hover {
+      background-color: $primary-color;
+      color: white;
+      border-radius: 4px;
+    }
+
+    &.active {
+      font-weight: 600;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 16px;
+        right: 16px;
+        height: 3px;
+        background-color: $primary-color;
+        border-radius: 2px;
+      }
+    }
+  }
+}
+
+// List Group Active State (if needed for other components)
+.list-group-item.active {
+  background-color: $primary-color;
+  border-color: $primary-color;
+  color: white;
+}
+
+// Responsive Adjustments
+@media (max-width: 767.98px) {
+  .form-floating-custom,
+  .form-floating-wide {
+    max-width: 100%;
+  }
+
+  .search-container {
+    min-width: 200px;
+  }
+
+  .manager-search {
+    max-width: 200px;
+  }
+}

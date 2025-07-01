@@ -1,0 +1,229 @@
+<div class="container py-5">
+  <!-- Card Wrapper -->
+  <div class="card shadow-lg rounded-4">
+    <!-- Progress Bar -->
+    <div class="progress rounded-0 custom-progress">
+      <div class="progress-bar custom-progress-bar" role="progressbar"
+        [style.width]="((currentStep + 1) / steps.length) * 100 + '%'"></div>
+    </div>
+
+    <div class="row g-0">
+      <!-- Step Sidebar -->
+      <div class="col-md-3 bg-light p-5 m-0">
+        <div class="nav flex-column nav-pills">
+          <div *ngFor="let step of steps; let i = index" class="mb-3 mt-5 d-flex align-items-start step-container">
+            <div class="step-circle me-2 d-flex justify-content-center align-items-center" [ngClass]="{
+          'step-completed': i < currentStep,
+          'step-active': i === currentStep
+        }">
+              <span class="text-white">{{ i + 1 }}</span>
+            </div>
+            <span [class.fw-bold]="i === currentStep">{{ step.label }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step Content Area -->
+      <div class="col-md-9 p-4">
+        <form [formGroup]="form">
+          <!-- Step 1 -->
+          <div *ngIf="currentStep === 0" formGroupName="projectInfo">
+            <h4 class="mb-4">Project Info</h4>
+            <div class="row g-4">
+              <div class="col-md-6">
+                <div class="form-floating form-floating-custom">
+                  <input type="text" class="form-control" id="code" formControlName="code" placeholder="Project Code" />
+                  <label for="code">Project Code*</label>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-floating form-floating-wide">
+                  <input type="text" class="form-control" id="name" formControlName="name" placeholder="Project Name" />
+                  <label for="name">Project Name*</label>
+                </div>
+              </div>
+
+              <div class="col-11">
+                <label class="form-label">Project Description</label>
+                <textarea class="form-control" formControlName="description" rows="3"
+                  placeholder="Enter description..."></textarea>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-floating form-floating-custom">
+                  <input type="date" class="form-control" id="startDate" formControlName="startDate"
+                    placeholder="Start Date" />
+                  <label for="startDate">Start Date*</label>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-floating form-floating-wide">
+                  <input type="date" class="form-control" id="endDate" formControlName="endDate"
+                    placeholder="End Date" />
+                  <label for="endDate">End Date*</label>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-floating form-floating-custom">
+                  <select class="form-select" id="billingFrequency" formControlName="billingFrequency">
+                    <option value="Monthly">Monthly</option>
+                    <option value="Quarterly">Quarterly</option>
+                    <option value="Milestone">Milestone</option>
+                  </select>
+                  <label for="billingFrequency">Billing Frequency*</label>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-floating form-floating-wide">
+                  <input type="text" class="form-control" id="contractType" formControlName="contractType"
+                    placeholder="Contract Type" />
+                  <label for="contractType">Contract Type*</label>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-floating form-floating-custom">
+                  <select class="form-select" id="currency" formControlName="currency" aria-label="Currency">
+                    <option value="" disabled selected>Select Currency</option>
+                    <option value="INR">INR - Indian Rupee</option>
+                    <option value="USD">USD - US Dollar</option>
+                    <option value="EUR">EUR - Euro</option>
+                    <option value="GBP">GBP - British Pound</option>
+                    <option value="JPY">JPY - Japanese Yen</option>
+                  </select>
+                  <label for="currency">Currency*</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div *ngIf="currentStep === 1" formGroupName="customerInfo">
+            <h4 class="mb-4">Customer Info</h4>
+
+            <!-- Select Type Buttons + Search Bar in same row -->
+            <div class="mb-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+              <!-- Tab Buttons -->
+              <div class="tab-buttons d-flex gap-2">
+                <button type="button" class="tab-button" [class.active]="!isNewCustomer"
+                  (click)="setCustomerType(false)">
+                  Existing
+                </button>
+                <button type="button" class="tab-button" [class.active]="isNewCustomer" (click)="setCustomerType(true)">
+                  New
+                </button>
+              </div>
+
+              <!-- Search bar -->
+              <div *ngIf="!isNewCustomer" class="search-container">
+                <input type="text" class="form-control" placeholder="Search customers..." [value]="searchText"
+                  (input)="searchText = $any($event.target).value" />
+              </div>
+            </div>
+
+            <!-- Existing Customer Block -->
+            <ng-container *ngIf="!isNewCustomer">
+              <div class="customer-list-container">
+                <div *ngFor="let customer of filteredCustomers" class="card p-3 mb-3 border customer-card"
+                  [class.border-success]="selectedCustomerId === customer.id"
+                  [class.bg-light]="selectedCustomerId === customer.id">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <strong>{{ customer.name }}</strong><br />
+                      {{ customer.legalEntity }} | {{ customer.contractType }}
+                    </div>
+                    <button class="btn btn-sm" [ngClass]="{
+            'btn-success text-white': selectedCustomerId === customer.id,
+            'custom-outline-button': selectedCustomerId !== customer.id
+          }" (click)="selectCustomer(customer)">
+                      <i class="pi"
+                        [ngClass]="selectedCustomerId === customer.id ? 'pi-check-circle' : 'pi-plus-circle'">
+                      </i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+
+            <!-- New Customer Block -->
+            <ng-container *ngIf="isNewCustomer">
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <div class="form-floating form-floating-custom">
+                    <input type="text" class="form-control" id="custName" placeholder="Customer Name"
+                      formControlName="name" />
+                    <label for="custName">Customer Name*</label>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-floating form-floating-custom">
+                    <input type="text" class="form-control" id="legalEntity" placeholder="Legal Entity"
+                      formControlName="legalEntity" />
+                    <label for="legalEntity">Legal Entity*</label>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-floating form-floating-custom">
+                    <input type="text" class="form-control" id="businessUnit" placeholder="Business Unit"
+                      formControlName="businessUnit" />
+                    <label for="businessUnit">Business Unit</label>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+
+          <!-- Step 3 -->
+          <ng-container *ngIf="currentStep === 2">
+            <!-- Title and Search -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <!-- Heading -->
+              <h4 class="mb-0 me-3 flex-grow-1">Select Project Manager</h4>
+
+              <!-- Search bar on right side -->
+              <input type="text" class="form-control manager-search" placeholder="Search managers..."
+                [value]="managerSearchText" (input)="managerSearchText = $any($event.target).value" />
+            </div>
+
+            <!-- Scrollable list of managers -->
+            <div class="manager-list-container">
+              <div *ngFor="let manager of filteredManagers" class="card p-3 mb-3 border manager-card"
+                [class.bg-light-blue]="form.get('managerId')?.value === manager.id" (click)="selectManager(manager.id)">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <h5>{{ manager.name }}</h5>
+                    <p class="mb-1"><strong>Email:</strong> {{ manager.email }}</p>
+                    <p class="mb-1"><strong>Projects Involved:</strong> {{ manager.projects.length }}</p>
+                    <div *ngIf="manager.projects.length">
+                      <small class="text-muted">{{ manager.projects.join(', ') }}</small>
+                    </div>
+                  </div>
+                  <div>
+                    <input class="form-check-input mt-2" type="radio" name="managerId" [value]="manager.id"
+                      formControlName="managerId" (click)="$event.stopPropagation()" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- Navigation Buttons -->
+          <div class="d-flex justify-content-between pt-4">
+            <button class="btn btn-outline-secondary" type="button" (click)="prevStep()"
+              [disabled]="currentStep === 0">Previous</button>
+            <button class="btn custom-outline-button" type="button" (click)="nextStep()"
+              *ngIf="currentStep < steps.length - 1">Next</button>
+            <button class="btn btn-success" type="button" (click)="onSubmit()"
+              *ngIf="currentStep === steps.length - 1">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

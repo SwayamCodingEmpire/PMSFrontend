@@ -1,0 +1,147 @@
+<div class="container mp-4">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center
+mb-4 p-3 border rounded shadow-sm bg-light">
+    <div>
+      <h5 class="mb-1 fw-semibold text-primary">⏱ Timesheet
+        Approval</h5>
+      <small class="text-muted">Week: {{ currentWeekRange }}</ small>
+    </div>
+    <!-- Prev/Next Week Icon Buttons -->
+    <div>
+      <button class="btn btn-outline-secondary btn-sm me-2" (click)="prevWeek()" title="Previous Week">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <button class="btn btn-outline-secondary btn-sm" (click)="nextWeek()" title="Next Week">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+  <!-- Tabs -->
+  <ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="activeTab === 'pending'" (click)="activeTab = 'pending'">Pending Review</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" [class.active]="activeTab === 'history'" (click)="activeTab = 'history'">Approved History</a>
+    </li>
+  </ul>
+  <!-- Project Filter -->
+  <div class="mb-3">
+    <label class="form-label fw-bold">Filter by Project Code:</ label>
+      <select class="form-select w-auto d-inline-block" [(ngModel)]="selectedProject">
+        <option value="">All</option>
+        <option *ngFor="let proj of projects">{{ proj }}</option>
+      </select>
+  </div>
+  <!-- Timesheet Table -->
+  <table class="table table-bordered table-striped">
+    <thead class="table-light">
+      <tr>
+        <th class="text-center">Resource Name</th>
+        <th class="text-center">Role</th>
+        <th class="text-center">Project</th>
+        <th class="text-center">Status</th>
+        <th class="text-center">View</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let t of pagedTimesheets">
+        <td class="text-center">{{ t.resource }}</td>
+        <td class="text-center">{{ t.role }}</td>
+        <td class="text-center">{{ t.project }}</td>
+        <td class="text-center">
+          <span [ngClass]="{
+'text-success': t.status === 'Approved',
+'text-warning': t.status === 'Submitted',
+'text-danger': t.status === 'Rejected'
+}">{{ t.status }}</span>
+        </td>
+        <td class="text-center">
+          <button class="btn btn-outline-info btn-sm" (click)="viewTimesheet(t)" title="View Timesheet">
+            <i class="fas fa-eye text-primary"></i>
+          </button>
+        </td>
+      </tr>
+      <tr *ngIf="pagedTimesheets.length === 0">
+        <td class="text-center text-muted" colspan="5">No records
+          found.</td>
+      </tr>
+    </tbody>
+  </table>
+  <!-- Pagination Controls -->
+  <div class="d-flex justify-content-end align-items-center mt-3">
+    <div class="d-flex align-items-center gap-3">
+      <div class="text-muted small">
+        Showing {{ (page - 1) * pageSize + 1 }} -
+        {{ Math.min(page * pageSize, filteredTimesheets.length) }}
+        of {{ filteredTimesheets.length }}
+      </div>
+      <div class="btn-group">
+        <!-- First Page -->
+        <button class="btn btn-outline-secondary btn-sm px-2 py-1" [disabled]="page === 1" (click)="page = 1">
+          <i class="fas fa-angles-left fa-xs"></i>
+        </button>
+        <!-- Previous Page -->
+        <button class="btn btn-outline-secondary btn-sm px-2 py-1" [disabled]="page === 1" (click)="page = page - 1">
+          <i class="fas fa-angle-left fa-xs"></i>
+        </button>
+        <!-- Next Page -->
+        <button class="btn btn-outline-secondary btn-sm px-2 py-1" [disabled]="page === totalPages"
+          (click)="page = page + 1">
+          <i class="fas fa-angle-right fa-xs"></i>
+        </button>
+        <!-- Last Page -->
+        <button class="btn btn-outline-secondary btn-sm px-2 py-1" [disabled]="page === totalPages"
+          (click)="page = totalPages">
+          <i class="fas fa-angles-right fa-xs"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- Timesheet Modal Preview -->
+  <div class="card mt-4 shadow-sm" *ngIf="selectedTimesheet">
+    <div class="card-header d-flex justify-content-between alignitems-
+center">
+      <strong>Timesheet for {{ selectedTimesheet.resource }}</ strong>
+        <button class="btn btn-sm btn-outline-secondary" (click)="closeView()">Close</button>
+    </div>
+    <div class="card-body">
+      <!-- Summary -->
+      <div class="mb-3">
+        <strong>Planned Hours:</strong>
+        <span class="badge bg-info textdark">{{
+          selectedTimesheet.referenceHours || 40 }} hrs</span>
+        <strong class="ms-4">Filled Hours:</strong>
+        <span class="badge bg-warning text-dark">
+          {{ getFilledHours(selectedTimesheet) }} hrs
+        </span>
+      </div>
+      <!-- Timesheet Grid -->
+      <table class="table table-bordered text-center">
+        <thead class="table-light">
+          <tr>
+            <th *ngFor="let day of weekDays">{{ day }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td *ngFor="let h of selectedTimesheet.week">{{ h ||
+              '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-end gap-2 mt-3" *ngIf="activeTab === 'pending'">
+        <button class="btn btn-success" (click)="approveTimesheet()" [disabled]="selectedTimesheet.status ===
+'Approved'">
+          <i class="fas fa-check-circle me-1"></i> Approve
+        </button>
+        <button class="btn btn-danger" (click)="rejectTimesheet()" [disabled]="selectedTimesheet.status ===
+'Rejected'">
+          <i class="fas fa-times-circle me-1"></i> Reject
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,83 @@
+.resource-container {
+    background-color: #e9f3f9;
+    min-height: 88vh;
+}
+
+.page-title {
+    font-weight: 600;
+    font-size: 18px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.resource-card {
+    border: none;
+}
+
+.table th {
+    background-color: #f8fbff;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.table td {
+    font-family: 'Montserrat', sans-serif;
+    vertical-align: middle;
+    font-size: 14px;
+}
+
+.project-link {
+    color: #2f72f4;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* Style the icons inside btn-link buttons */
+.btn-link i {
+    color: #6c757d !important;
+    font-size: 16px;
+}
+
+/* Proper placement — not nested */
+// .table tbody tr.alternate-row {
+//     background-color: #f8fbff;
+//     font-family: 'Montserrat', sans-serif;
+//     font-size: 14px;
+// }
+
+/* Add button and search bar styles */
+.resource-actions {
+    .search-input {
+        width: 18rem;
+    }
+
+    .add-resource-btn {
+        width: 150px;
+        border-radius: 5px;
+        background-color: #ffffff;
+        border: 1px solid #2e3c54;
+        color: #2e3c54;
+        font-weight: 400;
+        font-family: 'Montserrat', sans-serif;
+        transition: all 0.2s ease-in-out;
+
+        // &:hover {
+        //     background-color: #2f72f4;
+        //     color: #ffffff;
+        //     border-color: #2f72f4;
+        // }
+
+        &:focus {
+            box-shadow: 0 0 0 0.2rem rgba(47, 114, 244, 0.25);
+        }
+    }
+}
+
+/* Zebra striping row (alternate background) */
+.table tbody tr.zebra-row {
+  background-color: #f8fbff !important;
+}
+
+/* Optional: Smooth hover/transition */
+.table tbody tr {
+  transition: background-color 0.3s ease-in-out;
+}
