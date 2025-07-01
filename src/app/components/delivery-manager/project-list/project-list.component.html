@@ -22,7 +22,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let proj of paginatedProjects">
+            <tr *ngFor="let proj of paginatedProjects; let i = index">
               <td>{{ proj.projectCode }}</td>
               <td>{{ proj.projectName }}</td>
               <td>{{ proj.customerName }}</td>
@@ -35,12 +35,13 @@
                   <button class="btn btn-sm icon-button" title="View" (click)="viewProjectDetails(proj)">
                     <i class="fa-regular fa-eye icon-action"></i>
                   </button>
-                  <button class="btn btn-sm icon-button" title="Edit" (click)="editProject(proj)">
+                  <button class="btn btn-sm icon-button" title="Edit" (click)="editProject(i)" data-bs-toggle="modal"
+                    data-bs-target="#projectFormModal">
                     <i class="fa-regular fa-pen-to-square icon-action"></i>
                   </button>
 
                   <button class="btn btn-sm icon-button" title="Configure Mail" (click)="configureEmailProject(proj)">
-<i class="fa-solid fa-envelope-open-text"></i>                  </button>
+                    <i class="fa-solid fa-envelope-open-text"></i> </button>
 
                 </div>
               </td>
@@ -72,7 +73,7 @@
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content rounded-4 shadow-lg border-0">
       <!-- Header -->
-      <div class="modal-header text-white back-coz-color">
+      <div class="modal-header text-white cozentus-bg">
         <h5 class="modal-title" id="projectDetailsLabel">
           <i class="fa-regular fa-folder-open me-2"></i>Project Details
         </h5>
@@ -114,7 +115,7 @@
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content shadow-lg rounded-4">
 
-      <div class="modal-header  border-0 rounded-top-4 px-4 py-3 back-coz-color">
+      <div class="modal-header  border-0 rounded-top-4 px-4 py-3 cozentus-bg">
         <h5 class="modal-title fw-semibold text-light " id="mailModalLabel"> Configure Mail Notifications</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
@@ -164,3 +165,268 @@
     </div>
   </div>
 </div>
+
+<div class="modal fade" id="projectFormModal" tabindex="-1" aria-labelledby="projectFormLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content rounded-4 shadow-lg border-0">
+      <!-- Header -->
+      <div class="modal-header text-white cozentus-bg">
+        <h5 class="modal-title" id="projectFormLabel">
+          <i class="fa-regular fa-folder-open me-2"></i>Edit Project
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <!-- Progress Steps -->
+      <div class="bg-white px-4 py-3 border-bottom">
+        <div class="d-flex justify-content-center">
+          <div class="d-flex align-items-center gap-3">
+            <!-- Step 1 -->
+            <div class="d-flex align-items-center">
+              <div class="step-circle" [class.active]="currentStep === 1" [class.completed]="currentStep > 1">
+                <i class="fa-solid" [ngClass]="currentStep > 1 ? 'fa-check' : 'fa-info'"></i>
+              </div>
+              <span class="ms-2 fw-medium" [class.text-primary]="currentStep === 1">Project Details</span>
+            </div>
+
+            <div class="step-line"></div>
+
+            <!-- Step 2 -->
+            <div class="d-flex align-items-center">
+              <div class="step-circle" [class.active]="currentStep === 2" [class.completed]="currentStep > 2">
+                <i class="fa-solid" [ngClass]="currentStep > 2 ? 'fa-check' : 'fa-users'"></i>
+              </div>
+              <span class="ms-2 fw-medium" [class.text-primary]="currentStep === 2">Customer Info</span>
+            </div>
+
+            <div class="step-line"></div>
+
+            <!-- Step 3 -->
+            <div class="d-flex align-items-center">
+              <div class="step-circle" [class.active]="currentStep === 3">
+                <i class="fa-solid fa-user-tie"></i>
+              </div>
+              <span class="ms-2 fw-medium" [class.text-primary]="currentStep === 3">Project Manager</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body bg-light-subtle px-4 py-4" style="min-height: 500px;">
+        <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
+
+          <!-- Step 1: Project Details -->
+          <div *ngIf="currentStep === 1">
+            <h4 class="mb-4">Project Details</h4>
+            <div class="row g-4">
+              <!-- Project Code -->
+              <div class="col-md-6">
+                <div class="form-floating form-floating-custom">
+                  <input type="text" class="form-control" id="projectCode" placeholder="Project Code"
+                    formControlName="projectCode">
+                  <label for="projectCode">Project Code*</label>
+                </div>
+              </div>
+
+              <!-- Project Name -->
+              <div class="col-md-6">
+                <div class="form-floating form-floating-custom">
+                  <input type="text" class="form-control" id="projectName" placeholder="Project Name"
+                    formControlName="projectName">
+                  <label for="projectName">Project Name*</label>
+                </div>
+              </div>
+
+              <!-- Currency -->
+              <div class="col-md-6">
+                <div class="form-floating form-floating-custom">
+                  <select class="form-select" id="currency" formControlName="currency">
+                    <option value="">Select currency</option>
+                    <option value="USD">USD - US Dollar</option>
+                    <option value="EUR">EUR - Euro</option>
+                    <option value="GBP">GBP - British Pound</option>
+                    <option value="INR">INR - Indian Rupee</option>
+                    <option value="JPY">JPY - Japanese Yen</option>
+                    <option value="CAD">CAD - Canadian Dollar</option>
+                    <option value="AUD">AUD - Australian Dollar</option>
+                  </select>
+                  <label for="currency">Currency*</label>
+                </div>
+              </div>
+
+              <!-- Start Date -->
+              <div class="col-md-6">
+                <div class="form-floating form-floating-custom">
+                  <input type="date" class="form-control" id="scheduleStartDate" formControlName="scheduleStartDate">
+                  <label for="scheduleStartDate">Start Date*</label>
+                </div>
+              </div>
+
+              <!-- End Date -->
+              <div class="col-md-6">
+                <div class="form-floating form-floating-custom">
+                  <input type="date" class="form-control" id="scheduleEndDate" formControlName="scheduleEndDate">
+                  <label for="scheduleEndDate">End Date*</label>
+                </div>
+              </div>
+
+                              <div class="col-md-6">
+                  <div class="form-floating form-floating-custom">
+                    <select class="form-select" id="contractType" formControlName="contractType">
+                      <option value="">Select contract type</option>
+                      <option value="Fixed Price">Fixed Price</option>
+                      <option value="Time & Material">Time & Material</option>
+                      <option value="Cost Plus">Cost Plus</option>
+                    </select>
+                    <label for="contractType">Contract Type</label>
+                  </div>
+                </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Customer Info -->
+          <div *ngIf="currentStep === 2" formGroupName="customerInfo">
+            <h4 class="mb-4">Customer Info</h4>
+
+            <!-- Select Type Buttons + Search Bar -->
+            <div class="mb-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+              <!-- Tab Buttons -->
+              <div class="tab-buttons d-flex gap-2">
+                <button type="button" class="tab-button" [class.active]="!isNewCustomer"
+                  (click)="setCustomerType(false)">
+                  Existing
+                </button>
+                <button type="button" class="tab-button" [class.active]="isNewCustomer" (click)="setCustomerType(true)">
+                  New
+                </button>
+              </div>
+
+              <!-- Search bar -->
+              <div *ngIf="!isNewCustomer" class="search-container">
+                <input type="text" class="form-control" placeholder="Search customers..." [value]="customerSearchText"
+                  (input)="customerSearchText = $any($event.target).value" />
+              </div>
+            </div>
+
+            <!-- Existing Customer Block -->
+            <ng-container *ngIf="!isNewCustomer">
+              <div class="customer-list-container" style="max-height: 350px; overflow-y: auto;">
+                <div *ngFor="let customer of filteredCustomers" class="card p-3 mb-3 border customer-card"
+                  [class.border-success]="selectedCustomerId === customer.id"
+                  [class.bg-light]="selectedCustomerId === customer.id">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <strong>{{ customer.name }}</strong><br />
+                      <span class="text-muted">{{ customer.legalEntity }} | {{ customer.contractType }}</span>
+                    </div>
+                    <button type="button" class="btn btn-sm" [ngClass]="{
+                              'btn-success text-white': selectedCustomerId === customer.id,
+                              'btn-outline-primary': selectedCustomerId !== customer.id
+                            }" (click)="selectCustomer(customer)">
+                      <i class="fa-solid"
+                        [ngClass]="selectedCustomerId === customer.id ? 'fa-check-circle' : 'fa-plus-circle'">
+                      </i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+
+            <!-- New Customer Block -->
+            <ng-container *ngIf="isNewCustomer">
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <div class="form-floating form-floating-custom">
+                    <input type="text" class="form-control" id="custName" placeholder="Customer Name"
+                      formControlName="name" />
+                    <label for="custName">Customer Name*</label>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-floating form-floating-custom">
+                    <input type="text" class="form-control" id="legalEntity" placeholder="Legal Entity"
+                      formControlName="legalEntity" />
+                    <label for="legalEntity">Legal Entity*</label>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-floating form-floating-custom">
+                    <input type="text" class="form-control" id="businessUnit" placeholder="Business Unit"
+                      formControlName="businessUnit" />
+                    <label for="businessUnit">Business Unit</label>
+                  </div>
+                </div>
+
+
+              </div>
+            </ng-container>
+          </div>
+
+          <!-- Step 3: Project Manager -->
+          <div *ngIf="currentStep === 3">
+            <!-- Title and Search -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h4 class="mb-0 me-3 flex-grow-1">Select Project Manager</h4>
+              <input type="text" class="form-control manager-search" style="max-width: 300px;"
+                placeholder="Search managers..." [value]="managerSearchText"
+                (input)="managerSearchText = $any($event.target).value" />
+            </div>
+
+            <!-- Scrollable list of managers -->
+            <div class="manager-list-container" style="max-height: 400px; overflow-y: auto;">
+              <div *ngFor="let manager of filteredManagers" class="card p-3 mb-3 border manager-card cursor-pointer"
+                [class.bg-light-blue]="selectedManagerId === manager.id"
+                [class.border-primary]="selectedManagerId === manager.id" (click)="selectManager(manager.id)">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="flex-grow-1">
+                    <h5 class="mb-2">{{ manager.name }}</h5>
+                    <p class="mb-1"><strong>Email:</strong> {{ manager.email }}</p>
+                    <p class="mb-1"><strong>Projects Involved:</strong> {{ manager.projects?.length || 0 }}</p>
+                    <div *ngIf="manager.projects?.length">
+                      <small class="text-muted">{{ manager.projects.join(', ') }}</small>
+                    </div>
+                  </div>
+                  <div>
+                    <input class="form-check-input" type="radio" [checked]="selectedManagerId === manager.id"
+                      name="managerId" [value]="manager.id" (click)="$event.stopPropagation()" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer bg-white border-top">
+        <div class="d-flex justify-content-between w-100">
+          <!-- Previous Button -->
+          <button type="button" class="btn btn-outline-secondary" [disabled]="currentStep === 1"
+            (click)="previousStep()">
+            <i class="fa-solid fa-chevron-left me-1"></i> Previous
+          </button>
+
+          <div class="d-flex gap-2">
+            <!-- Cancel Button -->
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              <i class="fa-solid fa-xmark me-1"></i> Cancel
+            </button>
+
+            <!-- Next/Save Button -->
+            <button type="button" class="btn btn-custom-primary" *ngIf="currentStep < 3" (click)="nextStep()">
+              Next <i class="fa-solid fa-chevron-right ms-1"></i>
+            </button>
+
+            <button type="button" class="btn btn-success" *ngIf="currentStep === 3" (click)="onSubmit()">
+              <i class="fa-solid fa-check me-1"></i> Save Project
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

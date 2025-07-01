@@ -2,6 +2,10 @@
   --bs-table-striped-bg: #F0F8FC;
 }
 
+.cozentus-color-text {
+  color: #2E3C54 !important;
+}
+
 .table thead.table-light {
   box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.05);
 }
@@ -14,7 +18,7 @@
 .resource-card .table thead th {
   border-bottom: none;
   font-weight: 600;
-  
+
 }
 
 .resource-card .table tbody tr:hover {
@@ -79,6 +83,145 @@
   color: #2E3C54;
 }
 
-.back-coz-color{
-  background-color: #2E3C54;
+// Method 1: Override Bootstrap Variables (Recommended)
+// Create a file: src/styles/custom-bootstrap.scss
+
+// Define your custom colors
+$primary-color: #2e3c54;
+
+// Override Bootstrap's primary color before importing Bootstrap
+$primary: $primary-color;
+
+.bg-custom-primary {
+  background-color: #2e3c54 !important;
 }
+
+.text-custom-primary {
+  color: #2e3c54 !important;
+}
+
+.btn-custom-primary {
+  background-color: #2e3c54;
+  border-color: #2e3c54;
+  color: white;
+}
+
+.btn-custom-primary:hover {
+  background-color: #252f42;
+  border-color: #252f42;
+  color: white;
+}
+
+.btn-custom-primary:active,
+.btn-custom-primary.active {
+  background-color: #1e2530;
+  border-color: #1e2530;
+  color: white;
+}
+
+.border-custom-primary {
+  border-color: #2e3c54 !important;
+}
+
+.step-circle.active {
+  background-color: #2e3c54 !important;
+  color: white;
+}
+
+.tab-buttons .tab-button.active {
+  background: #2e3c54 !important;
+  color: white;
+  border-color: #2e3c54 !important;
+}
+
+.tab-buttons .tab-button:hover:not(.active) {
+  border-color: #2e3c54 !important;
+}
+
+// Additional classes for forms and components
+.form-control:focus {
+  border-color: #2e3c54;
+  box-shadow: 0 0 0 0.2rem rgba(46, 60, 84, 0.25);
+}
+
+.form-select:focus {
+  border-color: #2e3c54;
+  box-shadow: 0 0 0 0.2rem rgba(46, 60, 84, 0.25);
+}
+
+.step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e9ecef;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.3s;
+  }
+
+  .step-circle.active {
+    color: white;
+  }
+
+  .step-circle.completed {
+    background-color: #198754;
+    color: white;
+  }
+
+  .step-line {
+    width: 60px;
+    height: 2px;
+    background-color: #e9ecef;
+  }
+
+  .tab-buttons .tab-button {
+    padding: 8px 20px;
+    border: 1px solid #dee2e6;
+    background: white;
+    color: #6c757d;
+    border-radius: 6px;
+    transition: all 0.3s;
+  }
+
+  .tab-buttons .tab-button.active {
+    color: white;
+  }
+
+  .tab-buttons .tab-button:hover:not(.active) {
+    background: #f8f9fa;
+  }
+
+  .customer-card,
+  .manager-card {
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+
+  .customer-card:hover,
+  .manager-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .bg-light-blue {
+    background-color: #e7f3ff !important;
+  }
+
+  .search-container input,
+  .manager-search {
+    min-width: 250px;
+  }
+
+  .form-floating-custom {
+    position: relative;
+  }
+
+  .form-floating-custom .form-control:focus~label,
+  .form-floating-custom .form-control:not(:placeholder-shown)~label,
+  .form-floating-custom .form-select:focus~label,
+  .form-floating-custom .form-select:not([value=""])~label {
+    opacity: 0.65;
+    transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+  }
