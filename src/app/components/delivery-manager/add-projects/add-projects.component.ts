@@ -3,14 +3,17 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CustomerPayload } from '../../../models/CustomerPayload';
 import { ProjectManagerPayload } from '../../../models/ProjectManagerPayload';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-add-projects',
-  imports: [ReactiveFormsModule, CommonModule, FormsModule],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule, RouterModule],
   templateUrl: './add-projects.component.html',
   styleUrl: './add-projects.component.scss'
 })
 export class AddProjectsComponent {
+  mode!: 'add' | 'edit';
+  projectCode!: string;
   selectedCustomerId: number | null = null;
   managers: ProjectManagerPayload[] = [
     { id: 1, name: 'John Doe', email: 'john@example.com', projects: ['Alpha', 'Beta'] },
@@ -25,6 +28,29 @@ export class AddProjectsComponent {
   ];
   searchText: string = '';
 
+ ngOnInit(): void {
+    this.mode = this.route.snapshot.data['mode'];
+    console.log('Mode:', this.mode);
+
+    if (this.mode === 'add') {
+      // Add mode logic
+    } else if (this.mode === 'edit') {
+          this.route.paramMap.subscribe(params => {
+      const code = params.get('projectCode');
+
+      if (code) {
+        this.projectCode = code;
+        console.log('Editing project:', this.projectCode);
+
+        // Fetch project details from backend using projectCode
+        // e.g., this.projectService.getByCode(this.projectCode)
+      } else {
+        console.error('Project code not found in route!');
+      }
+    });
+    }
+  }
+
   get visibleCustomers() {
     if (!this.searchText) {
       return this.customers;
@@ -36,6 +62,8 @@ export class AddProjectsComponent {
       c.contractType?.toLowerCase().includes(search)
     );
   }
+
+
 
 
 
@@ -61,7 +89,7 @@ export class AddProjectsComponent {
 
   form: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private route: ActivatedRoute, private router: Router) {
     this.form = this.fb.group({
       projectInfo: this.fb.group({
         code: ['', Validators.required],
@@ -110,7 +138,8 @@ export class AddProjectsComponent {
 
   onSubmit() {
     if (this.form.valid) {
-      console.log(this.form.value);
+      this.router.navigate(['/delivery-manager/project-list']);
+      console.log("Form Submitted", this.form.value);
 
     } else {
       console.log("Form Invalid");

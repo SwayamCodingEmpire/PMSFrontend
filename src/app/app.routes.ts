@@ -11,7 +11,7 @@ import { ProjectListComponent } from './components/delivery-manager/project-list
 import { ResourcesComponent } from './components/delivery-manager/resources/resources.component';
 import { ManagerTimesheetComponent } from './components/project-manager/manager-timesheet/manager-timesheet.component';
 import { AddProjectsComponent } from './components/delivery-manager/add-projects/add-projects.component';
-import {  AssignResourceAllocationComponent } from './components/project-manager/assign-resources/assign-resources.component';
+import { AssignResourceAllocationComponent } from './components/project-manager/assign-resources/assign-resources.component';
 
 export const routes: Routes = [
 
@@ -31,11 +31,12 @@ export const routes: Routes = [
     children: [
       // ✅ Default admin route
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path : 'dashboard', component: DmDashboardComponent},
-      { path : 'project-list', component: ProjectListComponent }, // Placeholder for project-list component
-      { path : 'resource', component: ResourcesComponent }, // Placeholder for resource component
-      { path : 'time-sheet', component: ManagerTimesheetComponent } ,// Placeholder for time-sheet component
-      { path : 'add-projects', component: AddProjectsComponent }
+      { path: 'dashboard', component: DmDashboardComponent },
+      { path: 'project-list', component: ProjectListComponent }, // Placeholder for project-list component
+      { path: 'resource', component: ResourcesComponent }, // Placeholder for resource component
+      { path: 'time-sheet', component: ManagerTimesheetComponent },// Placeholder for time-sheet component
+      { path: 'add-projects', component: AddProjectsComponent, data: { mode: 'add' } },
+      { path: 'edit-projects/:projectCode', component: AddProjectsComponent, data: { mode: 'edit' } },
     ]
   },
   {
@@ -43,20 +44,20 @@ export const routes: Routes = [
     component: ResourceLayoutComponent,
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path : 'dashboard', component: ResourceDashboardComponent },
-      { path : 'time-sheet', component: ResourceTimesheetComponent } // Placeholder for time-sheet component
+      { path: 'dashboard', component: ResourceDashboardComponent },
+      { path: 'time-sheet', component: ResourceTimesheetComponent } // Placeholder for time-sheet component
     ]
   },
-    {
+  {
     path: 'project-manager',
     component: ProjectManagerLayoutComponent,
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path : 'dashboard', component: PmDashboardComponent},
-      { path : 'project-list', component: ProjectListComponent }, // Placeholder for project-list component
-      { path : 'resource', component: ResourcesComponent }, // Placeholder for resource component
-      { path : 'time-sheet', component: ManagerTimesheetComponent }, // Placeholder for time-sheet component
-      { path:  'allocate-resources', component: AssignResourceAllocationComponent}
+      { path: 'dashboard', component: PmDashboardComponent },
+      { path: 'project-list', component: ProjectListComponent }, // Placeholder for project-list component
+      { path: 'resource', component: ResourcesComponent }, // Placeholder for resource component
+      { path: 'time-sheet', component: ManagerTimesheetComponent }, // Placeholder for time-sheet component
+      { path: 'allocate-resources', component: AssignResourceAllocationComponent }
     ]
   }
 ];

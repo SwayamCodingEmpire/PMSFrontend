@@ -152,17 +152,6 @@ export class ProjectListComponent {
 
   ngOnInit(): void {
 
-    // Initialize the empty form
-    this.projectForm = new FormGroup({
-      projectCode: new FormControl(''),
-      projectName: new FormControl(''),
-      customerName: new FormControl(''),
-      currency: new FormControl(''),
-      scheduleStartDate: new FormControl(null),
-      scheduleEndDate: new FormControl(null),
-      projectManager: new FormControl(''),
-      contractType: new FormControl(''),
-    });
     this.updatePagination();
   }
 
@@ -193,150 +182,28 @@ export class ProjectListComponent {
     modal.show();
   }
 
-  // Component properties
-// Add these properties to your ProjectListComponent class
-
-// Step navigation
-currentStep = 1;
-isNewCustomer = false;
-
-// Search properties
-customerSearchText = '';
-managerSearchText = '';
 
 // Selection properties
 selectedCustomerId: number | null = null;
 selectedManagerId: number | null = null;
 
-// Data arrays (you may already have these or need to fetch from service)
-customers: any[] = [
-  { id: 1, name: 'Acme Corp', legalEntity: 'Acme LLC', contractType: 'Fixed Price' },
-  { id: 2, name: 'Tech Solutions', legalEntity: 'Tech Solutions Inc', contractType: 'Time & Material' },
-  { id: 3, name: 'Global Enterprises', legalEntity: 'Global Enterprises Ltd', contractType: 'Cost Plus' }
-];
 
-managers: any[] = [
-  {
-    id: 1,
-    name: 'John Smith',
-    email: 'john.smith@company.com',
-    projects: ['Project Alpha', 'Project Beta']
-  },
-  {
-    id: 2,
-    name: 'Sarah Johnson',
-    email: 'sarah.johnson@company.com',
-    projects: ['Project Gamma']
-  },
-  {
-    id: 3,
-    name: 'Mike Davis',
-    email: 'mike.davis@company.com',
-    projects: ['Project Delta', 'Project Epsilon', 'Project Zeta']
-  }
-];
 
-// Computed properties (getters)
-get filteredCustomers() {
-  if (!this.customerSearchText) {
-    return this.customers;
-  }
-  return this.customers.filter(customer =>
-    customer.name.toLowerCase().includes(this.customerSearchText.toLowerCase()) ||
-    customer.legalEntity.toLowerCase().includes(this.customerSearchText.toLowerCase())
-  );
-}
 
-get filteredManagers() {
-  if (!this.managerSearchText) {
-    return this.managers;
-  }
-  return this.managers.filter(manager =>
-    manager.name.toLowerCase().includes(this.managerSearchText.toLowerCase()) ||
-    manager.email.toLowerCase().includes(this.managerSearchText.toLowerCase())
-  );
-}
 
 // Navigation methods
-nextStep(): void {
-  if (this.currentStep < 3) {
-    this.currentStep++;
-  }
-}
 
-previousStep(): void {
-  if (this.currentStep > 1) {
-    this.currentStep--;
-  }
-}
 
-// Selection methods
-setCustomerType(isNew: boolean): void {
-  this.isNewCustomer = isNew;
-  if (isNew) {
-    this.selectedCustomerId = null;
-  }
-}
 
-selectCustomer(customer: any): void {
-  this.selectedCustomerId = customer.id;
-  // Optionally populate form with customer data
-  this.projectForm.get('customerInfo')?.patchValue({
-    name: customer.name,
-    legalEntity: customer.legalEntity,
-    contractType: customer.contractType
-  });
-}
 
-selectManager(managerId: number): void {
-  this.selectedManagerId = managerId;
-  const selectedManager = this.managers.find(m => m.id === managerId);
-  if (selectedManager) {
-    this.projectForm.patchValue({
-      projectManager: selectedManager.name
-    });
-  }
-}
 
 // Update your existing editProject method
 editProject(i: number): void {
   this.selectedProject = this.projects[i];
-  this.projectForm.patchValue(this.selectedProject);
-
-  // Reset modal state
-  this.currentStep = 1;
-  this.isNewCustomer = false;
-  this.customerSearchText = '';
-  this.managerSearchText = '';
-  this.selectedCustomerId = null;
-  this.selectedManagerId = null;
-
-  // If editing existing project, pre-select customer and manager
-  if (this.selectedProject.customerId) {
-    this.selectedCustomerId = this.selectedProject.customerId;
-  }
-  if (this.selectedProject.managerId) {
-    this.selectedManagerId = this.selectedProject.managerId;
-  }
+  const projectCode = this.selectedProject.projectCode;
+  this.router.navigate(['/delivery-manager/edit-projects/', projectCode]);
 }
 
-// Update your form structure to include customerInfo
-updateProjectForm(): void {
-  this.projectForm = new FormGroup({
-    projectCode: new FormControl(''),
-    projectName: new FormControl(''),
-    currency: new FormControl(''),
-    scheduleStartDate: new FormControl(null),
-    scheduleEndDate: new FormControl(null),
-    projectManager: new FormControl(''),
-          contractType: new FormControl(''),
-    customerInfo: new FormGroup({
-      name: new FormControl(''),
-      legalEntity: new FormControl(''),
-      businessUnit: new FormControl('')
-    })
-  });
-}
 
 
 
@@ -363,6 +230,10 @@ configureEmailProject(proj: any) {
     console.log('Warn Mail:', this.warnMailDate, this.warnMailTime);
     console.log('Reminder Mail:', this.reminderMailDate, this.reminderMailTime);
     // Implement actual email sending logic here
+  }
+
+  gotoAddProject(){
+    this.router.navigate(['/delivery-manager/add-projects']);
   }
 
 
