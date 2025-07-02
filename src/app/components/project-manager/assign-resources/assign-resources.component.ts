@@ -41,14 +41,14 @@ export class AssignResourceAllocationComponent {
     secondarySkill: 'React',
     designation: 'Sr. Developer',
     experience: 6,
-    currentAllocation: {
+    currentAllocation: [{
       project: 'Project Alpha',
       from: '2024-07-01',
       to: '2024-09-30',
       billability: 70,
           plannedUtil: 80,
     actualUtil: 75
-    },
+    }],
     billability: 70,
     plannedUtil: 80,
     actualUtil: 75
@@ -60,14 +60,14 @@ export class AssignResourceAllocationComponent {
     secondarySkill: 'React',
     designation: 'Sr. Developer',
     experience: 6,
-    currentAllocation: {
+    currentAllocation: [{
       project: 'Project Aplha',
       from: '2024-07-01',
       to: '2024-09-30',
       billability: 70,
                plannedUtil: 80,
     actualUtil: 75
-    },
+    }],
     billability: 70,
     plannedUtil: 80,
     actualUtil: 75
@@ -79,14 +79,14 @@ export class AssignResourceAllocationComponent {
     secondarySkill: 'React',
     designation: 'Sr. Developer',
     experience: 6,
-    currentAllocation: {
+    currentAllocation: [{
       project: 'Project Beta',
       from: '2024-07-01',
       to: '2024-09-30',
       billability: 70,
                plannedUtil: 80,
     actualUtil: 75
-    },
+    }],
     billability: 70,
     plannedUtil: 80,
     actualUtil: 75
@@ -98,14 +98,14 @@ export class AssignResourceAllocationComponent {
     secondarySkill: 'React',
     designation: 'Sr. Developer',
     experience: 6,
-    currentAllocation: {
+    currentAllocation: [{
       project: 'Project Beta',
       from: '2024-07-01',
       to: '2024-09-30',
       billability: 70,
                plannedUtil: 80,
     actualUtil: 75
-    },
+    }],
     billability: 70,
     plannedUtil: 80,
     actualUtil: 75
@@ -117,14 +117,14 @@ export class AssignResourceAllocationComponent {
     secondarySkill: 'React',
     designation: 'Sr. Developer',
     experience: 6,
-    currentAllocation: {
+    currentAllocation: [{
       project: 'Project Beta',
       from: '2024-07-01',
       to: '2024-09-30',
       billability: 70,
                plannedUtil: 80,
     actualUtil: 75
-    },
+    }],
     billability: 70,
     plannedUtil: 80,
     actualUtil: 75
@@ -136,14 +136,14 @@ export class AssignResourceAllocationComponent {
     secondarySkill: 'React',
     designation: 'Sr. Developer',
     experience: 6,
-    currentAllocation: {
+    currentAllocation: [{
       project: 'Project Beta',
       from: '2024-07-01',
       to: '2024-09-30',
       billability: 70,
                plannedUtil: 80,
     actualUtil: 75
-    },
+    }],
     billability: 70,
     plannedUtil: 80,
     actualUtil: 75
@@ -155,14 +155,14 @@ export class AssignResourceAllocationComponent {
     secondarySkill: 'React',
     designation: 'Sr. Developer',
     experience: 6,
-    currentAllocation: {
+    currentAllocation: [{
       project: 'Project Beta',
       from: '2024-07-01',
       to: '2024-09-30',
       billability: 70,
                plannedUtil: 80,
     actualUtil: 75
-    },
+    }],
     billability: 70,
     plannedUtil: 80,
     actualUtil: 75
@@ -174,14 +174,14 @@ export class AssignResourceAllocationComponent {
     secondarySkill: 'React',
     designation: 'Sr. Developer',
     experience: 6,
-    currentAllocation: {
+    currentAllocation: [{
       project: 'Project Beta',
       from: '2024-07-01',
       to: '2024-09-30',
       billability: 70,
                plannedUtil: 80,
     actualUtil: 75
-    },
+    }],
     billability: 70,
     plannedUtil: 80,
     actualUtil: 75
@@ -193,14 +193,14 @@ export class AssignResourceAllocationComponent {
     secondarySkill: 'React',
     designation: 'Sr. Developer',
     experience: 6,
-    currentAllocation:{
+    currentAllocation:[{
       project: 'Project Beta',
       from: '2024-07-01',
       to: '2024-09-30',
       billability: 70,
                plannedUtil: 80,
     actualUtil: 75
-    },
+    }],
     billability: 70,
     plannedUtil: 80,
     actualUtil: 75
@@ -212,14 +212,14 @@ export class AssignResourceAllocationComponent {
     secondarySkill: 'Spring',
     designation: 'Backend Dev',
     experience: 4,
-    currentAllocation: {
+    currentAllocation: [{
       project: 'Project Omega',
       from: '2024-08-01',
       to: '2024-10-15',
       billability: 50,
                plannedUtil: 80,
     actualUtil: 75
-    },
+    }],
     billability: 50,
     plannedUtil: 60,
     actualUtil: 55
