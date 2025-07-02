@@ -58,8 +58,7 @@ export class AddProjectsComponent {
     const search = this.searchText.toLowerCase();
     return this.customers.filter(c =>
       c.name.toLowerCase().includes(search) ||
-      c.legalEntity?.toLowerCase().includes(search) ||
-      c.contractType?.toLowerCase().includes(search)
+      c.legalEntity?.toLowerCase().includes(search)
     );
   }
 
@@ -77,14 +76,14 @@ export class AddProjectsComponent {
   ];
 
   customers: CustomerPayload[] = [
-    { id: 1, name: 'ABC Corp', legalEntity: 'ABC Ltd', businessUnit: 'IT', contractType: 'Fixed', billingFrequency: 'Monthly' },
-    { id: 2, name: 'XYZ Inc', legalEntity: 'XYZ Pvt', businessUnit: 'Consulting', contractType: 'Time & Material', billingFrequency: 'Quarterly' },
-    { id: 2, name: 'XYZ Inc', legalEntity: 'XYZ Pvt', businessUnit: 'Consulting', contractType: 'Time & Material', billingFrequency: 'Quarterly' },
-    { id: 2, name: 'XYZ Inc', legalEntity: 'XYZ Pvt', businessUnit: 'Consulting', contractType: 'Time & Material', billingFrequency: 'Quarterly' },
-    { id: 2, name: 'XYZ Inc', legalEntity: 'XYZ Pvt', businessUnit: 'Consulting', contractType: 'Time & Material', billingFrequency: 'Quarterly' },
-    { id: 2, name: 'XYZ Inc', legalEntity: 'XYZ Pvt', businessUnit: 'Consulting', contractType: 'Time & Material', billingFrequency: 'Quarterly' },
-    { id: 2, name: 'XYZ Inc', legalEntity: 'XYZ Pvt', businessUnit: 'Consulting', contractType: 'Time & Material', billingFrequency: 'Quarterly' },
-    { id: 2, name: 'XYZ Inc', legalEntity: 'XYZ Pvt', businessUnit: 'Consulting', contractType: 'Time & Material', billingFrequency: 'Quarterly' }
+    { id: 1, name: 'ABC Corp', legalEntity: 'ABC Ltd', businessUnit: 'IT',   },
+    { id: 2, name: 'XYZ Inc', legalEntity: 'XYZ Pvt', businessUnit: 'Consulting'},
+    { id: 2, name: 'XYZ Inc', legalEntity: 'XYZ Pvt', businessUnit: 'Consulting' },
+    { id: 2, name: 'XYZ Inc', legalEntity: 'XYZ Pvt', businessUnit: 'Consulting'},
+    { id: 2, name: 'XYZ Inc', legalEntity: 'XYZ Pvt', businessUnit: 'Consulting' },
+    { id: 2, name: 'XYZ Inc', legalEntity: 'XYZ Pvt', businessUnit: 'Consulting'},
+    { id: 2, name: 'XYZ Inc', legalEntity: 'XYZ Pvt', businessUnit: 'Consulting' },
+    { id: 2, name: 'XYZ Inc', legalEntity: 'XYZ Pvt', businessUnit: 'Consulting'}
   ];
 
   form: FormGroup;
@@ -151,8 +150,7 @@ export class AddProjectsComponent {
     const search = this.searchText.toLowerCase();
     return this.customers.filter(c =>
       c.name.toLowerCase().includes(search) ||
-      c.legalEntity?.toLowerCase().includes(search) ||
-      c.contractType?.toLowerCase().includes(search)
+      c.legalEntity?.toLowerCase().includes(search)
     );
   }
 

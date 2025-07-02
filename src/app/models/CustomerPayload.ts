@@ -3,6 +3,4 @@ export interface CustomerPayload {
   name: string;
   legalEntity: string;
   businessUnit: string;
-  contractType: string;
-  billingFrequency: string;
 }
