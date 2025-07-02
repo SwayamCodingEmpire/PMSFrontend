@@ -216,6 +216,13 @@ export class ResourcesComponent implements OnInit {
   newEmployee: Employee = this.getEmptyEmployee();
   private addModal: any;
 
+  onPageSizeChange() {
+  this.currentPage = 1;
+  this.calculateTotalPages();
+  this.updatePaginatedEmployees();
+}
+
+Math = Math;
 
   ngOnInit(): void {
     this.filteredEmployees = [...this.employees]; // Initialize

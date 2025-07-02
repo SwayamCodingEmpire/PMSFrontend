@@ -9,6 +9,35 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './manager-timesheet.component.scss'
 })
 export class ManagerTimesheetComponent {
+  onPageSizeChange() {
+    throw new Error('Method not implemented.');
+  }
+  days = [
+    { date: new Date('2025-07-01') },
+    { date: new Date('2025-07-02') },
+    { date: new Date('2025-07-03') },
+    { date: new Date('2025-07-04') },
+    { date: new Date('2025-07-05') }
+  ];
+
+  projectis = [
+    {
+      code: 'PRJ001',
+      name: 'Apollo Dashboard',
+      hours: [8, 8, 6, 4, 0],
+      rowTotal: 26
+    },
+    {
+      code: 'PRJ002',
+      name: 'Orion Tracker',
+      hours: [6, 7, 8, 8, 2],
+      rowTotal: 31
+    }
+  ];
+
+  // Each entry matches day index
+  dayTotals = [14, 15, 14, 12, 2];
+  grandTotal = 57;
 
   currentStartDate = new Date('2025-06-23');
   selectedProject = '';
@@ -78,8 +107,7 @@ export class ManagerTimesheetComponent {
   get currentWeekRange(): string {
     const end = new Date(this.currentStartDate);
     end.setDate(end.getDate() + 6);
-    return `${this.format(this.currentStartDate)} - $
-{this.format(end)}`;
+    return `${this.format(this.currentStartDate)} - ${this.format(end)}`;
   }
   format(date: Date): string {
     return `${date.toLocaleString('default', { month: 'short' })}

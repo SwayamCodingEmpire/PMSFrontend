@@ -1,25 +1,36 @@
-.resource-card .table {
-  --bs-table-striped-bg: #F0F8FC;
+.resource-card {
+  border: none;
+  box-shadow: none;
 }
 
-.table thead.table-light {
-  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.05);
-}
 
-.resource-card .table thead.table-light {
-  --bs-table-bg: #f8fbff;
-  --bs-table-color: #2e3c54;
-}
-
-.resource-card .table thead th {
+.resource-card table thead th {
+  background-color: #f8fbff !important;
   border-bottom: none;
-  font-weight: 600;
-  
 }
 
-.resource-card .table tbody tr:hover {
-  background-color: #E8F4F8 !important;
+
+
+
+.resource-card table tbody,
+.resource-card table tr {
+  background-color: transparent !important;
+  border-bottom: transparent;
 }
+
+/* Override Bootstrap's variable for striped background */
+.resource-card table.table-striped {
+  --bs-table-striped-bg: #f0f8fc !important;   /* Even rows */
+}
+
+/* For odd rows, which you want as white, set the cell background: */
+.resource-card table.table-striped > tbody > tr:nth-of-type(odd) > td {
+  background-color: #f0f8fc !important;           /* Odd rows */
+}
+
+
+
+
 
 /* Action Icons */
 .icon-button {
@@ -47,7 +58,7 @@
   transform: scale(1.3);
 }
 
-/* Modal Body Enhancements */
+
 .bg-light-subtle {
   background-color: #f6f9fc !important;
 }
