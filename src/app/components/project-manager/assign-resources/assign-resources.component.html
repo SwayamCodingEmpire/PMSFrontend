@@ -1,41 +1,37 @@
 <div class="px-5 mx-4 py-3 ">
   <!-- Heading -->
-  <div fxLayout="row" class="mb-3">
-    <div>
-      <h3 class="fw-bold text-primary mb-0" style="letter-spacing:0.5px;">
-        Resource Allocation
-      </h3>
+  <div class="row mb-3 align-items-center">
+    <div class="col">
+      <label class="mt-3 h4">Resource Allocation</label>
     </div>
   </div>
 
   <!-- Project details card -->
-  <div class="card shadow-sm border-0 mb-4 px-3 py-3" style="background-color: white;">
-    <div fxLayout="row" fxLayoutGap="48px" fxLayoutAlign="start center" fxLayout.lt-sm="column">
-      <div><b class="pe-2">Project Name:</b> <span class="text-primary">{{ project.name }}</span></div>
-      <div><b class="pe-2">Project Code:</b> <span class="text-primary">{{ project.code }}</span></div>
-      <div><b class="pe-2">Customer:</b> <span class="text-primary">{{ project.customer }}</span></div>
-    </div>
-  </div>
+  <div class="card shadow-sm p-4 resource-card mb-5">
+    <div class="card-body">
 
-  <!-- Main 2-column layout -->
-  <div fxLayout="row" fxLayoutGap="36px" fxLayout.lt-md="column">
-    <!-- Right: Matching Resources Table Card -->
-    <div fxFlex class="card shadow-sm border-0 px-5" style="background:#fff;">
+      <!-- Project Info Row -->
+      <div fxLayout="row" fxLayoutGap="48px" fxLayoutAlign="start center" fxLayout.lt-sm="column" class="mb-3">
+        <div><b class="pe-2">Project Name:</b> <span class="text-primary">{{ project.name }}</span></div>
+        <div><b class="pe-2">Project Code:</b> <span class="text-primary">{{ project.code }}</span></div>
+        <div><b class="pe-2">Customer:</b> <span class="text-primary">{{ project.customer }}</span></div>
+      </div>
+
       <!-- Filter Section -->
-      <div class="card-header bg-white border-0 pb-0">
-        <div fxLayout="row">
+      <div class="bg-white rounded-4 pt-3 pb-1">
+        <div fxLayout="row" fxLayoutAlign="start center" class="mb-2">
           <h5 class="fw-bold text-primary mb-0">Resource Allocation</h5>
           <button type="button" class="btn p-0 ms-2 d-flex align-items-center justify-content-center"
             style="background: none; border: none; box-shadow: none;" (click)="showFilters = !showFilters"
             [attr.aria-label]="showFilters ? 'Hide Filters' : 'Show Filters'"
             [title]="showFilters ? 'Hide Filters' : 'Show Filters'">
-            <i [ngClass]="showFilters ? 'pi pi-filter-fill bg-cozentus' : 'pi pi-filter bg-cozentus'"></i>
+            <i [ngClass]="showFilters ? 'pi pi-filter-fill bg-cozentus' : 'pi pi-filter bg-cozentus'"
+              style="font-size:1.1rem;padding:3px;"></i>
           </button>
         </div>
 
-        <!-- Filters Form -->
         <form *ngIf="showFilters" fxLayout="row" fxLayoutGap="16px" fxLayout.lt-md="column" autocomplete="off"
-          class="mt-3 pt-2 pb-3 px-4  bg-light rounded-3 shadow-sm">
+          class="mt-3 pt-2 pb-3 px-4 bg-light rounded-3 shadow-sm">
           <div fxFlex.gt-sm="25" fxFlex="100">
             <label class="form-label small text-muted mb-1">Primary Skill</label>
             <input type="text" class="form-control shadow-sm" [(ngModel)]="search.primarySkill"
@@ -60,17 +56,13 @@
             <button type="button" class="btn cozentus-bg text-white rounded-pill px-3" (click)="searchResources()">
               <i class="pi pi-search me-2"></i>Search
             </button>
-
           </div>
         </form>
       </div>
 
-      <!-- Resources Table Section -->
-      <div class="card-body pt-4">
-        <div fxLayout="row" fxLayoutAlign="space-between center" class="mb-3">
-          <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
-            <h6 class="fw-bold text-secondary mb-0">Matching Resources</h6>
-          </div>
+      <!-- Matching Resources Table -->
+      <div class="bg-white rounded-4 ">
+        <div fxLayout="row" fxLayoutAlign="end center" class="my-2">
           <div fxLayout="row" fxLayoutGap="12px" fxLayoutAlign="end center">
             <span *ngIf="selectedResources.length" class="badge rounded-pill bg-success-light text-success px-3 py-2">
               <i class="pi pi-check-circle me-1"></i>{{selectedResources.length}} selected
@@ -82,24 +74,22 @@
           </div>
         </div>
 
-        <!-- Responsive Table -->
+
         <div class="table-responsive mb-3">
           <table class="table table-borderless align-middle resource-table mb-0">
             <thead>
               <tr>
-                <th style="background: #f8fbff;; width: 40px;">
-                  <input type="checkbox" class="form-check-input" [checked]="allSelected()"
-                    (change)="toggleAll($event)" />
+                <th style="background: #f8fbff;">
                 </th>
                 <th style="background: #f8fbff;">Name</th>
                 <th style="background: #f8fbff;">Primary Skill</th>
                 <th style="background: #f8fbff;">Secondary Skill</th>
                 <th style="background: #f8fbff;">Designation</th>
-                <th style="background: #f8fbff; width: 80px;">Exp</th>
+                <th style="background: #f8fbff; ">Exp</th>
                 <th style="background: #f8fbff;">Allocation</th>
-                <th style="background: #f8fbff; width: 100px;">Billable %</th>
-                <th style="background: #f8fbff; width: 100px;">Planned Utilization %</th>
-                <th style="background: #f8fbff; width: 100px;">Actual Utilization %</th>
+                <th style="background: #f8fbff; ">Billable %</th>
+                <th style="background: #f8fbff; ">Planned Utilization %</th>
+                <th style="background: #f8fbff; ">Actual Utilization %</th>
               </tr>
             </thead>
             <tbody>
@@ -117,36 +107,45 @@
                   <span class=" text-primary">{{ res.primarySkill }}</span>
                 </td>
                 <td>
-                  <span *ngIf="res.secondarySkill" class=" bg-secondary-light ">{{ res.secondarySkill
-                    }}</span>
+                  <span *ngIf="res.secondarySkill" class="bg-secondary-light">{{ res.secondarySkill }}</span>
                 </td>
                 <td>{{ res.designation }}</td>
                 <td>{{ res.experience }}y</td>
                 <td class="small">
-                  <!-- Case: Allocation matches -->
-                  <ng-container *ngIf="isAllocatedToProject(res, project.name); else showAllocations">
+                  <!-- Case: Allocation matches this project -->
+                  <ng-container *ngIf="isAllocatedToProject(res, project.name); else notAllocatedHere">
                     <span class="badge bg-success-light text-success">
                       <i class="pi pi-check-circle me-1"></i>This Project
                     </span>
                   </ng-container>
 
-                  <!-- Case: No allocation match -->
-                  <ng-template #showAllocations>
-<!-- "View Details" trigger -->
-<span class="badge bg-success-light text-info"
-      style="cursor: pointer;"
-      role="button"
-      data-bs-toggle="modal"
-      data-bs-target="#allocationDetailsModal"
-      (click)="openDetailsModal(res.currentAllocation)">
-  <i class="pi pi-eye me-1"></i>View Details
-</span>
+                  <!-- Case: Not allocated to this project -->
+                  <ng-template #notAllocatedHere>
+                    <!-- Has other allocations -->
+                    <ng-container *ngIf="res.currentAllocation && res.currentAllocation.length > 0; else noAlloc">
+                      <div class="d-flex align-items-center justify-content-left">
+                        <div class="d-flex flex-column">
+                          <span class="fw-semibold">{{ res.currentAllocation[0].project }}</span>
+                          <span class="text-muted small">
+                            {{ res.currentAllocation[0].from | date:'M/d/yy' }} - {{ res.currentAllocation[0].to |
+                            date:'M/d/yy' }}
+                          </span>
+                        </div>
+                        <button *ngIf="res.currentAllocation.length > 1" class="btn plus-inline-btn ms-2"
+                          (click)="openDetailsModal(res.currentAllocation)">
+                          +{{ res.currentAllocation.length - 1 }}
+                        </button>
+                      </div>
 
+                    </ng-container>
+
+
+                    <!-- No allocations at all -->
+                    <ng-template #noAlloc>
+                      <span class="text-muted small">No Allocation</span>
+                    </ng-template>
                   </ng-template>
-
                 </td>
-
-
 
                 <td>
                   <div class="progress" style="height: 6px;">
@@ -164,10 +163,10 @@
                 <td>
                   <div class="progress" style="height: 6px;">
                     <div class="progress-bar" [ngClass]="{
-                 'bg-success': res.actualUtil >= 80,
-                 'bg-warning': res.actualUtil >= 50 && res.actualUtil < 80,
-                 'bg-danger': res.actualUtil < 50
-               }" role="progressbar" [style.width]="res.actualUtil + '%'"></div>
+                      'bg-success': res.actualUtil >= 80,
+                      'bg-warning': res.actualUtil >= 50 && res.actualUtil < 80,
+                      'bg-danger': res.actualUtil < 50
+                    }" role="progressbar" [style.width]="res.actualUtil + '%'"></div>
                   </div>
                   <small class="text-muted">{{ res.actualUtil }}%</small>
                 </td>
@@ -218,7 +217,6 @@
               </select>
             </div>
           </div>
-
         </div>
 
         <!-- Empty State -->
@@ -231,128 +229,134 @@
           </button>
         </div>
 
-        <!-- Allocation Form -->
+        <!-- Allocation Form For Selected Resources -->
         <div *ngIf="selectedResources.length > 0"
           class="allocation-form-box p-4 mt-4 mb-2 bg-light rounded-3 shadow-sm">
-          <h6 class="fw-bold text-primary mb-3">
-            <i class="pi pi-users me-2"></i>Allocate {{selectedResources.length}} Resource{{selectedResources.length > 1
-            ? 's' : ''}}
+
+          <h6 class="fw-bold text-primary mb-4">
+            <i class="pi pi-users me-2"></i>
+            Allocate {{selectedResources.length}} Resource{{selectedResources.length > 1 ? 's' : ''}}
           </h6>
 
-          <div fxLayout="row wrap" fxLayoutGap="16px" fxLayoutAlign="start center">
-            <div fxFlex.gt-sm="20" fxFlex="100" class="mb-2">
-              <label class="form-label small text-muted mb-1">Start Date</label>
-              <input type="date" class="form-control shadow-sm" placeholder="Start Date" [(ngModel)]="allocation.start"
-                name="start">
-            </div>
-            <div fxFlex.gt-sm="20" fxFlex="100" class="mb-2">
-              <label class="form-label small text-muted mb-1">End Date</label>
-              <input type="date" class="form-control shadow-sm" placeholder="End Date" [(ngModel)]="allocation.end"
-                name="end">
-            </div>
-            <div fxFlex.gt-sm="20" fxFlex="100" class="mb-2">
-              <label class="form-label small text-muted mb-1">Role</label>
-              <input type="text" class="form-control shadow-sm" placeholder="e.g. Developer, Tester"
-                [(ngModel)]="allocation.role" name="role">
-            </div>
-            <div fxFlex.gt-sm="15" fxFlex="100" class="mb-2">
-              <label class="form-label small text-muted mb-1">Billability</label>
-              <input type="number" min="0" max="100" class="form-control shadow-sm" placeholder="%"
-                [(ngModel)]="allocation.billability" name="billability">
-            </div>
-            <div fxFlex.gt-sm="15" fxFlex="100" class="mb-2">
-              <label class="form-label small text-muted mb-1">Planned Util</label>
-              <input type="number" min="0" max="100" class="form-control shadow-sm" placeholder="%"
-                [(ngModel)]="allocation.plannedUtil" name="plannedUtil">
-            </div>
-            <div class="mb-2 pt-3">
-              <button class="btn btn-success rounded-pill w-100" type="button" (click)="allocateResource()">
-                <i class="pi pi-check-circle me-1"></i>Allocate
-              </button>
+          <div *ngFor="let res of selectedResources; let last = last" class="mb-2 pb-4"
+            [ngClass]="{'border-bottom': !last}">
+            <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="16px"
+              class="p-3 rounded-3 bg-white shadow-sm">
+              <!-- Name on the left -->
+              <div class="fw-semibold text-primary d-flex align-items-center" style="min-width:150px;">
+                <i class="pi pi-user me-2" style="font-size:1.25rem"></i>
+                {{ res.name }}
+              </div>
+              <!-- Fields -->
+              <div fxFlex.gt-sm="20" class="mb-0">
+                <label class="form-label small text-muted mb-1">Start Date</label>
+                <input type="date" class="form-control shadow-sm" [(ngModel)]="res.allocation.start"
+                  name="start-{{res.id}}">
+              </div>
+              <div fxFlex.gt-sm="20" class="mb-0">
+                <label class="form-label small text-muted mb-1">End Date</label>
+                <input type="date" class="form-control shadow-sm" [(ngModel)]="res.allocation.end"
+                  name="end-{{res.id}}">
+              </div>
+              <div fxFlex.gt-sm="20" class="mb-0">
+                <label class="form-label small text-muted mb-1">Role</label>
+                <input type="text" class="form-control shadow-sm" [(ngModel)]="res.allocation.role"
+                  name="role-{{res.id}}">
+              </div>
+              <div fxFlex.gt-sm="10" class="mb-0">
+                <label class="form-label small text-muted mb-1">Billability</label>
+                <input type="number" min="0" max="100" class="form-control shadow-sm"
+                  [(ngModel)]="res.allocation.billability" name="billability-{{res.id}}">
+              </div>
+              <div fxFlex.gt-sm="10" class="mb-0">
+                <label class="form-label small text-muted mb-1">Planned Util</label>
+                <input type="number" min="0" max="100" class="form-control shadow-sm"
+                  [(ngModel)]="res.allocation.plannedUtil" name="plannedUtil-{{res.id}}">
+              </div>
             </div>
           </div>
 
-
+          <div class=" text-end">
+            <button class="btn btn-success rounded-pill px-4" type="button" (click)="allocateAllResources()">
+              <i class="pi pi-check-circle me-1"></i>Allocate Selected
+            </button>
+          </div>
         </div>
       </div>
     </div>
-
   </div>
-</div>
 
-<!-- Allocation Details Modal -->
-<!-- Allocation Details Modal -->
-<!-- Allocation Details Modal -->
-<div class="modal fade" id="allocationDetailsModal" tabindex="-1" aria-labelledby="allocationDetailsLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content">
 
-      <div class="modal-header cozentus-bg">
-        <h5 class="modal-title text-light" id="allocationDetailsLabel">Allocation Details</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
+  <!-- Allocation Details Modal -->
+  <!-- Allocation Details Modal -->
+  <!-- Allocation Details Modal -->
+  <div class="modal fade" id="allocationDetailsModal" tabindex="-1" aria-labelledby="allocationDetailsLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
 
-      <div class="modal-body">
-        <table class="table table-borderless table-sm text-center align-middle">
-          <thead class="table-light">
-            <tr>
-              <th style="background: #f8fbff;">Allocation</th>
-              <th style="background: #f8fbff; width: 130px;">Billable %</th>
-              <th style="background: #f8fbff; width: 180px;">Planned Utilization %</th>
-              <th style="background: #f8fbff; width: 180px;">Actual Utilization %</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let alloc of selectedAllocations">
-              <!-- Allocation column: project name + date -->
-              <td class="text-center">
-                <div class="fw-semibold text-truncate">{{ alloc.project }}</div>
-                <div class="text-muted small">
-                  {{ alloc.from | date:'shortDate' }} - {{ alloc.to | date:'shortDate' }}
-                </div>
-              </td>
+        <div class="modal-header cozentus-bg">
+          <h5 class="modal-title text-light" id="allocationDetailsLabel">Allocation Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
 
-              <!-- Billable % -->
-              <td>
-                <div class="progress" style="height: 6px;">
-                  <div class="progress-bar bg-info" role="progressbar"
-                       [style.width]="alloc.billability + '%'"></div>
-                </div>
-                <small class="text-muted">{{ alloc.billability }}%</small>
-              </td>
+        <div class="modal-body">
+          <table class="table table-borderless table-sm text-center align-middle">
+            <thead class="table-light">
+              <tr>
+                <th style="background: #f8fbff;">Allocation</th>
+                <th style="background: #f8fbff; width: 130px;">Billable %</th>
+                <th style="background: #f8fbff; width: 180px;">Planned Utilization %</th>
+                <th style="background: #f8fbff; width: 180px;">Actual Utilization %</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let alloc of selectedAllocations">
+                <!-- Allocation column: project name + date -->
+                <td class="text-center">
+                  <div class="fw-semibold text-truncate">{{ alloc.project }}</div>
+                  <div class="text-muted small">
+                    {{ alloc.from | date:'shortDate' }} - {{ alloc.to | date:'shortDate' }}
+                  </div>
+                </td>
 
-              <!-- Planned Utilization % -->
-              <td>
-                <div class="progress" style="height: 6px;">
-                  <div class="progress-bar cozentus-bg" role="progressbar"
-                       [style.width]="alloc.plannedUtil + '%'"></div>
-                </div>
-                <small class="text-muted">{{ alloc.plannedUtil }}%</small>
-              </td>
+                <!-- Billable % -->
+                <td>
+                  <div class="progress" style="height: 6px;">
+                    <div class="progress-bar bg-info" role="progressbar" [style.width]="alloc.billability + '%'"></div>
+                  </div>
+                  <small class="text-muted">{{ alloc.billability }}%</small>
+                </td>
 
-              <!-- Actual Utilization % -->
-              <td>
-                <div class="progress" style="height: 6px;">
-                  <div class="progress-bar"
-                       [ngClass]="{
+                <!-- Planned Utilization % -->
+                <td>
+                  <div class="progress" style="height: 6px;">
+                    <div class="progress-bar cozentus-bg" role="progressbar" [style.width]="alloc.plannedUtil + '%'">
+                    </div>
+                  </div>
+                  <small class="text-muted">{{ alloc.plannedUtil }}%</small>
+                </td>
+
+                <!-- Actual Utilization % -->
+                <td>
+                  <div class="progress" style="height: 6px;">
+                    <div class="progress-bar" [ngClass]="{
                          'bg-success': alloc.actualUtil >= 80,
                          'bg-warning': alloc.actualUtil >= 50 && alloc.actualUtil < 80,
                          'bg-danger': alloc.actualUtil < 50
-                       }"
-                       role="progressbar"
-                       [style.width]="alloc.actualUtil + '%'"></div>
-                </div>
-                <small class="text-muted">{{ alloc.actualUtil }}%</small>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+                       }" role="progressbar" [style.width]="alloc.actualUtil + '%'"></div>
+                  </div>
+                  <small class="text-muted">{{ alloc.actualUtil }}%</small>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-      <div class="modal-footer bg-light">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
+        <div class="modal-footer bg-light">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
 
+      </div>
     </div>
   </div>
-</div>
