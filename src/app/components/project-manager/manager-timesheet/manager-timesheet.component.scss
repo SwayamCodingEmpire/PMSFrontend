@@ -1,21 +1,166 @@
-.container {
-  background: #fff;
-  border-radius: 10px;
-  padding: 20px;
+.resource-container {
+  background-color: #e9f3f9;
 }
-.table th,
-.table td {
+.resource-card {
+  border: none;
+  box-shadow: none;
+}
+.resource-card table thead th {
+  background-color: #f8fbff !important;
+  border-bottom: none;
+}
+.resource-card table tbody,
+.resource-card table tr {
+  background-color: transparent !important;
+  border-bottom: transparent;
+}
+.resource-card table.table-striped {
+  --bs-table-striped-bg: #f0f8fc !important;
+}
+
+/* Action Icons */
+.icon-button {
+  background: transparent;
+  padding: 6px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.icon-action {
+  font-size: 16px;
+  color: #2E3C54;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.icon-button:hover .icon-action {
+  color: #1a2233;
+  transform: scale(1.2);
+}
+.icon-button:active .icon-action {
+  transform: scale(1.3);
+}
+.bg-light-subtle {
+  background-color: #f6f9fc !important;
+}
+.info-card {
+  background-color: #fff;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.035);
+  transition: all 0.3s ease-in-out;
+}
+.info-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.06);
+}
+.info-card label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #6c757d;
+  margin-bottom: 0.3rem;
+  display: block;
+}
+.info-card div {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #2E3C54;
+}
+.back-coz-color {
+  background-color: #2E3C54;
+}
+
+.btn-circle {
+  border-radius: 50% !important;
+  width: 38px; height: 38px;
+  padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: #f8fbff !important;
+  border: 1px solid #dde6f4 !important;
+  color: #317bce !important;
+  font-size: 1.1rem;
+  transition: box-shadow 0.15s, border 0.2s;
+  &:hover, &:focus {
+    background: #e0f1ff !important;
+    border: 1.5px solid #4fa2f9 !important;
+    color: #225a92 !important;
+    box-shadow: 0 0 0 0.15rem rgba(76, 170, 245, 0.14);
+  }
+}
+
+/* Replace #2E3C54 with your actual Cozentus brand color if it's different */
+.nav-tabs-modern .nav-link.active,
+.nav-pills .nav-link.active {
+  background-color: #2E3C54 !important;
+  color: #fff !important;
+  font-weight: 600;
+  box-shadow: 0 1px 8px rgba(46,60,84,0.07);
+  border-radius: 0.5rem;
+  border: none;
+  letter-spacing: 0.03em;
+  transition: background 0.18s, color 0.18s;
+}
+
+.nav-tabs-modern .nav-link,
+.nav-pills .nav-link {
+  color: #2E3C54;  /* Your brand color for inactive tab text */
+  font-weight: 500;
+  background: transparent;
+  border: none;
+  transition: color 0.18s;
+    cursor: pointer;
+}
+
+/* Table Headings & Footer */
+.timesheet-card .table thead th,
+.timesheet-card .table tfoot td {
+  font-family: 'Montserrat', sans-serif !important;
+  font-weight: 600;
+  font-size: 13px;
+  background: #eff5fd !important;
   vertical-align: middle;
 }
-.card {
-  border: 1px solid #ccc;
+
+/* Table Body Cells */
+.timesheet-card .table tbody td {
+  font-family: 'Montserrat', sans-serif !important;
+  font-weight: 400;
+  font-size: 13px;
+  vertical-align: middle;
 }
-.text-primary {
-  color: #0d6efd !important;
+
+/* Border for Borderless Table Rows */
+.timesheet-card .table-borderless tbody tr {
+  border-bottom: 1px solid #e6f3f7 !important;
 }
-h5 {
-  letter-spacing: 0.3px;
+
+/* Row Hover Effect */
+.timesheet-card .table tbody tr:hover {
+  background: #f0f8fa !important;
+  transition: background .2s;
 }
-button.btn-outline-secondary {
-  min-width: 100px;
+
+/* Totals & Footer Cells */
+.timesheet-card .footer-label,
+.timesheet-card .total-cell,
+.timesheet-card .grand-total {
+  background: #f0f8fc !important;
+  font-weight: 700;
 }
+
+/* Day/Date labels inside table */
+.timesheet-card .day-label {
+  color: #2e3c54;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+.timesheet-card .date-label {
+  color: #888;
+  font-size: 0.97rem;
+}
+
+/* Table warning highlight */
+.timesheet-card .bg-warning-subtle {
+  background-color: #fff3cd !important;
+}
+

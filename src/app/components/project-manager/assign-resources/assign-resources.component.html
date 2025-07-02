@@ -2,277 +2,185 @@
   <!-- Heading -->
   <div fxLayout="row" class="mb-3">
     <div>
-      <h3 class="fw-bold text-primary mb-0" style="letter-spacing:0.5px;">
-        Resource Allocation
-      </h3>
-    </div>
-  </div>
+      <!-- Table title and selection badge -->
+      <div class="d-flex align-items-center justify-content-between mb-2">
 
-  <!-- Project details card -->
-  <div class="card shadow-sm border-0 mb-4 px-3 py-3" style="background-color: white;">
-    <div fxLayout="row" fxLayoutGap="48px" fxLayoutAlign="start center" fxLayout.lt-sm="column">
-      <div><b class="pe-2">Project Name:</b> <span class="text-primary">{{ project.name }}</span></div>
-      <div><b class="pe-2">Project Code:</b> <span class="text-primary">{{ project.code }}</span></div>
-      <div><b class="pe-2">Customer:</b> <span class="text-primary">{{ project.customer }}</span></div>
-    </div>
-  </div>
-
-  <!-- Main 2-column layout -->
-  <div fxLayout="row" fxLayoutGap="36px" fxLayout.lt-md="column">
-    <!-- Right: Matching Resources Table Card -->
-    <div fxFlex class="card shadow-sm border-0 px-5" style="background:#fff;">
-      <!-- Filter Section -->
-      <div class="card-header bg-white border-0 pb-0">
-        <div fxLayout="row">
-          <h5 class="fw-bold text-primary mb-0">Resource Allocation</h5>
-          <button type="button" class="btn p-0 ms-2 d-flex align-items-center justify-content-center"
-            style="background: none; border: none; box-shadow: none;" (click)="showFilters = !showFilters"
-            [attr.aria-label]="showFilters ? 'Hide Filters' : 'Show Filters'"
-            [title]="showFilters ? 'Hide Filters' : 'Show Filters'">
-            <i [ngClass]="showFilters ? 'pi pi-filter-fill bg-cozentus' : 'pi pi-filter bg-cozentus'"></i>
-          </button>
+        <div>
+          <span *ngIf="selectedResources.length"
+            class="badge rounded-pill bg-success-light text-success px-3 py-2 me-2">
+            <i class="pi pi-check-circle me-1"></i>{{selectedResources.length}} selected
+          </span>
+          <button *ngIf="selectedResources.length" type="button" class="btn btn-outline-secondary rounded-pill btn-sm"
+            (click)="selectedResources = []">Clear</button>
         </div>
-
-        <!-- Filters Form -->
-        <form *ngIf="showFilters" fxLayout="row" fxLayoutGap="16px" fxLayout.lt-md="column" autocomplete="off"
-          class="mt-3 pt-2 pb-3 px-4  bg-light rounded-3 shadow-sm">
-          <div fxFlex.gt-sm="25" fxFlex="100">
-            <label class="form-label small text-muted mb-1">Primary Skill</label>
-            <input type="text" class="form-control shadow-sm" [(ngModel)]="search.primarySkill"
-              placeholder="e.g. Angular, Java" name="primarySkill" autocomplete="off" />
-          </div>
-          <div fxFlex.gt-sm="25" fxFlex="100">
-            <label class="form-label small text-muted mb-1">Secondary Skill</label>
-            <input type="text" class="form-control shadow-sm" [(ngModel)]="search.secondarySkill" name="secondarySkill"
-              placeholder="e.g. React, Spring" autocomplete="off" />
-          </div>
-          <div fxFlex.gt-sm="20" fxFlex="100">
-            <label class="form-label small text-muted mb-1">Designation</label>
-            <input type="text" class="form-control shadow-sm" [(ngModel)]="search.designation"
-              placeholder="e.g. Developer, Architect" name="designation" autocomplete="off" />
-          </div>
-          <div fxFlex.gt-sm="15" fxFlex="100">
-            <label class="form-label small text-muted mb-1">Experience (Years)</label>
-            <input type="number" min="0" class="form-control shadow-sm" [(ngModel)]="search.experience"
-              placeholder="Min years" name="experience" />
-          </div>
-          <div fxFlex.gt-sm="15" fxFlex="100" fxLayoutAlign="end center" class="pt-3">
-            <button type="button" class="btn cozentus-bg text-white rounded-pill px-3" (click)="searchResources()">
-              <i class="pi pi-search me-2"></i>Search
-            </button>
-
-          </div>
-        </form>
+      </div>
+      <!-- Responsive Table -->
+      <div class="table-responsive mb-3">
+        <table class="table table-borderless align-middle resource-table mb-0">
+          <thead>
+            <tr>
+              <th style="background: #f8fbff; width: 40px;">
+                <input type="checkbox" class="form-check-input" [checked]="allSelected()"
+                  (change)="toggleAll($event)" />
+              </th>
+              <th style="background: #f8fbff;">Name</th>
+              <th style="background: #f8fbff;">Primary Skill</th>
+              <th style="background: #f8fbff;">Secondary Skill</th>
+              <th style="background: #f8fbff;">Designation</th>
+              <th style="background: #f8fbff; width: 80px;">Exp</th>
+              <th style="background: #f8fbff;">Allocation</th>
+              <th style="background: #f8fbff;">Billable %</th>
+              <th style="background: #f8fbff;">Planned Util %</th>
+              <th style="background: #f8fbff;">Actual Util %</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let res of pagedResources; let i = index"
+              [ngStyle]="{'background': i % 2 === 0 ? '#f8fbff' : 'transparent'}"
+              [class.table-primary]="isSelected(res)">
+              <td>
+                <input type="checkbox" class="form-check-input" [checked]="isSelected(res)"
+                  (change)="toggleResource(res)" />
+              </td>
+              <td><span class="fw-semibold text-primary">{{ res.name }}</span></td>
+              <td><span class="text-primary">{{ res.primarySkill }}</span></td>
+              <td><span *ngIf="res.secondarySkill" class="bg-secondary-light">{{ res.secondarySkill }}</span></td>
+              <td>{{ res.designation }}</td>
+              <td>{{ res.experience }}y</td>
+              <td class="small">
+                <div *ngIf="res.currentAllocation.project !== project.name">
+                  <div class="d-flex justify-content-between">
+                    <span class="fw-semibold text-truncate">{{ res.currentAllocation.project }}</span>
+                  </div>
+                  <div class="text-muted">
+                    {{ res.currentAllocation.from | date:'shortDate' }} - {{ res.currentAllocation.to | date:'shortDate'
+                    }}
+                  </div>
+                </div>
+                <span *ngIf="res.currentAllocation.project === project.name"
+                  class="badge bg-success-light text-success">
+                  <i class="pi pi-check-circle me-1"></i>This Project
+                </span>
+              </td>
+              <td>
+                <div class="progress" style="height: 6px;">
+                  <div class="progress-bar bg-info" role="progressbar" [style.width]="res.billability + '%'"></div>
+                </div>
+                <small class="text-muted">{{ res.billability }}%</small>
+              </td>
+              <td>
+                <div class="progress" style="height: 6px;">
+                  <div class="progress-bar cozentus-bg" role="progressbar" [style.width]="res.plannedUtil + '%'"></div>
+                </div>
+                <small class="text-muted">{{ res.plannedUtil }}%</small>
+              </td>
+              <td>
+                <div class="progress" style="height: 6px;">
+                  <div class="progress-bar" [ngClass]="{
+                      'bg-success': res.actualUtil >= 80,
+                      'bg-warning': res.actualUtil >= 50 && res.actualUtil < 80,
+                      'bg-danger': res.actualUtil < 50
+                    }" role="progressbar" [style.width]="res.actualUtil + '%'"></div>
+                </div>
+                <small class="text-muted">{{ res.actualUtil }}%</small>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
-      <!-- Resources Table Section -->
-      <div class="card-body pt-4">
-        <div fxLayout="row" fxLayoutAlign="space-between center" class="mb-3">
-          <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="8px">
-            <h6 class="fw-bold text-secondary mb-0">Matching Resources</h6>
+      <!-- Pagination Controls (Card footer style, modern) -->
+      <div class="d-flex justify-content-end align-items-center w-100 custom-font mt-2">
+        <div class="ms-auto text-end me-1">
+          <span class="small">
+            Showing
+            {{ ((currentPage - 1) * pageSize) + (pagedResources.length ? 1 : 0) }}
+            to
+            {{ ((currentPage - 1) * pageSize) + pagedResources.length }}
+            of {{ resources.length }} entries
+          </span>
+        </div>
+        <div class="d-flex align-items-center">
+          <button class="btn btn-outline-secondary btn-sm mx-1"
+            style="width: 25px; height: 25px; padding: 0; display: flex; align-items: center; justify-content: center;"
+            (click)="goToFirstPage()" [disabled]="currentPage === 1">
+            <span><i class="fa-regular fa-angle-double-left"></i></span>
+          </button>
+          <button class="btn btn-outline-secondary btn-sm mx-1"
+            style="width: 25px; height: 25px; padding: 0; display: flex; align-items: center; justify-content: center;"
+            (click)="goToPreviousPage()" [disabled]="currentPage === 1">
+            <span><i class="fa-regular fa-angle-left"></i></span>
+          </button>
+          <button class="btn btn-outline-secondary btn-sm mx-1"
+            style="width: 25px; height: 25px; padding: 0; display: flex; align-items: center; justify-content: center;">
+            {{ currentPage }}
+          </button>
+          <button class="btn btn-outline-secondary btn-sm mx-1"
+            style="width: 25px; height: 25px; padding: 0; display: flex; align-items: center; justify-content: center;"
+            (click)="goToNextPage()" [disabled]="currentPage === totalPages">
+            <span><i class="fa-regular fa-angle-right"></i></span>
+          </button>
+          <button class="btn btn-outline-secondary btn-sm mx-1"
+            style="width: 25px; height: 25px; padding: 0; display: flex; align-items: center; justify-content: center;"
+            (click)="goToLastPage()" [disabled]="currentPage === totalPages">
+            <span><i class="fa-regular fa-angle-double-right"></i></span>
+          </button>
+          <select class="form-select form-select-sm ms-2" style="width: 60px;" [(ngModel)]="pageSize"
+            (change)="updatePagination()">
+            <option [value]="5">5</option>
+            <option [value]="10">10</option>
+            <option [value]="15">15</option>
+            <option [value]="20">20</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Empty State (if no resources) -->
+      <div *ngIf="resources.length === 0" class="text-center py-5">
+        <i class="pi pi-search text-muted" style="font-size: 3rem;"></i>
+        <h5 class="text-muted mt-3">No resources found</h5>
+        <p class="text-muted">Try adjusting your search filters</p>
+        <button class="btn btn-outline-primary rounded-pill">
+          <i class="pi pi-filter-slash me-2"></i>Clear Filters
+        </button>
+      </div>
+
+      <!-- Allocation Form (highlighted card inside) -->
+      <div *ngIf="selectedResources.length > 0" class="allocation-form-box p-4 mt-4 mb-2 bg-light rounded-3 shadow-sm">
+        <h6 class="fw-bold text-primary mb-3">
+          <i class="pi pi-users me-2"></i>Allocate {{selectedResources.length}} Resource{{selectedResources.length > 1 ?
+          's' : ''}}
+        </h6>
+        <div class="row g-3">
+          <div class="col-md-3">
+            <label class="form-label small text-muted mb-1">Start Date</label>
+            <input type="date" class="form-control" placeholder="Start Date" [(ngModel)]="allocation.start"
+              name="start">
           </div>
-          <div fxLayout="row" fxLayoutGap="12px" fxLayoutAlign="end center">
-            <span *ngIf="selectedResources.length" class="badge rounded-pill bg-success-light text-success px-3 py-2">
-              <i class="pi pi-check-circle me-1"></i>{{selectedResources.length}} selected
-            </span>
-            <button *ngIf="selectedResources.length" type="button" class="btn btn-outline-secondary rounded-pill btn-sm"
-              (click)="selectedResources = []">
-              Clear
+          <div class="col-md-3">
+            <label class="form-label small text-muted mb-1">End Date</label>
+            <input type="date" class="form-control" placeholder="End Date" [(ngModel)]="allocation.end" name="end">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label small text-muted mb-1">Role</label>
+            <input type="text" class="form-control" placeholder="e.g. Developer, Tester" [(ngModel)]="allocation.role"
+              name="role">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label small text-muted mb-1">Billability</label>
+            <input type="number" min="0" max="100" class="form-control" placeholder="%"
+              [(ngModel)]="allocation.billability" name="billability">
+          </div>
+          <div class="col-md-2">
+            <label class="form-label small text-muted mb-1">Planned Util</label>
+            <input type="number" min="0" max="100" class="form-control" placeholder="%"
+              [(ngModel)]="allocation.plannedUtil" name="plannedUtil">
+          </div>
+          <div class="col-md-12 d-flex justify-content-end pt-3">
+            <button class="btn btn-success rounded-pill px-4" type="button" (click)="allocateResource()">
+              <i class="pi pi-check-circle me-1"></i>Allocate
             </button>
           </div>
-        </div>
-
-        <!-- Responsive Table -->
-        <div class="table-responsive mb-3">
-          <table class="table table-borderless align-middle resource-table mb-0">
-            <thead>
-              <tr>
-                <th style="background: #f8fbff;; width: 40px;">
-                  <input type="checkbox" class="form-check-input" [checked]="allSelected()"
-                    (change)="toggleAll($event)" />
-                </th>
-                <th style="background: #f8fbff;">Name</th>
-                <th style="background: #f8fbff;">Primary Skill</th>
-                <th style="background: #f8fbff;">Secondary Skill</th>
-                <th style="background: #f8fbff;">Designation</th>
-                <th style="background: #f8fbff; width: 80px;">Exp</th>
-                <th style="background: #f8fbff;">Allocation</th>
-                <th style="background: #f8fbff; width: 100px;">Billable %</th>
-                <th style="background: #f8fbff; width: 100px;">Planned Utilization %</th>
-                <th style="background: #f8fbff; width: 100px;">Actual Utilization %</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let res of pagedResources; let i = index"
-                [ngStyle]="{'background': i % 2 === 0 ? '#f8fbff' : 'transparent'}"
-                [class.table-primary]="isSelected(res)">
-                <td>
-                  <input type="checkbox" class="form-check-input" [checked]="isSelected(res) "
-                    (change)="toggleResource(res)" [disabled]="isAllocatedToProject(res, project.name)" />
-                </td>
-                <td>
-                  <span class="fw-semibold text-primary">{{ res.name }}</span>
-                </td>
-                <td>
-                  <span class=" text-primary">{{ res.primarySkill }}</span>
-                </td>
-                <td>
-                  <span *ngIf="res.secondarySkill" class=" bg-secondary-light ">{{ res.secondarySkill
-                    }}</span>
-                </td>
-                <td>{{ res.designation }}</td>
-                <td>{{ res.experience }}y</td>
-                <td class="small">
-                  <!-- Case: Allocation matches -->
-                  <ng-container *ngIf="isAllocatedToProject(res, project.name); else showAllocations">
-                    <span class="badge bg-success-light text-success">
-                      <i class="pi pi-check-circle me-1"></i>This Project
-                    </span>
-                  </ng-container>
-
-                  <!-- Case: No allocation match -->
-                  <ng-template #showAllocations>
-<!-- "View Details" trigger -->
-<span class="badge bg-success-light text-info"
-      style="cursor: pointer;"
-      role="button"
-      data-bs-toggle="modal"
-      data-bs-target="#allocationDetailsModal"
-      (click)="openDetailsModal(res.currentAllocation)">
-  <i class="pi pi-eye me-1"></i>View Details
-</span>
-
-                  </ng-template>
-
-                </td>
-
-
-
-                <td>
-                  <div class="progress" style="height: 6px;">
-                    <div class="progress-bar bg-info" role="progressbar" [style.width]="res.billability + '%'"></div>
-                  </div>
-                  <small class="text-muted">{{ res.billability }}%</small>
-                </td>
-                <td>
-                  <div class="progress" style="height: 6px;">
-                    <div class="progress-bar cozentus-bg" role="progressbar" [style.width]="res.plannedUtil + '%'">
-                    </div>
-                  </div>
-                  <small class="text-muted">{{ res.plannedUtil }}%</small>
-                </td>
-                <td>
-                  <div class="progress" style="height: 6px;">
-                    <div class="progress-bar" [ngClass]="{
-                 'bg-success': res.actualUtil >= 80,
-                 'bg-warning': res.actualUtil >= 50 && res.actualUtil < 80,
-                 'bg-danger': res.actualUtil < 50
-               }" role="progressbar" [style.width]="res.actualUtil + '%'"></div>
-                  </div>
-                  <small class="text-muted">{{ res.actualUtil }}%</small>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="d-flex justify-content-between align-items-center w-100 custom-font mt-2">
-            <div class="ms-auto text-end me-1">
-              <span class="small">
-                Showing
-                {{ ((currentPage - 1) * pageSize) + (pagedResources.length ? 1 : 0) }}
-                to
-                {{ ((currentPage - 1) * pageSize) + pagedResources.length }}
-                of {{ resources.length }} entries
-              </span>
-            </div>
-            <div class="d-flex align-items-center">
-              <button class="btn btn-outline-secondary btn-sm mx-1"
-                style="width: 25px; height: 25px; padding: 0; display: flex; align-items: center; justify-content: center;"
-                (click)="goToFirstPage()" [disabled]="currentPage === 1">
-                <span><i class="fa-regular fa-angle-double-left"></i></span>
-              </button>
-              <button class="btn btn-outline-secondary btn-sm mx-1"
-                style="width: 25px; height: 25px; padding: 0; display: flex; align-items: center; justify-content: center;"
-                (click)="goToPreviousPage()" [disabled]="currentPage === 1">
-                <span><i class="fa-regular fa-angle-left"></i></span>
-              </button>
-              <button class="btn btn-outline-secondary btn-sm mx-1"
-                style="width: 25px; height: 25px; padding: 0; display: flex; align-items: center; justify-content: center;">
-                {{ currentPage }}
-              </button>
-              <button class="btn btn-outline-secondary btn-sm mx-1"
-                style="width: 25px; height: 25px; padding: 0; display: flex; align-items: center; justify-content: center;"
-                (click)="goToNextPage()" [disabled]="currentPage === totalPages">
-                <span><i class="fa-regular fa-angle-right"></i></span>
-              </button>
-              <button class="btn btn-outline-secondary btn-sm mx-1"
-                style="width: 25px; height: 25px; padding: 0; display: flex; align-items: center; justify-content: center;"
-                (click)="goToLastPage()" [disabled]="currentPage === totalPages">
-                <span><i class="fa-regular fa-angle-double-right"></i></span>
-              </button>
-              <select class="form-select form-select-sm ms-2" style="width: 60px;" [(ngModel)]="pageSize"
-                (change)="updatePagination()">
-                <option [value]="5">5</option>
-                <option [value]="10">10</option>
-                <option [value]="15">15</option>
-                <option [value]="20">20</option>
-              </select>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Empty State -->
-        <div *ngIf="resources.length === 0" class="text-center py-5">
-          <i class="pi pi-search text-muted" style="font-size: 3rem;"></i>
-          <h5 class="text-muted mt-3">No resources found</h5>
-          <p class="text-muted">Try adjusting your search filters</p>
-          <button class="btn btn-outline-primary rounded-pill">
-            <i class="pi pi-filter-slash me-2"></i>Clear Filters
-          </button>
-        </div>
-
-        <!-- Allocation Form -->
-        <div *ngIf="selectedResources.length > 0"
-          class="allocation-form-box p-4 mt-4 mb-2 bg-light rounded-3 shadow-sm">
-          <h6 class="fw-bold text-primary mb-3">
-            <i class="pi pi-users me-2"></i>Allocate {{selectedResources.length}} Resource{{selectedResources.length > 1
-            ? 's' : ''}}
-          </h6>
-
-          <div fxLayout="row wrap" fxLayoutGap="16px" fxLayoutAlign="start center">
-            <div fxFlex.gt-sm="20" fxFlex="100" class="mb-2">
-              <label class="form-label small text-muted mb-1">Start Date</label>
-              <input type="date" class="form-control shadow-sm" placeholder="Start Date" [(ngModel)]="allocation.start"
-                name="start">
-            </div>
-            <div fxFlex.gt-sm="20" fxFlex="100" class="mb-2">
-              <label class="form-label small text-muted mb-1">End Date</label>
-              <input type="date" class="form-control shadow-sm" placeholder="End Date" [(ngModel)]="allocation.end"
-                name="end">
-            </div>
-            <div fxFlex.gt-sm="20" fxFlex="100" class="mb-2">
-              <label class="form-label small text-muted mb-1">Role</label>
-              <input type="text" class="form-control shadow-sm" placeholder="e.g. Developer, Tester"
-                [(ngModel)]="allocation.role" name="role">
-            </div>
-            <div fxFlex.gt-sm="15" fxFlex="100" class="mb-2">
-              <label class="form-label small text-muted mb-1">Billability</label>
-              <input type="number" min="0" max="100" class="form-control shadow-sm" placeholder="%"
-                [(ngModel)]="allocation.billability" name="billability">
-            </div>
-            <div fxFlex.gt-sm="15" fxFlex="100" class="mb-2">
-              <label class="form-label small text-muted mb-1">Planned Util</label>
-              <input type="number" min="0" max="100" class="form-control shadow-sm" placeholder="%"
-                [(ngModel)]="allocation.plannedUtil" name="plannedUtil">
-            </div>
-            <div class="mb-2 pt-3">
-              <button class="btn btn-success rounded-pill w-100" type="button" (click)="allocateResource()">
-                <i class="pi pi-check-circle me-1"></i>Allocate
-              </button>
-            </div>
-          </div>
-
-
         </div>
       </div>
     </div>
