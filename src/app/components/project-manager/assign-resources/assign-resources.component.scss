@@ -47,3 +47,25 @@
 .btn-outline-primary::hover{
   background-color: #e6f3f7 !important;
 }
+.plus-inline-btn {
+  border: none;
+  background: transparent;
+  color: #212529;
+  font-size: 1.07rem;
+  font-weight: 500;
+  box-shadow: none;
+  padding: 0 4px;
+  margin-top: 2px;
+  margin-left: 8px;
+  line-height: 1;
+  vertical-align: middle;
+  transition: color 0.2s;
+}
+
+.plus-inline-btn:hover,
+.plus-inline-btn:focus {
+  color: #2e3c54;      /* Your primary color */
+  background: #f8fbff;
+  outline: none;
+  border: none;
+}

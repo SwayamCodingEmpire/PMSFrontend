@@ -13,7 +13,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 export class AssignResourceAllocationComponent {
 
   selectedResources: any[] = [];
-  showFilters = false;
+  showFilters = true;
 
   project = {
     name: 'Project Alpha',
@@ -22,8 +22,8 @@ export class AssignResourceAllocationComponent {
   };
 
   isAllocatedToProject(resource: any, projectName: string): boolean {
-  return resource.currentAllocation?.some((a: any) => a.project === projectName);
-}
+    return resource.currentAllocation?.some((a: any) => a.project === projectName);
+  }
 
 
   search = {
@@ -34,197 +34,204 @@ export class AssignResourceAllocationComponent {
   };
 
   resources = [
-  {
-    id: 1,
-    name: 'Jane Doe',
-    primarySkill: 'Angular',
-    secondarySkill: 'React',
-    designation: 'Sr. Developer',
-    experience: 6,
-    currentAllocation: [{
-      project: 'Project Alpha',
-      from: '2024-07-01',
-      to: '2024-09-30',
+    {
+      id: 1,
+      name: 'Jane Doe',
+      primarySkill: 'Angular',
+      secondarySkill: 'React',
+      designation: 'Sr. Developer',
+      experience: 6,
+      currentAllocation: [{
+        project: 'Project Alpha',
+        from: '2024-07-01',
+        to: '2024-09-30',
+        billability: 70,
+        plannedUtil: 80,
+        actualUtil: 75
+      }],
       billability: 70,
-          plannedUtil: 80,
-    actualUtil: 75
-    }],
-    billability: 70,
-    plannedUtil: 80,
-    actualUtil: 75
-  },
-  {
-    id: 2,
-    name: 'Jane Doe',
-    primarySkill: 'Angular',
-    secondarySkill: 'React',
-    designation: 'Sr. Developer',
-    experience: 6,
-    currentAllocation: [{
-      project: 'Project Aplha',
-      from: '2024-07-01',
-      to: '2024-09-30',
+      plannedUtil: 80,
+      actualUtil: 75
+    },
+    {
+      id: 2,
+      name: 'Jane Doe',
+      primarySkill: 'Angular',
+      secondarySkill: 'React',
+      designation: 'Sr. Developer',
+      experience: 6,
+      currentAllocation: [{
+        project: 'Project Aplha',
+        from: '2024-07-01',
+        to: '2024-09-30',
+        billability: 70,
+        plannedUtil: 80,
+        actualUtil: 75
+      }, {
+        project: 'Project Omega',
+        from: '2024-08-01',
+        to: '2024-10-15',
+        billability: 50,
+        plannedUtil: 80,
+        actualUtil: 75
+      }],
       billability: 70,
-               plannedUtil: 80,
-    actualUtil: 75
-    }],
-    billability: 70,
-    plannedUtil: 80,
-    actualUtil: 75
-  },
-  {
-    id: 3,
-    name: 'Jane Doe',
-    primarySkill: 'Angular',
-    secondarySkill: 'React',
-    designation: 'Sr. Developer',
-    experience: 6,
-    currentAllocation: [{
-      project: 'Project Beta',
-      from: '2024-07-01',
-      to: '2024-09-30',
+      plannedUtil: 80,
+      actualUtil: 75
+    },
+    {
+      id: 3,
+      name: 'Jane Doe',
+      primarySkill: 'Angular',
+      secondarySkill: 'React',
+      designation: 'Sr. Developer',
+      experience: 6,
+      currentAllocation: [{
+        project: 'Project Beta',
+        from: '2024-07-01',
+        to: '2024-09-30',
+        billability: 70,
+        plannedUtil: 80,
+        actualUtil: 75
+      }],
       billability: 70,
-               plannedUtil: 80,
-    actualUtil: 75
-    }],
-    billability: 70,
-    plannedUtil: 80,
-    actualUtil: 75
-  },
-  {
-    id: 4,
-    name: 'Jane Doe',
-    primarySkill: 'Angular',
-    secondarySkill: 'React',
-    designation: 'Sr. Developer',
-    experience: 6,
-    currentAllocation: [{
-      project: 'Project Beta',
-      from: '2024-07-01',
-      to: '2024-09-30',
+      plannedUtil: 80,
+      actualUtil: 75
+    },
+    {
+      id: 4,
+      name: 'Jane Doe',
+      primarySkill: 'Angular',
+      secondarySkill: 'React',
+      designation: 'Sr. Developer',
+      experience: 6,
+      currentAllocation: [{
+        project: 'Project Beta',
+        from: '2024-07-01',
+        to: '2024-09-30',
+        billability: 70,
+        plannedUtil: 80,
+        actualUtil: 75
+      }],
       billability: 70,
-               plannedUtil: 80,
-    actualUtil: 75
-    }],
-    billability: 70,
-    plannedUtil: 80,
-    actualUtil: 75
-  },
-  {
-    id: 5,
-    name: 'Jane Doe',
-    primarySkill: 'Angular',
-    secondarySkill: 'React',
-    designation: 'Sr. Developer',
-    experience: 6,
-    currentAllocation: [{
-      project: 'Project Beta',
-      from: '2024-07-01',
-      to: '2024-09-30',
+      plannedUtil: 80,
+      actualUtil: 75
+    },
+    {
+      id: 5,
+      name: 'Jane Doe',
+      primarySkill: 'Angular',
+      secondarySkill: 'React',
+      designation: 'Sr. Developer',
+      experience: 6,
+      currentAllocation: [{
+        project: 'Project Beta',
+        from: '2024-07-01',
+        to: '2024-09-30',
+        billability: 70,
+        plannedUtil: 80,
+        actualUtil: 75
+      }],
       billability: 70,
-               plannedUtil: 80,
-    actualUtil: 75
-    }],
-    billability: 70,
-    plannedUtil: 80,
-    actualUtil: 75
-  },
-  {
-    id: 6,
-    name: 'Jane Doe',
-    primarySkill: 'Angular',
-    secondarySkill: 'React',
-    designation: 'Sr. Developer',
-    experience: 6,
-    currentAllocation: [{
-      project: 'Project Beta',
-      from: '2024-07-01',
-      to: '2024-09-30',
+      plannedUtil: 80,
+      actualUtil: 75
+    },
+    {
+      id: 6,
+      name: 'Jane Doe',
+      primarySkill: 'Angular',
+      secondarySkill: 'React',
+      designation: 'Sr. Developer',
+      experience: 6,
+      currentAllocation: [{
+        project: 'Project Beta',
+        from: '2024-07-01',
+        to: '2024-09-30',
+        billability: 70,
+        plannedUtil: 80,
+        actualUtil: 75
+      }],
       billability: 70,
-               plannedUtil: 80,
-    actualUtil: 75
-    }],
-    billability: 70,
-    plannedUtil: 80,
-    actualUtil: 75
-  },
-  {
-    id: 7,
-    name: 'Jane Doe',
-    primarySkill: 'Angular',
-    secondarySkill: 'React',
-    designation: 'Sr. Developer',
-    experience: 6,
-    currentAllocation: [{
-      project: 'Project Beta',
-      from: '2024-07-01',
-      to: '2024-09-30',
+      plannedUtil: 80,
+      actualUtil: 75
+    },
+    {
+      id: 7,
+      name: 'Jane Doe',
+      primarySkill: 'Angular',
+      secondarySkill: 'React',
+      designation: 'Sr. Developer',
+      experience: 6,
+      currentAllocation: [{
+        project: 'Project Beta',
+        from: '2024-07-01',
+        to: '2024-09-30',
+        billability: 70,
+        plannedUtil: 80,
+        actualUtil: 75
+      }],
       billability: 70,
-               plannedUtil: 80,
-    actualUtil: 75
-    }],
-    billability: 70,
-    plannedUtil: 80,
-    actualUtil: 75
-  },
-  {
-    id: 8,
-    name: 'Jane Doe',
-    primarySkill: 'Angular',
-    secondarySkill: 'React',
-    designation: 'Sr. Developer',
-    experience: 6,
-    currentAllocation: [{
-      project: 'Project Beta',
-      from: '2024-07-01',
-      to: '2024-09-30',
+      plannedUtil: 80,
+      actualUtil: 75
+    },
+    {
+      id: 8,
+      name: 'Jane Doe',
+      primarySkill: 'Angular',
+      secondarySkill: 'React',
+      designation: 'Sr. Developer',
+      experience: 6,
+      currentAllocation: [{
+        project: 'Project Beta',
+        from: '2024-07-01',
+        to: '2024-09-30',
+        billability: 70,
+        plannedUtil: 80,
+        actualUtil: 75
+      }],
       billability: 70,
-               plannedUtil: 80,
-    actualUtil: 75
-    }],
-    billability: 70,
-    plannedUtil: 80,
-    actualUtil: 75
-  },
-  {
-    id: 9,
-    name: 'Jane Doe',
-    primarySkill: 'Angular',
-    secondarySkill: 'React',
-    designation: 'Sr. Developer',
-    experience: 6,
-    currentAllocation:[{
-      project: 'Project Beta',
-      from: '2024-07-01',
-      to: '2024-09-30',
+      plannedUtil: 80,
+      actualUtil: 75
+    },
+    {
+      id: 9,
+      name: 'Jane Doe',
+      primarySkill: 'Angular',
+      secondarySkill: 'React',
+      designation: 'Sr. Developer',
+      experience: 6,
+      currentAllocation: [{
+        project: 'Project Beta',
+        from: '2024-07-01',
+        to: '2024-09-30',
+        billability: 70,
+        plannedUtil: 80,
+        actualUtil: 75
+      }],
       billability: 70,
-               plannedUtil: 80,
-    actualUtil: 75
-    }],
-    billability: 70,
-    plannedUtil: 80,
-    actualUtil: 75
-  },
-  {
-    id: 10,
-    name: 'John Smith',
-    primarySkill: 'Java',
-    secondarySkill: 'Spring',
-    designation: 'Backend Dev',
-    experience: 4,
-    currentAllocation: [{
-      project: 'Project Omega',
-      from: '2024-08-01',
-      to: '2024-10-15',
+      plannedUtil: 80,
+      actualUtil: 75
+    },
+    {
+      id: 10,
+      name: 'John Smith',
+      primarySkill: 'Java',
+      secondarySkill: 'Spring',
+      designation: 'Backend Dev',
+      experience: 4,
+      currentAllocation: [{
+        project: 'Project Omega',
+        from: '2024-08-01',
+        to: '2024-10-15',
+        billability: 50,
+        plannedUtil: 80,
+        actualUtil: 75
+      }],
       billability: 50,
-               plannedUtil: 80,
-    actualUtil: 75
-    }],
-    billability: 50,
-    plannedUtil: 60,
-    actualUtil: 55
-  }
-];
+      plannedUtil: 60,
+      actualUtil: 55
+    }
+  ];
 
 
   allocation = {
@@ -241,12 +248,46 @@ export class AssignResourceAllocationComponent {
   }
 
   // Toggle resource selection
+  // In your component class
+
+  // When toggling resource selection:
   toggleResource(res: any) {
     if (this.isSelected(res)) {
       this.selectedResources = this.selectedResources.filter(r => r.id !== res.id);
     } else {
-      this.selectedResources.push(res);
+      // Clone to avoid mutating original if needed
+      const resourceClone = { ...res };
+      // If allocation already exists (from previous selection), keep it; else create new
+      if (!resourceClone.allocation) {
+        resourceClone.allocation = {
+          start: '',
+          end: '',
+          role: '',
+          billability: null,
+          plannedUtil: null
+        };
+      }
+      this.selectedResources.push(resourceClone);
     }
+  }
+
+  allocateAllResources() {
+    if (this.selectedResources.length === 0) {
+      alert('Select at least one resource to allocate!');
+      return;
+    }
+    // You can send this.selectedResources (with .allocation property) to backend here
+    console.log('Allocating resources:', this.selectedResources.map(r => ({
+      name: r.name,
+      allocation: r.allocation
+    })));
+    alert(
+      `Allocated ${this.selectedResources.length} resource(s):\n\n` +
+      this.selectedResources.map(r =>
+        `${r.name}: ${r.allocation.start} to ${r.allocation.end}, Role: ${r.allocation.role}, Billability: ${r.allocation.billability}, Planned: ${r.allocation.plannedUtil}`
+      ).join('\n')
+    );
+    this.selectedResources = [];
   }
 
   // Toggle all resources select/deselect
@@ -311,13 +352,18 @@ export class AssignResourceAllocationComponent {
 
 
 
-showDetailsModal = false;
-selectedAllocations: any[] = [];
+  showDetailsModal = false;
+  selectedAllocations: any[] = [];
 
-openDetailsModal(allocations: any[]) {
+  openDetailsModal(allocations: any[]) {
   this.selectedAllocations = allocations;
-  this.showDetailsModal = true;
+  setTimeout(() => {
+    // Wait for Angular to update the DOM, then show modal
+    const modal = new (window as any).bootstrap.Modal(document.getElementById('allocationDetailsModal'));
+    modal.show();
+  });
 }
+
 
 
 }
