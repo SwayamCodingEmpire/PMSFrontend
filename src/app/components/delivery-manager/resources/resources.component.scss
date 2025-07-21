@@ -2,12 +2,74 @@
   border: none;
   box-shadow: none;
 }
+.skill-field-clickable {
+  cursor: pointer;
+}
+.more-link {
+  font-size: 0.85em;
+  color: #007bff;
+}
+
+.skill-cell {
+  min-height: 32px;
+  cursor: pointer;
+}
+input[disabled] {
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+.copy-icon {
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.copy-icon:hover {
+  transform: scale(1.2);
+  color: #2e3c54; /* Bootstrap primary */
+}
+
+select:focus {
+  width: auto;
+  min-width: 150px;
+}
+
+
+
 
 
 .resource-card table thead th {
   background-color: #f8fbff !important;
   border-bottom: none;
 }
+.btn-close {
+  filter: brightness(0) invert(1);
+  opacity: 1; // Optional for full visibility
+}
+
+.accordion-button.cozentus-bg:not(.collapsed)::after,
+.accordion-button.cozentus-bg:focus::after {
+  filter: brightness(0) invert(1);
+}
+
+.accordion-button.cozentus-bg:focus::after {
+  filter: brightness(0) invert(1);
+}
+
+.skill-text {
+  cursor: pointer;
+  color: #0d6efd;
+}
+
+.more-link {
+  color: #0d6efd; // Bootstrap primary link color
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+
+
+
 
 
 
@@ -39,6 +101,32 @@
 .btn-link i {
     color: #6c757d !important;
     font-size: 16px;
+}
+
+
+
+.manager-list-container {
+  max-height: 34vh;
+  overflow-y: auto;
+
+  @media (min-width: 768px) {
+    max-height: 45vh;
+  }
+}
+
+.manager-list-container {
+  max-height: 45vh;
+}
+
+.manager-card.bg-info {
+  border-left: 5px solid #0dcaf0;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.underline-colored {
+  text-decoration: underline !important;
+  text-decoration-color: #2e3c54; // Your desired color
+  text-underline-offset: 2px; // Optional: improves readability
 }
 
 

@@ -1,9 +1,13 @@
 <div class="container-fluid px-4 resource-container">
-  <div class="row mb-3 align-items-center">
-    <div class="col">
-      <label class="mt-3 h4">Project List</label>
-    </div>
+<div class="row mb-3 align-items-center">
+  <div class="col d-flex justify-content-between align-items-center">
+    <label class="mt-3 h4 mb-0">Project List</label>
+    <button class="btn btn-outline-secondary cozentus-bg " data-bs-toggle="modal" data-bs-target="#defaultMailModal" *ngIf="isAllowedForDML()">
+      <i class="bi bi-gear text-white"></i>
+    </button>
   </div>
+</div>
+
 
   <div class="card shadow-sm p-3 resource-card">
     <div class="card-body">
@@ -12,7 +16,7 @@
           <input type="text" class="form-control search-input" placeholder="Search Here" [(ngModel)]="searchTerm"
             (input)="applySearch()" />
         </div>
-        <div class="col-auto">
+        <div class="col-auto" *ngIf="isAllowedForDML()">
           <button class="btn btn-outline-dark ms-3 add-resource-btn" (click)="gotoAddProject()">
             Add Project
           </button>
@@ -30,20 +34,21 @@
               <th scope="col">Start Date</th>
               <th scope="col">End Date</th>
               <th scope="col">Project Mgr</th>
+              <th scope="col" class="text-center">Allocations</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let proj of paginatedProjects">
+            <tr *ngFor="let proj of projects;let i = index">
               <td class="py-1 px-2">
                 <div class="d-flex gap-0">
-                  <button class="btn btn-sm icon-button" title="View" (click)="viewProjectDetails(proj)">
+                  <!-- <button class="btn btn-sm icon-button" title="View" (click)="viewProjectDetails(proj)">
                     <i class="fa-regular fa-eye "></i>
-                  </button>
-                  <button class="btn btn-sm icon-button" title="Edit" (click)="editProject(proj)">
+                  </button> -->
+                  <button class="btn btn-sm icon-button" (click)="editProject(i)" title="Edit Project" *ngIf="isAllowedForDML()">
                     <i class="fa-regular fa-pen-to-square "></i>
                   </button>
 
-                  <button class="btn btn-sm icon-button" title="Configure Mail" (click)="configureEmailProject(proj)">
+                  <button class="btn btn-sm icon-button" title="Configure Mail" (click)="configureEmailProject(proj,i)">
                     <i class="fa-solid fa-envelope-open-text "></i> </button>
                 </div>
               </td>
@@ -54,6 +59,26 @@
               <td>{{ proj.scheduleStartDate | date: 'mediumDate' }}</td>
               <td>{{ proj.scheduleEndDate | date: 'mediumDate' }}</td>
               <td>{{ proj.projectManager }}</td>
+             <td>
+  <span
+    class="badge bg-success text-white px-3 py-2 d-block mb-2"
+    style="cursor: pointer;"
+    (click)="goToResourceAllocationPage(proj.projectCode, proj.projectName, proj.customerName)"
+  >
+    <i class="far fa-person me-1"></i>Allocate Resources
+  </span>
+
+<span
+  class="badge bg-info text-white px-3 py-2 d-block"
+  style="cursor: pointer;"
+  [routerLink]="['../view-allocations', proj.projectCode]"
+  [relativeTo]="route"
+>
+  <i class="fa-regular fa-eye me-1"></i>View Resources
+</span>
+
+</td>
+
 
             </tr>
           </tbody>
@@ -65,9 +90,9 @@
             <div class="ms-auto text-end me-1">
               <span class="small">
                 Showing
-                {{ ((currentPage - 1) * pageSize) + (paginatedProjects.length ? 1 : 0) }}
+                {{ ((currentPage - 1) * pageSize) + (projects.length ? 1 : 0) }}
                 to
-                {{ ((currentPage - 1) * pageSize) + paginatedProjects.length }}
+                {{ ((currentPage - 1) * pageSize) + projects.length }}
                 of {{ projects.length }} entries
               </span>
             </div>
@@ -136,18 +161,13 @@
               { icon: 'fa-user-tie', label: 'Customer Name', value: selectedProject.customerName },
               { icon: 'fa-money-bill-wave', label: 'Currency', value: selectedProject.currency },
               { icon: 'fa-calendar-check', label: 'Start Date', value: (selectedProject.scheduleStartDate | date: 'mediumDate') },
-              { icon: 'fa-calendar-xmark', label: 'End Date', value: (selectedProject.scheduleEndDate | date: 'mediumDate') }
+              { icon: 'fa-calendar-xmark', label: 'End Date', value: (selectedProject.scheduleEndDate | date: 'mediumDate') },
+              { icon: 'fa-user-gear', label: 'Project Manager', value: selectedProject.projectManager },
+                            { icon: 'fa-briefcase', label: 'Project Type', value: selectedProject.projectType == null ? 'N/A' : selectedProject.projectType },
             ]; let i = index">
             <div class="info-card h-100">
               <label><i class="fa-solid {{ field.icon }} me-1"></i> {{ field.label }}</label>
               <div>{{ field.value }}</div>
-            </div>
-          </div>
-
-          <div class="col-12">
-            <div class="info-card">
-              <label><i class="fa-solid fa-user-gear me-1"></i> Project Manager</label>
-              <div>{{ selectedProject.projectManager }}</div>
             </div>
           </div>
         </div>
@@ -162,61 +182,70 @@
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content shadow-lg rounded-4">
 
-      <div class="modal-header  border-0 rounded-top-4 px-4 py-3 cozentus-bg">
-        <h5 class="modal-title fw-semibold text-light " id="mailModalLabel"> Configure Mail Notifications</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal-header border-0 rounded-top-4 px-4 py-3 cozentus-bg text-white">
+        <h5 class="modal-title fw-semibold text-light" id="mailModalLabel">Configure Mail Notifications</h5>
+        <button type="button bg-white" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
       <div class="modal-body px-4 py-4">
+        <form [formGroup]="mailForm">
+          <div class="row border-below">
+            <!-- Warning Day 1 -->
+            <div class="col-md-6 border-end pe-4">
+              <h6 class="fw-bold text-secondary mb-3">Timesheet Warning Day 1</h6>
+              <div class="mb-3">
+                <label class="form-label">Day</label>
+                <select class="form-select rounded-3 shadow-sm"
+                        formControlName="timesheetWarningDay1"
+                        >
+                  <option *ngFor="let day of daysOfWeek" [value]="day">{{ day }}</option>
+                </select>
+              </div>
+            </div>
 
-        <div class="row border-below">
-          <!-- Warn Mail Section -->
-          <div class="col-md-6 border-end pe-4 ">
-            <h6 class="fw-bold text-secondary mb-3 "> Warn Mail Day 1</h6>
-            <div class="mb-3">
-              <label class="form-label">Date</label>
-              <input type="date" class="form-control rounded-3 shadow-sm" [(ngModel)]="warnMailDate">
+            <!-- Warning Day 2 -->
+            <div class="col-md-6 ps-4">
+              <h6 class="fw-bold text-secondary mb-3">Timesheet Warning Day 2</h6>
+              <div class="mb-3">
+                <label class="form-label">Day</label>
+                <select class="form-select rounded-3 shadow-sm" formControlName="timesheetWarningDay2">
+                  <option *ngFor="let day of daysOfWeek" [value]="day">{{ day }}</option>
+                </select>
+              </div>
             </div>
           </div>
 
-          <!-- Reminder Mail Section -->
-          <div class="col-md-6 ps-4">
-            <h6 class="fw-bold text-secondary mb-3"> Warn Mail Day 2</h6>
-            <div class="mb-3">
-              <label class="form-label">Date</label>
-              <input type="date" class="form-control rounded-3 shadow-sm" [(ngModel)]="reminderMailDate">
+          <div class="row">
+            <!-- Summary Day -->
+            <div class="col-md-6 ps-4">
+              <h6 class="fw-bold text-secondary mb-3">Timesheet Summary Day</h6>
+              <div class="mb-3">
+                <label class="form-label">Day</label>
+                <select class="form-select rounded-3 shadow-sm" formControlName="timesheetSummaryDay">
+                  <option *ngFor="let day of daysOfWeek" [value]="day">{{ day }}</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Reminder Day -->
+            <div class="col-md-6 ps-4">
+              <h6 class="fw-bold text-secondary mb-3">Timesheet Reminder Day</h6>
+              <div class="mb-3">
+                <label class="form-label">Day</label>
+                <select class="form-select rounded-3 shadow-sm" formControlName="timesheetReminderDay">
+                  <option *ngFor="let day of daysOfWeek" [value]="day">{{ day }}</option>
+                </select>
+              </div>
             </div>
           </div>
-
-        </div>
-
-        <div class="row">
-
-          <div class="col-md-6 ps-4">
-            <h6 class="fw-bold text-secondary mb-3"> Not Submitted Mail List</h6>
-            <div class="mb-3">
-              <label class="form-label">Date</label>
-              <input type="date" class="form-control rounded-3 shadow-sm" [(ngModel)]="notSUbmittedMail">
-            </div>
-          </div>
-
-          <div class="col-md-6 ps-4">
-            <h6 class="fw-bold text-secondary mb-3"> Reminder Mail</h6>
-            <div class="mb-3">
-              <label class="form-label">Date</label>
-              <input type="date" class="form-control rounded-3 shadow-sm" [(ngModel)]="reminderMailDate">
-            </div>
-          </div>
-
-        </div>
-
+        </form>
       </div>
 
       <div class="modal-footer bg-light border-0 rounded-bottom-4 px-4 py-3 d-flex justify-content-between">
         <span class="text-muted small">Make sure the timings are valid before sending the mail.</span>
         <div>
-          <button type="button" class="btn btn-secondary px-4 pe-2" (click)="sendEmail()">
-            <i class="fa-solid fa-paper-plane me-2"></i>Send Email
+          <button type="button" class="btn btn-secondary px-2 pe-2 mx-1" (click)="configure()">
+            <i class="fa-solid fa-paper-plane me-2"></i>Configure
           </button>
           <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Close</button>
         </div>
@@ -225,6 +254,87 @@
     </div>
   </div>
 </div>
+
+
+<div class="modal fade" id="defaultMailModal" tabindex="-1" aria-labelledby="defaultMailModal" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content shadow-lg rounded-4">
+
+      <div class="modal-header border-0 rounded-top-4 px-4 py-3 cozentus-bg">
+        <h5 class="modal-title fw-semibold text-light" id="mailModalLabel">Configure Default Mail Notifications</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body px-4 py-4">
+        <form [formGroup]="mailForm">
+          <div class="row border-below">
+            <!-- Warning Day 1 -->
+            <div class="col-md-6 border-end pe-4">
+              <h6 class="fw-bold text-secondary mb-3">Timesheet Warning Day 1</h6>
+              <div class="mb-3">
+                <label class="form-label">Day</label>
+                <select class="form-select rounded-3 shadow-sm"
+                        formControlName="timesheetWarningDay1"
+                        >
+                  <option *ngFor="let day of daysOfWeek" [value]="day">{{ day }}</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Warning Day 2 -->
+            <div class="col-md-6 ps-4">
+              <h6 class="fw-bold text-secondary mb-3">Timesheet Warning Day 2</h6>
+              <div class="mb-3">
+                <label class="form-label">Day</label>
+                <select class="form-select rounded-3 shadow-sm" formControlName="timesheetWarningDay2">
+                  <option *ngFor="let day of daysOfWeek" [value]="day">{{ day }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <!-- Summary Day -->
+            <div class="col-md-6 ps-4">
+              <h6 class="fw-bold text-secondary mb-3">Timesheet Summary Day</h6>
+              <div class="mb-3">
+                <label class="form-label">Day</label>
+                <select class="form-select rounded-3 shadow-sm" formControlName="timesheetSummaryDay">
+                  <option *ngFor="let day of daysOfWeek" [value]="day">{{ day }}</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Reminder Day -->
+            <div class="col-md-6 ps-4">
+              <h6 class="fw-bold text-secondary mb-3">Timesheet Reminder Day</h6>
+              <div class="mb-3">
+                <label class="form-label">Day</label>
+                <select class="form-select rounded-3 shadow-sm" formControlName="timesheetReminderDay">
+                  <option *ngFor="let day of daysOfWeek" [value]="day">{{ day }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer bg-light border-0 rounded-bottom-4 px-4 py-3 d-flex justify-content-between">
+        <span class="text-muted small">Make sure the timings are valid before sending the mail.</span>
+        <div>
+          <button type="button" class="btn btn-secondary px-2 pe-2 mx-1" (click)="configureDefault()">
+            <i class="fa-solid fa-paper-plane me-2"></i>Configure
+          </button>
+          <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
 
 
 

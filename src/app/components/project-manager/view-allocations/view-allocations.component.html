@@ -1,0 +1,192 @@
+<div class="px-5 mx-4 py-3">
+  <!-- Heading -->
+  <div fxLayout="row" class="mb-3">
+    <div>
+      <h3 class="fw-bold text-primary mb-0" style="letter-spacing:0.5px;">
+        Project Resources
+      </h3>
+    </div>
+  </div>
+
+  <!-- Project details card -->
+  <div class="card shadow-sm border-0 mb-4 px-3 py-3" style="background-color: white;">
+    <div *ngIf="isLoadingProject" class="text-center py-3">
+      <i class="fa fa-spinner fa-spin me-2"></i>Loading project details...
+    </div>
+    <div *ngIf="projectError" class="alert alert-danger" role="alert">
+      <i class="fa fa-exclamation-triangle me-2"></i>{{ projectError }}
+    </div>
+<!-- Project Details in Single Line -->
+<div class="row mb-1">
+  <div class="col-md-4">
+    <b class="pe-2">Project Name:</b>
+    <span class="text-primary">{{ project.name }}</span>
+  </div>
+  <div class="col-md-4">
+    <b class="pe-2">Project Code:</b>
+    <span class="text-primary">{{ project.code }}</span>
+  </div>
+  <div class="col-md-4">
+    <b class="pe-2">Customer:</b>
+    <span class="text-primary">{{ project.customer }}</span>
+  </div>
+</div>
+
+
+
+
+  </div>
+
+  <!-- Resources Table Card -->
+  <div class="card shadow-sm border-0 px-5" style="background:#fff;">
+    <!-- Header -->
+    <div class="card-header bg-white border-0 pb-0">
+      <div fxLayout="row" fxLayoutAlign="space-between center">
+        <h5 class="fw-bold text-primary mb-0">Allocated Resources</h5>
+        <!-- <div fxLayout="row" fxLayoutGap="12px" fxLayoutAlign="end center">
+          <span *ngIf="resources.length" class="badge rounded-pill bg-info-light text-info px-3 py-2">
+            <i class="pi pi-users me-1"></i>{{ resources.length }} resource{{ resources.length > 1 ? 's' : '' }} allocated
+          </span>
+        </div> -->
+      </div>
+
+                    <div class="d-flex justify-content-end mb-2 px-3">
+                <button class="btn btn-sm btn-outline-primary" title="Export Manager Projects" (click)="exportToExcel()">
+                  <i class="fa-solid fa-file-export"></i>
+                </button>
+              </div>
+    </div>
+
+    <!-- Resources Table Section -->
+    <div class="card-body pt-4">
+      <!-- Responsive Table -->
+      <div class="table-responsive mb-3">
+        <table class="table table-borderless align-middle resource-table mb-0">
+          <thead>
+            <tr>
+              <th style="background: #f8fbff;">Name</th>
+              <th style="background: #f8fbff;">Primary Skill</th>
+              <th style="background: #f8fbff;">Secondary Skill</th>
+              <th style="background: #f8fbff;">Designation</th>
+              <th style="background: #f8fbff; width: 80px;">Exp</th>
+              <!-- <th style="background: #f8fbff;">Allocation Period</th> -->
+              <th style="background: #f8fbff; width: 100px;">Billable %</th>
+              <th style="background: #f8fbff; width: 100px;">Planned Utilization %</th>
+              <th style="background: #f8fbff; width: 100px;">Actual Utilization %</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let res of pagedResources; let i = index"
+              [ngStyle]="{'background': i % 2 === 0 ? '#f8fbff' : 'transparent'}">
+              <td>
+                <span class="fw-semibold text-primary">{{ res.name }}</span>
+              </td>
+              <td>
+                <span class="text-primary">{{getPrimarySkills(res) }}</span>
+              </td>
+              <td>
+                <span *ngIf="res.secondarySkill" class="bg">{{getSecondarySkills(res)}}</span>
+                <span *ngIf="!res.secondarySkill" class="text-muted">-</span>
+              </td>
+              <td>{{ res.designation }}</td>
+              <td>{{ res.experience }}y</td>
+              <!-- <td class="small">
+                <div *ngIf="res.allocationPeriod">
+                  <div class="fw-semibold">{{ res.allocationPeriod.startDate | date:'shortDate' }} - {{ res.allocationPeriod.endDate | date:'shortDate' }}</div>
+                  <div class="text-muted">{{ res.allocationPeriod.role }}</div>
+                </div>
+                <span *ngIf="!res.allocationPeriod" class="text-muted">No allocation data</span>
+              </td> -->
+              <td>
+                <div class="progress" style="height: 6px;">
+                  <div class="progress-bar bg-info" role="progressbar" [style.width]="(res.billability || 0) + '%'"></div>
+                </div>
+                <small class="text-muted">{{ res.billability || 0 }}%</small>
+              </td>
+              <td>
+                <div class="progress" style="height: 6px;">
+                  <div class="progress-bar cozentus-bg" role="progressbar" [style.width]="(res.plannedUtil || 0) + '%'">
+                  </div>
+                </div>
+                <small class="text-muted">{{ res.plannedUtil || 0 }}%</small>
+              </td>
+              <td>
+                <div class="progress" style="height: 6px;">
+                  <div class="progress-bar" [ngClass]="{
+               'bg-success': (res.actualUtil || 0) >= 80,
+               'bg-warning': (res.actualUtil || 0) >= 50 && (res.actualUtil || 0) < 80,
+               'bg-danger': (res.actualUtil || 0) < 50
+             }" role="progressbar" [style.width]="(res.actualUtil || 0) + '%'"></div>
+                </div>
+                <small class="text-muted">{{ res.actualUtil || 0 }}%</small>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-between align-items-center w-100 custom-font mt-2">
+          <div class="ms-auto text-end me-1">
+            <span class="small">
+              Showing
+              {{ ((currentPage - 1) * pageSize) + (pagedResources.length ? 1 : 0) }}
+              to
+              {{ ((currentPage - 1) * pageSize) + pagedResources.length }}
+              of {{ resources.length }} entries
+            </span>
+          </div>
+          <div class="d-flex align-items-center">
+            <button class="btn btn-outline-secondary btn-sm mx-1"
+              style="width: 25px; height: 25px; padding: 0; display: flex; align-items: center; justify-content: center;"
+              (click)="goToFirstPage()" [disabled]="currentPage === 1">
+              <span><i class="fa-regular fa-angle-double-left"></i></span>
+            </button>
+            <button class="btn btn-outline-secondary btn-sm mx-1"
+              style="width: 25px; height: 25px; padding: 0; display: flex; align-items: center; justify-content: center;"
+              (click)="goToPreviousPage()" [disabled]="currentPage === 1">
+              <span><i class="fa-regular fa-angle-left"></i></span>
+            </button>
+            <button class="btn btn-outline-secondary btn-sm mx-1"
+              style="width: 25px; height: 25px; padding: 0; display: flex; align-items: center; justify-content: center;">
+              {{ currentPage }}
+            </button>
+            <button class="btn btn-outline-secondary btn-sm mx-1"
+              style="width: 25px; height: 25px; padding: 0; display: flex; align-items: center; justify-content: center;"
+              (click)="goToNextPage()" [disabled]="currentPage === totalPages">
+              <span><i class="fa-regular fa-angle-right"></i></span>
+            </button>
+            <button class="btn btn-outline-secondary btn-sm mx-1"
+              style="width: 25px; height: 25px; padding: 0; display: flex; align-items: center; justify-content: center;"
+              (click)="goToLastPage()" [disabled]="currentPage === totalPages">
+              <span><i class="fa-regular fa-angle-double-right"></i></span>
+            </button>
+            <select class="form-select form-select-sm ms-2" style="width: 60px;" [(ngModel)]="pageSize"
+              (change)="updatePagination()">
+              <option [value]="5">5</option>
+              <option [value]="10">10</option>
+              <option [value]="15">15</option>
+              <option [value]="20">20</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!isLoadingResources && resources.length === 0" class="text-center py-5">
+        <i class="pi pi-users text-muted" style="font-size: 3rem;"></i>
+        <h5 class="text-muted mt-3">No resources allocated</h5>
+        <p class="text-muted">This project has no resources allocated yet.</p>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoadingResources" class="text-center py-5">
+        <i class="fa fa-spinner fa-spin me-2"></i>Loading resources...
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="resourcesError" class="alert alert-danger" role="alert">
+        <i class="fa fa-exclamation-triangle me-2"></i>{{ resourcesError }}
+      </div>
+    </div>
+  </div>
+</div>

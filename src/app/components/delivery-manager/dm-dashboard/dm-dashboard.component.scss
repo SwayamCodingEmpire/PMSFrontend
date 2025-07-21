@@ -14,7 +14,7 @@
     color: #2d3748;
     margin: 0;
   }
-   
+
   /* Metric Cards */
   .metric-card {
     border-radius: 0.75rem;
@@ -63,7 +63,7 @@
       }
     }
   }
-   
+
   /* Gradient Backgrounds */
   .bg-gradient-primary {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -81,7 +81,7 @@
       color: #4a5568 !important;
     }
   }
-   
+
   /* Table Styles */
   .table {
     th {
@@ -97,7 +97,7 @@
       padding: 1rem 0.75rem;
     }
   }
-   
+
   /* Badge Variants */
   .bg-success-light {
     background-color: rgba(16, 185, 129, 0.1) !important;
@@ -108,7 +108,7 @@
   .bg-danger-light {
     background-color: rgba(239, 68, 68, 0.1) !important;
   }
-   
+
   /* Avatar */
   .avatar-sm {
     width: 28px;
@@ -119,14 +119,14 @@
     font-size: 0.75rem;
     font-weight: 500;
   }
-   
+
   /* Modal */
   .modal-content {
     border-radius: 0.75rem;
     border: none;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   }
-   
+
   /* Table action buttons */
   .btn-light {
     background: #e5e7eb !important;
@@ -139,7 +139,7 @@
     background: #cbd5e1 !important;
     box-shadow: 0 2px 8px 0 rgba(0,0,0,0.06) !important;
   }
-   
+
   /* Responsive Adjustments */
   @media (max-width: 768px) {
     .dashboard-header {

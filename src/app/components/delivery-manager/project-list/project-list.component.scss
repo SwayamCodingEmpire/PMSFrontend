@@ -113,6 +113,11 @@ $primary: $primary-color;
   color: white;
 }
 
+.btn-close {
+  filter: brightness(0) invert(1);
+  opacity: 1; // Optional for full visibility
+}
+
 .btn-custom-primary:hover {
   background-color: #252f42;
   border-color: #252f42;
@@ -232,3 +237,11 @@ $primary: $primary-color;
     opacity: 0.65;
     transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
   }
+
+  .bg-success-light {
+  background: #e4f8ef !important;
+}
+
+.bg-light-steel-blue {
+  background: #2e3c54	 !important;
+}

@@ -1,5 +1,5 @@
 export interface ProjectManagerPayload {
-  id: number;
+  id: string;
   name: string;
   email: string;
   projects: string[];

@@ -13,7 +13,7 @@
       </button>
     </div> -->
   </div>
- 
+
   <!-- KPI Cards Section -->
   <div class="row mb-4">
     <div class="col-lg-6 col-md-6 mb-3">
@@ -31,7 +31,7 @@
         </div>
       </div>
     </div>
- 
+
     <div class="col-lg-6 col-md-6 mb-3">
       <div class="card border-0 shadow-sm border-start border-4 border-success h-100">
         <div class="card-body p-4 d-flex flex-column">
@@ -48,7 +48,7 @@
       </div>
     </div>
   </div>
- 
+
   <!-- Active Projects Table -->
   <div class="row mb-4">
     <div class="col-12">
@@ -76,18 +76,18 @@
                   <th class="text-uppercase small fw-semibold">Currency</th>
                   <th class="text-uppercase small fw-semibold">Start Date</th>
                   <th class="text-uppercase small fw-semibold">End Date</th>
-                  <th class="text-uppercase small fw-semibold">Project Mgr</th>
+                  <th class="text-uppercase small fw-semibold">Project Manager</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let project of activeProjects | projectFilter:projectSearchTerm | paginate: { itemsPerPage: pageSize, currentPage: currentPage }">
-                  <td class="fw-bold align-middle">{{ project.code }}</td>
-                  <td class="align-middle">{{ project.name }}</td>
-                  <td class="align-middle">{{ project.customer }}</td>
+                  <td class="fw-bold align-middle">{{ project.projectCode }}</td>
+                  <td class="align-middle">{{ project.projectName }}</td>
+                  <td class="align-middle">{{ project.customerName }}</td>
                   <td class="align-middle">{{ project.currency }}</td>
-                  <td class="align-middle">{{ project.startDate }}</td>
-                  <td class="align-middle">{{ project.endDate }}</td>
-                  <td class="align-middle">{{ project.manager }}</td>
+                  <td class="align-middle">{{ project.scheduleStartDate | date }}</td>
+                  <td class="align-middle">{{ project.scheduleEndDate | date }}</td>
+                  <td class="align-middle">{{ project.projectManager }}</td>
                 </tr>
               </tbody>
             </table>
@@ -96,11 +96,11 @@
       </div>
     </div>
   </div>
- 
+
   <!-- Charts Section -->
   <div class="row mb-4">
     <!-- Final Project Submission Pie Chart -->
-    <div class="col-lg-6 mb-4">
+    <!-- <div class="col-lg-6 mb-4">
       <div class="card shadow-sm border-0">
         <div class="card-header bg-white pb-0 border-0">
           <h5 class="card-title mb-0 fw-semibold text-dark">
@@ -115,22 +115,13 @@
                 [colors]="submissionPie.colors" [responsive]="submissionPie.responsive">
               </apx-chart>
             </div>
-            <!-- <div class="ms-4">
-              <ul class="list-group list-group-flush">
-                <li class="list-group-item bg-transparent border-0 ps-0" *ngFor="let s of submissionPieDetails">
-                  <span class="badge rounded-pill me-2" [style.background-color]="s.color"
-                    style="width:18px;height:18px;">&nbsp;</span>
-                  <b class="me-1">{{s.label}}:</b> <span class="text-dark">{{s.count}}</span>
-                </li>
-              </ul>
-            </div> -->
           </div>
         </div>
       </div>
-    </div>
- 
+    </div> -->
+
     <!-- Resource Utilization Chart -->
-    <div class="col-lg-6 mb-4">
+    <div class="col-12">
       <div class="card shadow-sm border-0">
         <div class="card-header bg-white pb-0 border-0">
           <h5 class="card-title mb-0 fw-semibold text-dark">

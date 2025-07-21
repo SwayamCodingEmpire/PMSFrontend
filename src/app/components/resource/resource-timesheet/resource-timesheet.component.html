@@ -35,88 +35,88 @@
 
     <!-- Timesheet Table -->
     <div class="bg-white shadow-sm rounded-4 px-3 pt-4 pb-2 timesheet-card">
-        <div class="table-container table-responsive">
-            <table class="table table-borderless align-middle resource-table">
-                <thead>
-                    <tr>
-                        <th style="background: #f8fbff;">Project</th>
-                        <ng-container *ngFor="let day of days; let d = index">
-                            <th style="background: #f8fbff;" class="px-3">
-                                <!-- 1st Row: Day + Icon -->
-                                <div fxLayout="row" fxLayoutAlign="space-between center">
-                                    <span class="day-label">{{ day.date | date: 'EEE' }}</span>
-                                    <button class="btn btn-sm btn-outline-success day-action p-1" (click)="saveDay(d)"
-                                        title="Save this day">
-                                        <i class="pi pi-save text-dark"></i>
-                                    </button>
-                                </div>
-                                <!-- 2nd Row: Date + Icon -->
-                                <div fxLayout="row" fxLayoutAlign="space-between center">
-                                    <span class="date-label">{{ day.date | date: 'd MMM' }}</span>
-                                    <div class="dropdown position-relative" [class.show]="dayDropdownOpen === d">
-                                        <button type="button" class="btn btn-sm btn-outline-warning day-action p-1"
-                                            (click)="toggleDayDropdown(d)" [attr.aria-expanded]="dayDropdownOpen === d">
-                                            <i class="pi pi-calendar-minus text-dark"></i>
+        <form [formGroup]="timesheetForm">
+            <div class="table-container table-responsive">
+                <table class="table table-borderless align-middle resource-table">
+                    <thead>
+                        <tr>
+                            <th style="background: #f8fbff;">Project</th>
+                            <ng-container *ngFor="let day of days; let d = index">
+                                <th style="background: #f8fbff;" class="px-3">
+                                    <!-- 1st Row: Day + Icon -->
+                                    <div fxLayout="row" fxLayoutAlign="space-between center">
+                                        <span class="day-label">{{ day.date | date: 'EEE' }}</span>
+                                        <button class="btn btn-sm btn-outline-success day-action p-1" (click)="saveDay(d)" [disabled]="isFutureDate(day.date)"
+                                            title="Save this day">
+                                            <i class="pi pi-save text-dark"></i>
                                         </button>
-                                        <ul class="dropdown-menu" [class.show]="dayDropdownOpen === d">
-                                            <li>
-                                                <button class="dropdown-item" (click)="markAllLeave(d)">
-                                                    Full Day Leave
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <hr class="dropdown-divider">
-                                            </li>
-                                            <li *ngFor="let project of projects">
-                                                <button class="dropdown-item"
-                                                    (click)="markProjectLeave(project.code, d)">
-                                                    Leave for {{ project.code }}
-                                                </button>
-                                            </li>
-                                        </ul>
                                     </div>
-                                </div>
-                            </th>
-
-                        </ng-container>
-                        <th style="background: #f8fbff;">Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let project of projects; let i = index"
-                        [ngStyle]="{'background': i % 2 === 1 ? '#f8fbff' : 'transparent'}">
-                        <td>
-                            <div fxLayout="column">
-                                <span class="fw-semibold text-primary">{{ project.code }}</span>
-                                <span class="project-name ">{{ project.name }}</span>
-                            </div>
-                        </td>
-                        <ng-container *ngFor="let day of days; let d = index">
-                            <td [class.bg-warning-subtle]="!!timesheet[project.code][d].leave">
-                                <div fxLayout="row" fxLayoutAlign="center center">
-                                    <input type="number" class="form-control form-control-sm text-center hours-input"
-                                        min="0" max="24" step="0.5"
-                                        [disabled]="!!timesheet[project.code][d].leave || isWeekend(day.date)"
-                                        [(ngModel)]="timesheet[project.code][d].hours"
-                                        (ngModelChange)="setHours(project.code, d, $event)" placeholder="0.0" />
-
+                                    <!-- 2nd Row: Date + Icon -->
+                                    <div fxLayout="row" fxLayoutAlign="space-between center">
+                                        <span class="date-label">{{ day.date | date: 'd MMM' }}</span>
+                                        <div class="dropdown position-relative" [class.show]="dayDropdownOpen === d">
+                                            <button type="button" class="btn btn-sm btn-outline-warning day-action p-1" [disabled]="isFutureDate(day.date)"
+                                                (click)="toggleDayDropdown(d)" [attr.aria-expanded]="dayDropdownOpen === d">
+                                                <i class="pi pi-calendar-minus text-dark"></i>
+                                            </button>
+                                            <ul class="dropdown-menu" [class.show]="dayDropdownOpen === d">
+                                                <li>
+                                                    <button class="dropdown-item" (click)="markAllLeave(d)">
+                                                        Full Day Leave
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <hr class="dropdown-divider">
+                                                </li>
+                                                <li *ngFor="let project of projects">
+                                                    <button class="dropdown-item"
+                                                        (click)="markProjectLeave(project.code, d)">
+                                                        Leave for {{ project.code }}
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </th>
+                            </ng-container>
+                            <th style="background: #f8fbff;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let project of projects; let i = index"
+                            [ngStyle]="{'background': i % 2 === 1 ? '#f8fbff' : 'transparent'}">
+                            <td>
+                                <div fxLayout="column">
+                                    <span class="fw-semibold text-primary">{{ project.code }}</span>
+                                    <span class="project-name ">{{ project.name }}</span>
                                 </div>
                             </td>
-                        </ng-container>
-                        <td class="total-cell text-center">{{ rowTotal(project.code) }}</td>
-                    </tr>
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td class="footer-label">Daily Total</td>
-                        <ng-container *ngFor="let day of days; let d = index">
-                            <td class="day-total text-center">{{ dayTotal(d) }}</td>
-                        </ng-container>
-                        <td class="total-cell text-center">{{ calculateGrandTotal() }}</td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
+                            <ng-container *ngFor="let day of days; let d = index">
+                                <td [class.bg-warning-subtle]="!!timesheet[project.code][d].leave">
+                                    <div fxLayout="row" fxLayoutAlign="center center">
+                                        <input type="number" class="form-control form-control-sm text-center hours-input"
+                                            min="0" max="24" step="0.5"
+                                            [formControlName]="getFormControlName(project.code, d)"
+                                            (input)="onHoursChange(project.code, d, $event)"
+                                            placeholder="0.0" />
+                                    </div>
+                                </td>
+                            </ng-container>
+                            <td class="total-cell text-center">{{ rowTotal(project.code) }}</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td class="footer-label">Daily Total</td>
+                            <ng-container *ngFor="let day of days; let d = index">
+                                <td class="day-total text-center">{{ dayTotal(d) }}</td>
+                            </ng-container>
+                            <td class="total-cell text-center">{{ calculateGrandTotal() }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </form>
         <div fxLayout="row" fxLayoutAlign="end center" class="actions">
             <button class="submit-button" (click)="submitTimesheet()">
                 <i class="pi pi-send pe-2"></i>Submit Timesheet

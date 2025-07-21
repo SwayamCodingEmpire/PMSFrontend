@@ -59,6 +59,21 @@ export class NavbarComponent {
     } else if (this.router.url === '/admin/students') {
       this.option = false;
     }
+
+    this.userName = localStorage.getItem('name') || 'Swayam Prakash Mohanty';
+    this.userInitials = this.getInitials(this.userName);
+  }
+
+  getInitials(name: string): string {
+    if (!name) return '';
+    const nameParts = name.trim().split(/\s+/);
+    let initials = '';
+    for (let i = 0; i < nameParts.length; i++) {
+      if (nameParts[i].length > 0) {
+        initials += nameParts[i][0].toUpperCase();
+      }
+    }
+    return initials;
   }
 
   checkOption() {

@@ -1,1 +1,80 @@
-<p>login works!</p>
+<div class="container-fluid vh-100 d-flex justify-content-center align-items-center"
+     style="background: url('assets/abcd.png') no-repeat center center/cover;">
+
+  <div class="card p-3 px-5 text-light shadow-lg border-0"
+       style="width: 500px;height:400px; background: rgba(18, 16, 28, 0.73); border-radius: 5px;">
+
+    <div class="text-center mb-5 pt-2 mt-3">
+      <img src="https://www.cozentus.com/assets/images/footer-logo.webp" alt="Logo" width="330">
+    </div>
+
+    <!-- Angular Form Binding -->
+    <form [formGroup]="loginForm" (ngSubmit)="login()">
+
+      <!-- Username Input -->
+      <div class="mb-4">
+        <div class="input-group">
+          <input type="text"
+                 class="form-control text-white border-0 px-3 py-1"
+                 style="background: #0d0b1a; height: 40px; border-radius: 3px 0 0 3px;"
+                 placeholder="Username"
+                 formControlName="username">
+          <span class="input-group-text border-0"
+                style="background: #0d0b1a; height: 40px; color: #5e5d5d; border-radius: 0 3px 3px 0;">
+            <i class="far fa-user"></i>
+          </span>
+        </div>
+      </div>
+
+      <!-- Password Input with Show/Hide -->
+      <div class="mb-2 mt-2">
+        <div class="input-group">
+          <input [type]="showPassword ? 'text' : 'password'"
+                 class="form-control text-white border-0 px-3 py-1"
+                 style="background: #0d0b1a; height: 40px; border-radius: 3px 0 0 3px;"
+                 placeholder="Password"
+                 formControlName="password">
+          <span class="input-group-text border-0"
+                style="background: #0d0b1a; height: 40px; color: #5e5d5d; border-radius: 0 3px 3px 0; cursor: pointer;"
+                (click)="togglePassword()">
+            <i class="far" [ngClass]="showPassword ? 'fa-eye' : 'fa-eye-slash'"></i>
+          </span>
+        </div>
+        <small *ngIf="loginForm.controls['password'].invalid && loginForm.controls['password'].touched" class="text-danger">
+          Password must be at least 6 characters.
+        </small>
+      </div>
+
+      <!-- Forgot Password -->
+      <div class="mb-2 text-end">
+        <a href="#" class="text-decoration-none" style="font-size: 13px; color: #405df7"> &nbsp;</a>
+      </div>
+
+      <!-- Remember Me Checkbox -->
+      <div class="form-check mb-4 d-flex align-items-center" style="margin-left: 0; padding-left: 0;">
+        <span (click)="rememberMe = !rememberMe" class="me-2" style="cursor: pointer; font-size: 18px; color: white;">
+          <i class="far" [ngClass]="rememberMe ? 'fa-check-square' : 'fa-square'"></i>
+        </span>
+        <label (click)="rememberMe = !rememberMe" class="form-check-label text-white" style="cursor: pointer; margin-left: 2px;">
+          Keep me signed in
+        </label>
+      </div>
+
+      <!-- Login Button -->
+      <button type="submit" class="btn w-100 text-white"
+              style="background: #327dff; border: none; height: 45px; padding: 5px 15px; border-radius: 3px; line-height: normal;">
+        Login
+      </button>
+    </form>
+
+
+  </div>
+</div>
+
+<style>
+  /* Placeholder Styling */
+  ::placeholder {
+    color: #5e5b59 !important;
+    opacity: 0.7 !important;
+  }
+</style>

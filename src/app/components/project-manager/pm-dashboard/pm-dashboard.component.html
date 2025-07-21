@@ -1,260 +1,483 @@
 <div class="container-fluid bg-light min-vh-100 py-4 px-3">
-  <!-- Header Section with Filters -->
+  <!-- Header Section -->
   <div class="row mb-4 align-items-center">
     <div class="col-md-8">
       <h5 class="text-dark fw-semibold mb-0 ms-3">
-       
         Project Manager Dashboard
       </h5>
     </div>
-    <div class="col-md-4 text-end mt-3">
-      <select class="form-select"
-              style="max-width: 200px; display: inline-block;"
-              [value]="selectedTimeRange"
-              (change)="onTimeRangeChange($event)">
-        <option value="7">Last 7 Days</option>
-        <option value="30">Last 30 Days</option>
-        <option value="90">Last 90 Days</option>
-      </select>
+  </div>
+
+  <!-- KPI Cards Section -->
+  <div class="row g-3 mb-4">
+
+    <!-- Total Resources -->
+    <div class="col-xl col-lg col-md-6 col-sm-6">
+      <div class="card border-0 shadow-sm border-start border-4 border-primary h-100">
+        <div class="card-body p-2">
+          <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-primary"
+              style="width: 40px; height: 40px; flex-shrink: 0;" data-bs-toggle="tooltip"
+              title="Includes all active & bench">
+              <i class="fas fa-users text-white" style="font-size: 16px;"></i>
+            </div>
+            <div class="flex-grow-1">
+              <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.totalResources }}</h5>
+              <p class="text-muted mb-0" style="font-size: 0.75rem;">Total Resources</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Billability Ratio -->
+    <div class="col-xl col-lg col-md-6 col-sm-6">
+      <div class="card border-0 shadow-sm border-start border-4 border-success h-100">
+        <div class="card-body p-2">
+          <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-success"
+              style="width: 40px; height: 40px; flex-shrink: 0;" data-bs-toggle="tooltip" title="Billed / Not Billed">
+              <i class="fas fa-tachometer-alt text-white" style="font-size: 16px;"></i>
+            </div>
+            <div class="flex-grow-1">
+              <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.billedNotBilled.billed }} / {{
+                kpiData.billedNotBilled.notBilled }}</h5>
+              <p class="text-muted mb-0" style="font-size: 0.75rem;">Billability Ratio</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Customer Utilization -->
+    <div class="col-xl col-lg col-md-6 col-sm-6">
+      <div class="card border-0 shadow-sm border-start border-4 border-info h-100">
+        <div class="card-body p-2">
+          <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-info"
+              style="width: 40px; height: 40px; flex-shrink: 0;" data-bs-toggle="tooltip" title="Actual / Planned">
+              <i class="fas fa-briefcase text-white" style="font-size: 16px;"></i>
+            </div>
+            <div class="flex-grow-1">
+              <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.customerActualUtilization }} / {{
+                kpiData.customerPlannedUtilization }}</h5>
+              <p class="text-muted mb-0" style="font-size: 0.75rem;">Customer Utilization</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Non-Customer Utilization -->
+    <div class="col-xl col-lg col-md-6 col-sm-6">
+      <div class="card border-0 shadow-sm border-start border-4 border-warning h-100">
+        <div class="card-body p-2">
+          <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-warning"
+              style="width: 40px; height: 40px; flex-shrink: 0;" data-bs-toggle="tooltip" title="Actual / Planned">
+              <i class="fas fa-tools text-white" style="font-size: 16px;"></i>
+            </div>
+            <div class="flex-grow-1">
+              <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.nonCustomerActualUtilization }} / {{
+                kpiData.nonCustomerPlannedUtilization }}</h5>
+              <p class="text-muted mb-0" style="font-size: 0.75rem;">Non-Customer Utilization</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Non Utilized Resources -->
+    <div class="col-xl col-lg col-md-6 col-sm-6">
+      <div class="card border-0 shadow-sm border-start border-4 border-danger h-100">
+        <div class="card-body p-2">
+          <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-danger"
+              style="width: 40px; height: 40px; flex-shrink: 0;" data-bs-toggle="tooltip" title="Currently on bench">
+              <i class="fas fa-user-slash text-white" style="font-size: 16px;"></i>
+            </div>
+            <div class="flex-grow-1">
+              <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.nonUtilizedResources }}</h5>
+              <p class="text-muted mb-0" style="font-size: 0.75rem;">Non Utilized Resources</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="row g-4">
+    <!-- Projects Table -->
+    <div class="col-xl-12 d-flex flex-column">
+      <div class="card shadow-sm border-0 flex-fill">
+        <div class="card-header bg-white pb-0 border-0">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0 fw-semibold text-dark">Project List</h5>
+
+            <!-- Right-side container: search + export -->
+            <div class="d-flex align-items-center gap-2">
+              <div class="input-group input-group-sm" style="width: 200px;">
+                <span class="input-group-text bg-white">
+                  <i class="fa-light fa-magnifying-glass"></i>
+                </span>
+                <input type="text" class="form-control form-control-sm" placeholder="Search..." [(ngModel)]="searchTerm"
+                  (input)="onSearchChange()" />
+              </div>
+              <button class="btn btn-sm btn-outline-primary" title="Export Project List">
+                <i class="fa-solid fa-file-export"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th class="text-uppercase small fw-semibold">Code</th>
+                  <th class="text-uppercase small fw-semibold">Name</th>
+                  <th class="text-uppercase small fw-semibold">Customer</th>
+                  <th class="text-uppercase small fw-semibold"> Delivery Manager</th>
+                  <th class="text-uppercase small fw-semibold">Billability</th>
+                  <th class="text-uppercase small fw-semibold">Total Resources</th>
+                  <th class="text-uppercase small fw-semibold">Planned Utilization</th>
+                  <th class="text-uppercase small fw-semibold">Actual Utilization</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let project of paginatedProjects" class="animate_animated animate_fadeIn">
+                  <td class="fw-semibold">{{ project.code }}</td>
+                  <td class="align-middle">{{ project.name }}</td>
+                  <td class="align-middle">{{ project.customer }}</td>
+                  <td class="align-middle">
+                    <div class="d-flex align-items-center">
+                      <div class="avatar-sm me-2">
+                        <span class="avatar-title rounded-circle bg-light text-dark">
+                          {{ project.manager.charAt(0) }}
+                        </span>
+                      </div>
+                      {{ project.manager }}
+                    </div>
+                  </td>
+                  <td class="align-middle">
+                    <div class="progress" style="height: 8px;">
+                      <div class="progress-bar bg-success" [style.width]="project.billability + '%'"></div>
+                    </div>
+                    <small class="text-muted">{{ project.billability }}%</small>
+                  </td>
+                  <td class="align-middle text-center">
+                    <span class="badge bg-primary rounded-pill">{{ project.totalResources }}</span>
+                  </td>
+                  <td class="align-middle">
+                    <div class="progress" style="height: 8px;">
+                      <div class="progress-bar bg-info" [style.width]="project.plannedUtilization + '%'"></div>
+                    </div>
+                    <small class="text-muted">{{ project.plannedUtilization }}%</small>
+                  </td>
+                  <td class="align-middle">
+                    <div class="progress" style="height: 8px;">
+                      <div class="progress-bar" [ngClass]="{
+                             'bg-success': project.actualUtilization >= 85,
+                             'bg-warning': project.actualUtilization >= 70 && project.actualUtilization < 85,
+                             'bg-danger': project.actualUtilization < 70
+                           }" [style.width]="project.actualUtilization + '%'"></div>
+                    </div>
+                    <small class="text-muted">{{ project.actualUtilization }}%</small>
+                  </td>
+                </tr>
+                <tr *ngIf="paginatedProjects.length === 0">
+                  <td colspan="8" class="text-center py-4 text-muted">
+                    <i class="bi bi-inbox fs-1"></i>
+                    <p class="mt-2 mb-0">No projects found</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer bg-white d-flex justify-content-between align-items-center">
+          <div class="text-muted small">
+            Showing <strong>{{ paginatedProjects.length }}</strong> of <strong>{{ filteredProjects.length }}</strong>
+            projects
+          </div>
+          <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-secondary" (click)="goToFirstPage()" [disabled]="currentPage === 1">
+              <i class="fa-light fa-angle-double-left"></i>
+            </button>
+            <button class="btn btn-outline-secondary" (click)="goToPreviousPage()" [disabled]="currentPage === 1">
+              <i class="fa-light fa-chevron-left"></i>
+            </button>
+            <span class="btn btn-outline-secondary disabled">{{ currentPage }} of {{ totalPages }}</span>
+            <button class="btn btn-outline-secondary" (click)="goToNextPage()" [disabled]="currentPage === totalPages">
+              <i class="fa-light fa-chevron-right"></i>
+            </button>
+            <button class="btn btn-outline-secondary" (click)="goToLastPage()" [disabled]="currentPage === totalPages">
+              <i class="fa-light fa-angle-double-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
- 
-  <!-- Loading Spinner -->
-  <div *ngIf="isLoading" class="text-center py-5">
-    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-      <span class="visually-hidden">Loading...</span>
+
+  <!-- Chart and Selected Project Resources Section -->
+  <div class="row g-4 mt-4">
+    <!-- Project Resource Chart -->
+    <div class="col-xl-6 d-flex">
+      <div class="card shadow-sm border-0 h-100 flex-fill">
+        <div class="card-header bg-white pb-0 border-0">
+          <h5 class="card-title mb-0 fw-semibold text-dark">
+            <i class="bi bi-pie-chart-fill me-2 text-primary"></i>
+            Resources by Project
+          </h5>
+          <p class="text-muted small mb-0">Click on a project to view its resources</p>
+        </div>
+        <div class="card-body">
+          <apx-chart [series]="projectChart.series" [chart]="projectChart.chart" [labels]="projectChart.labels"
+            [colors]="projectChart.colors" [legend]="projectChart.legend" [plotOptions]="projectChart.plotOptions!"
+            [dataLabels]="projectChart.dataLabels!">
+          </apx-chart>
+        </div>
+      </div>
+    </div>
+
+    <!-- Selected Project Resources -->
+<div class="col-xl-6 d-flex">
+  <div class="card shadow-sm border-0 h-100 flex-fill">
+    <div class="card-header bg-white pb-0 border-0">
+      <h5 class="card-title mb-0 fw-semibold text-dark">
+        <i class="bi bi-people-fill me-2 text-success"></i>
+        {{ selectedProjectSummary ? selectedProjectSummary.name + ' Resources' : "Project Resources" }}
+      </h5>
+      <p class="text-muted small mb-0" *ngIf="!selectedProjectSummary">
+        Select a project from the chart to view resources
+      </p>
+    </div>
+    <div class="card-body">
+      <div *ngIf="selectedProjectSummary; else noProjectSelected">
+        <div class="table-responsive">
+          <div class="d-flex justify-content-end mb-2 px-3">
+            <button class="btn btn-sm btn-outline-success" title="Export Manager Projects">
+              <i class="fa-solid fa-file-export"></i>
+            </button>
+          </div>
+
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th class="text-uppercase small fw-semibold">Code</th>
+                <th class="text-uppercase small fw-semibold">Name</th>
+                <th class="text-uppercase small fw-semibold">Role</th>
+                <th class="text-uppercase small fw-semibold">Utilization</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let resource of selectedProjectSummary.resources || []">
+                <td class="fw-semibold">{{ resource.code }}</td>
+                <td class="fw-semibold">{{ resource.name }}</td>
+                <td class="fw-semibold">{{ resource.role }}</td>
+                <td class="text-center">
+                  <span class="badge rounded-pill" [ngClass]="getUtilizationBadgeClass(resource.utilization)">
+                    {{ resource.utilization }}%
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <ng-template #noProjectSelected>
+        <div class="text-center py-5">
+          <i class="bi bi-diagram-3 fs-1 text-muted"></i>
+          <p class="mt-3 text-muted">Click on a project in the chart to view its resources</p>
+        </div>
+      </ng-template>
     </div>
   </div>
- 
-  <!-- Dashboard Content -->
-  <ng-container *ngIf="!isLoading">
-   
-    <!-- KPI Cards Section -->
-    <div class="row mb-4">
-      <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card border-0 shadow-sm border-start border-4 border-success h-100">
-          <div class="card-body p-4 d-flex flex-column">
-            <div class="d-flex align-items-center">
-              <div class="d-flex align-items-center justify-content-center rounded-circle me-3 bg-success" style="width: 60px; height: 60px; flex-shrink: 0;">
-                <i class="fas fa-users text-white fs-3"></i>
-              </div>
-              <div class="flex-grow-1">
-                <h3 class="fs-2 fw-bold mb-1 text-dark">{{kpiData.totalActiveResources}}</h3>
-                <p class="text-muted mb-0 small">Total Active Resources</p>
-              </div>
-            </div>
-          </div>
+</div>
+  </div>
+
+  <!-- Skills Chart and Selected Skill Resources Section -->
+  <div class="row g-4 mt-4">
+    <!-- Skills Chart -->
+    <div class="col-xl-6 d-flex">
+      <div class="card shadow-sm border-0 h-100 flex-fill">
+        <div class="card-header bg-white pb-0 border-0">
+          <h5 class="card-title mb-0 fw-semibold text-dark">
+            <i class="bi bi-bar-chart-fill me-2 text-info"></i>
+            Skills Distribution by Level
+            <small class="text-muted ms-2">({{ skills.length }} total skills)</small>
+          </h5>
+          <p class="text-muted small mb-0">Click on a skill level to view resource details</p>
         </div>
-      </div>
- 
-      <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card border-0 shadow-sm border-start border-4 border-primary h-100">
-          <div class="card-body p-4 d-flex flex-column">
-            <div class="d-flex align-items-center">
-              <div class="d-flex align-items-center justify-content-center rounded-circle me-3 bg-primary" style="width: 60px; height: 60px; flex-shrink: 0;">
-                <i class="fas fa-project-diagram text-white fs-3"></i>
-              </div>
-              <div class="flex-grow-1">
-                <h3 class="fs-2 fw-bold mb-1 text-dark">{{kpiData.totalActiveProjects}}</h3>
-                <p class="text-muted mb-0 small">Total Active Projects</p>
-              </div>
+        <div class="card-body">
+          <apx-chart [series]="skillsChart.series" [chart]="skillsChart.chart" [xaxis]="skillsChart.xaxis"
+            [yaxis]="skillsChart.yaxis" [colors]="skillsChart.colors" [legend]="skillsChart.legend"
+            [plotOptions]="skillsChart.plotOptions!" [dataLabels]="skillsChart.dataLabels!"
+            [tooltip]="skillsChart.tooltip!">
+          </apx-chart>
+
+          <!-- Pagination for Skills Chart -->
+          <div class="d-flex justify-content-between align-items-center mt-3" *ngIf="skillsChartTotalPages > 1">
+            <div class="text-muted small">
+              Showing {{ (skillsChartCurrentPage - 1) * skillsChartPageSize + 1 }} to
+              {{ Math.min(skillsChartCurrentPage * skillsChartPageSize, skills.length) }}
+              of {{ skills.length }} skills
             </div>
-          </div>
-        </div>
-      </div>
- 
-      <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card border-0 shadow-sm border-start border-4 h-100" [ngClass]="{'border-warning': kpiData.upcomingDeadlines <= 2, 'border-danger': kpiData.upcomingDeadlines > 2}">
-          <div class="card-body p-4 d-flex flex-column">
-            <div class="d-flex align-items-center">
-              <div class="d-flex align-items-center justify-content-center rounded-circle me-3" [ngClass]="{'bg-warning': kpiData.upcomingDeadlines <= 2, 'bg-danger': kpiData.upcomingDeadlines > 2}" style="width: 60px; height: 60px; flex-shrink: 0;">
-                <i class="fas fa-clock text-white fs-3"></i>
-              </div>
-              <div class="flex-grow-1">
-                <h3 class="fs-2 fw-bold mb-1 text-dark">{{kpiData.upcomingDeadlines}}</h3>
-                <p class="text-muted mb-0 small">Upcoming Deadlines</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
- 
-      <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card border-0 shadow-sm border-start border-4 h-100" [ngClass]="{'border-secondary': kpiData.unallocatedResources <= 5, 'border-danger': kpiData.unallocatedResources > 5}">
-          <div class="card-body p-4 d-flex flex-column">
-            <div class="d-flex align-items-center">
-              <div class="d-flex align-items-center justify-content-center rounded-circle me-3" [ngClass]="{'bg-secondary': kpiData.unallocatedResources <= 5, 'bg-danger': kpiData.unallocatedResources > 5}" style="width: 60px; height: 60px; flex-shrink: 0;">
-                <i class="fas fa-user-slash text-white fs-3"></i>
-              </div>
-              <div class="flex-grow-1">
-                <h3 class="fs-2 fw-bold mb-1 text-dark">{{kpiData.unallocatedResources}}</h3>
-                <p class="text-muted mb-0 small">Unallocated Resources</p>
-              </div>
-            </div>
+            <nav>
+              <ul class="pagination pagination-sm mb-0">
+                <li class="page-item" [class.disabled]="skillsChartCurrentPage === 1">
+                  <button class="page-link" (click)="goToFirstPageSkillsChart()"
+                    [disabled]="skillsChartCurrentPage === 1">
+                    <i class="bi bi-chevron-double-left"></i>
+                  </button>
+                </li>
+                <li class="page-item" [class.disabled]="skillsChartCurrentPage === 1">
+                  <button class="page-link" (click)="goToPreviousPageSkillsChart()"
+                    [disabled]="skillsChartCurrentPage === 1">
+                    <i class="bi bi-chevron-left"></i>
+                  </button>
+                </li>
+                <li class="page-item active">
+                  <span class="page-link">{{ skillsChartCurrentPage }} of {{ skillsChartTotalPages }}</span>
+                </li>
+                <li class="page-item" [class.disabled]="skillsChartCurrentPage === skillsChartTotalPages">
+                  <button class="page-link" (click)="goToNextPageSkillsChart()"
+                    [disabled]="skillsChartCurrentPage === skillsChartTotalPages">
+                    <i class="bi bi-chevron-right"></i>
+                  </button>
+                </li>
+                <li class="page-item" [class.disabled]="skillsChartCurrentPage === skillsChartTotalPages">
+                  <button class="page-link" (click)="goToLastPageSkillsChart()"
+                    [disabled]="skillsChartCurrentPage === skillsChartTotalPages">
+                    <i class="bi bi-chevron-double-right"></i>
+                  </button>
+                </li>
+              </ul>
+            </nav>
           </div>
         </div>
       </div>
     </div>
- 
-    <!-- Projects Table Section -->
-    <div class="row mb-4">
-      <div class="col-12">
-        <div class="card shadow-sm border-0">
-          <div class="card-header bg-white pb-0 border-0">
-            <h5 class="card-title mb-0 fw-semibold text-dark">
-              <i class="fas fa-list me-2 text-primary"></i>
-              Active Projects
-            </h5>
-          </div>
-          <div class="card-body">
+
+    <!-- Selected Skill Resources -->
+    <div class="col-xl-6 d-flex">
+      <div class="card shadow-sm border-0 h-100 flex-fill">
+        <div class="card-header bg-white pb-0 border-0">
+          <h5 class="card-title mb-0 fw-semibold text-dark">
+            <i class="bi bi-code-slash me-2 text-warning"></i>
+            {{ selectedSkill && selectedSkillLevel ? selectedSkill.name + ' - ' + selectedSkillLevel + ' Level' : "Skill
+            Resources" }}
+          </h5>
+          <p class="text-muted small mb-0" *ngIf="!selectedSkill">Select a skill level from the chart to view resources
+          </p>
+        </div>
+        <div class="card-body">
+          <div *ngIf="selectedSkill && selectedSkillLevel; else noSkillSelected">
+            <div class="mb-3 d-flex justify-content-between align-items-center">
+              <div>
+                <span class="badge rounded-pill me-2" [ngClass]="getSkillLevelBadgeClass(selectedSkillLevel)">
+                  {{ selectedSkillLevel }}
+                </span>
+                <span class="text-muted small">{{ filteredSkillResources.length }} resources</span>
+              </div>
+              <div class="col-md-4">
+                <div class="input-group input-group-sm">
+                  <span class="input-group-text bg-light border-end-0">
+                    <i class="bi bi-search"></i>
+                  </span>
+                  <input type="text" class="form-control border-start-0" placeholder="Search resources..."
+                    [(ngModel)]="skillResourceSearchTerm" (input)="onSkillResourceSearchChange()">
+                </div>
+              </div>
+            </div>
             <div class="table-responsive">
-              <table class="table table-hover">
-                <thead class="table-light">
+              <div class="d-flex justify-content-end mb-2 px-3">
+                <button class="btn btn-sm btn-outline-success" title="Export Manager Projects">
+                  <i class="fa-solid fa-file-export"></i>
+                </button>
+              </div>
+
+              <table class="table table-sm">
+                <thead>
                   <tr>
-                    <th class="text-uppercase small fw-semibold">Project Code</th>
-                    <th class="text-uppercase small fw-semibold">Project Name</th>
-                    <th class="text-uppercase small fw-semibold">Client</th>
-                    <th class="text-uppercase small fw-semibold">Start Date</th>
-                    <th class="text-uppercase small fw-semibold">End Date</th>
-                    <th class="text-uppercase small fw-semibold">Status</th>
-                    <!-- <th class="text-uppercase small fw-semibold">% Completion</th>
-                    <th class="text-uppercase small fw-semibold">Utilization %</th> -->
-                    <!-- <th class="text-uppercase small fw-semibold">Action</th> -->
+                    <th class="text-uppercase small fw-semibold">Name</th>
+                    <th class="text-uppercase small fw-semibold">Employee ID</th>
+                    <th class="text-uppercase small fw-semibold">Designation</th>
+                    <th class="text-uppercase small fw-semibold">Experience</th>
+                    <th class="text-uppercase small fw-semibold">Utilization</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let project of projectsList">
-                    <td class="fw-bold align-middle">{{project.projectCode}}</td>
-                    <td class="align-middle">{{project.projectName}}</td>
-                    <td class="align-middle">{{project.client}}</td>
-                    <td class="align-middle">{{formatDate(project.startDate)}}</td>
-                    <td class="align-middle">{{formatDate(project.endDate)}}</td>
-                    <td class="align-middle">
-                      <span [class]="getStatusBadgeClass(project.status)">
-                        {{project.status | titlecase}}
+                  <tr *ngFor="let resource of paginatedSkillResources">
+                    <td class="fw-semibold">{{ resource.name }}</td>
+                    <td>{{ resource.employeeId }}</td>
+                    <td>{{ resource.designation }}</td>
+                    <td>{{ resource.experience }} years</td>
+                    <td class="text-center">
+                      <span class="badge rounded-pill" [ngClass]="getUtilizationBadgeClass(resource.utilization)">
+                        {{ resource.utilization }}%
                       </span>
                     </td>
-                    <!-- <td class="align-middle">
-                      <div class="progress" style="height: 20px;">
-                        <div [class]="getProgressBarClass(project.completionPercentage)"
-                             [style.width]="project.completionPercentage + '%'">
-                          {{project.completionPercentage}}%
-                        </div>
-                      </div>
-                    </td>
-                    <td class="align-middle">
-                      <span class="badge bg-light text-dark">{{project.utilization}}%</span>
-                    </td> -->
-                    <!-- <td class="align-middle">
-                      <button class="btn btn-sm btn-outline-primary "
-                              title="View Details">
-                        <i class="fas fa-eye"></i>
-                      </button>
-                    </td> -->
                   </tr>
                 </tbody>
               </table>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
- 
-    <!-- Charts Section -->
-    <div class="row mb-4">
-     
-      <div class="col-6">
- 
-        <div class="card shadow-sm border-0">
-          <div class="card-body">
-            <apx-chart
-              [series]="projectStatusChart.series"
-              [chart]="projectStatusChart.chart"
-              [labels]="projectStatusChart.labels"
-              [colors]="projectStatusChart.colors"
-              [legend]="projectStatusChart.legend"
-              [title]="projectStatusChart.title">
-            </apx-chart>
-          </div>
-        </div>
-        </div>
- 
-        <div class="col-6">
-        <div class="card  shadow-sm border-0">
-          <div class="card-body">
-            <apx-chart
-              [series]="resourceAllocationChart.series"
-              [chart]="resourceAllocationChart.chart"
-              [labels]="resourceAllocationChart.labels"
-              [colors]="resourceAllocationChart.colors"
-              [legend]="resourceAllocationChart.legend"
-              [title]="resourceAllocationChart.title">
-            </apx-chart>
-          </div>
-        </div>
-      </div>
-       
-       
-       
-      </div>
- 
-     
-   
- 
-    <!-- Top Performers Section -->
-    <div class="row">
-      <div class="col-12">
-        <div class="card shadow-sm border-0">
-          <div class="card-header bg-white pb-0 border-0">
-            <h5 class="card-title mb-0 fw-semibold text-dark">
-              <i class="fas fa-star me-2 text-warning"></i>
-              Top Performers
-            </h5>
-          </div>
-          <div class="card-body">
-            <div class="table-responsive">
-              <table class="table table-hover">
-                <thead class="table-light">
-                  <tr>
-                    <th class="text-uppercase small fw-semibold">Resource Name</th>
-                    <th class="text-uppercase small fw-semibold">Primary Skill</th>
-                    <th class="text-uppercase small fw-semibold">Planner Utilization %</th>
-                    <th class="text-uppercase small fw-semibold">Actual Utilization %</th>
-                    <th class="text-uppercase small fw-semibold">Feedback Rating</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let performer of topPerformers">
-                    <td class="fw-bold align-middle">{{performer.resourceName}}</td>
-                    <td class="align-middle">{{performer.primarySkill}}</td>
-                    <td class="align-middle">
-                      <div class="progress" style="height: 20px;">
-                        <div class="progress-bar bg-success"
-                             [style.width]="performer.allocationPercentage + '%'">
-                          {{performer.allocationPercentage}}%
-                        </div>
-                      </div>
-                    </td>
-                    <td class="align-middle">
-                      <div class="progress" style="height: 20px;">
-                        <div class="progress-bar bg-info"
-                             [style.width]="performer.timesheetCompliance + '%'">
-                          {{performer.timesheetCompliance}}%
-                        </div>
-                      </div>
-                    </td>
-                    <td class="align-middle">
-                      <span class="text-warning fs-5">{{getStarRating(performer.feedbackRating)}}</span>
-                      <span class="fw-semibold ms-2 small">{{performer.feedbackRating}}</span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+
+            <!-- Pagination for Skills Resources -->
+            <div class="d-flex justify-content-between align-items-center mt-3" *ngIf="skillResourceTotalPages > 1">
+              <div class="text-muted small">
+                Showing {{ (skillResourceCurrentPage - 1) * skillResourcePageSize + 1 }} to
+                {{ Math.min(skillResourceCurrentPage * skillResourcePageSize, filteredSkillResources.length) }}
+                of {{ filteredSkillResources.length }} resources
+              </div>
+              <nav>
+                <ul class="pagination pagination-sm mb-0">
+                  <li class="page-item" [class.disabled]="skillResourceCurrentPage === 1">
+                    <button class="page-link" (click)="goToFirstPageSkillResource()"
+                      [disabled]="skillResourceCurrentPage === 1">
+                      <i class="bi bi-chevron-double-left"></i>
+                    </button>
+                  </li>
+                  <li class="page-item" [class.disabled]="skillResourceCurrentPage === 1">
+                    <button class="page-link" (click)="goToPreviousPageSkillResource()"
+                      [disabled]="skillResourceCurrentPage === 1">
+                      <i class="bi bi-chevron-left"></i>
+                    </button>
+                  </li>
+                  <li class="page-item active">
+                    <span class="page-link">{{ skillResourceCurrentPage }} of {{ skillResourceTotalPages }}</span>
+                  </li>
+                  <li class="page-item" [class.disabled]="skillResourceCurrentPage === skillResourceTotalPages">
+                    <button class="page-link" (click)="goToNextPageSkillResource()"
+                      [disabled]="skillResourceCurrentPage === skillResourceTotalPages">
+                      <i class="bi bi-chevron-right"></i>
+                    </button>
+                  </li>
+                  <li class="page-item" [class.disabled]="skillResourceCurrentPage === skillResourceTotalPages">
+                    <button class="page-link" (click)="goToLastPageSkillResource()"
+                      [disabled]="skillResourceCurrentPage === skillResourceTotalPages">
+                      <i class="bi bi-chevron-double-right"></i>
+                    </button>
+                  </li>
+                </ul>
+              </nav>
             </div>
           </div>
+          <ng-template #noSkillSelected>
+            <div class="text-center py-5">
+              <i class="bi bi-code-slash fs-1 text-muted"></i>
+              <p class="mt-3 text-muted">Click on a skill level in the chart to view resource details</p>
+            </div>
+          </ng-template>
         </div>
       </div>
     </div>
- 
-  </ng-container>
+  </div>
+
+
 </div>

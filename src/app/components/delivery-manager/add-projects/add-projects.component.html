@@ -1,4 +1,4 @@
-<div class="container py-5">
+<div class="container py-5" #formContainer>
   <!-- Card Wrapper -->
   <div class="card shadow-lg rounded-4">
     <!-- Progress Bar -->
@@ -7,19 +7,25 @@
         [style.width]="((currentStep + 1) / steps.length) * 100 + '%'"></div>
     </div>
 
-    <div class="row g-0">
+    <div class="row g-0 d-flex flex-wrap">
+
+
       <!-- Step Sidebar -->
       <div class="col-md-3 bg-light p-5 m-0">
         <div class="nav flex-column nav-pills">
           <div *ngFor="let step of steps; let i = index" class="mb-3 mt-5 d-flex align-items-start step-container">
             <div class="step-circle me-2 d-flex justify-content-center align-items-center" [ngClass]="{
-          'step-completed': i < currentStep,
-          'step-active': i === currentStep
-        }">
+         'step-completed': i < currentStep,
+         'step-active': i === currentStep
+       }">
               <span class="text-white">{{ i + 1 }}</span>
             </div>
-            <span [class.fw-bold]="i === currentStep">{{ step.label }}</span>
+            <span [class.fw-bold]="i === currentStep" [class.text-secondary]="i === 2 && skipCustomerStep">
+              {{ step.label }}
+            </span>
           </div>
+
+
         </div>
       </div>
 
@@ -85,24 +91,85 @@
                 </div>
               </div>
 
+              <!-- <div class="col-md-6">
+                <div class="form-floating form-floating-wide">
+                  <input type="text" class="form-control" id="projectType" formControlName="projectType"
+                    placeholder="Project Type" />
+                  <label for="projectType">Project Type*</label>
+                </div>
+              </div> -->
+
               <div class="col-md-6">
                 <div class="form-floating form-floating-custom">
                   <select class="form-select" id="currency" formControlName="currency" aria-label="Currency">
                     <option value="" disabled selected>Select Currency</option>
-                    <option value="INR">INR - Indian Rupee</option>
-                    <option value="USD">USD - US Dollar</option>
-                    <option value="EUR">EUR - Euro</option>
-                    <option value="GBP">GBP - British Pound</option>
-                    <option value="JPY">JPY - Japanese Yen</option>
+                    <option *ngFor="let currency of currencyOptions" [value]="currency.abbr">
+                      {{ currency.value }}
+                    </option>
                   </select>
                   <label for="currency">Currency*</label>
                 </div>
+
               </div>
+
+
             </div>
           </div>
 
+          <!-- Step 1 -->
+          <div *ngIf="currentStep === 1" formGroupName="projectType">
+            <div class="mb-4 pb-2 border-bottom border-secondary-subtle">
+              <h4 class="text-dark" style="color: #2e3c54;">
+                <i class="bi bi-folder-check me-2"></i>Project Type
+              </h4>
+            </div>
+
+            <div class="row g-4 align-items-start">
+              <!-- Project Type Dropdown (Grouped) -->
+              <div class="col-12 col-md-6">
+                <div class="form-floating position-relative">
+                  <select class="form-select" formControlName="projectType" id="projectTypeSelect">
+                    <option value="" disabled>Select Project Type</option>
+
+                    <ng-container *ngFor="let group of projectTypeGroups">
+                      <optgroup [label]="group.label">
+                        <option *ngFor="let type of group.options" [value]="type.id">
+                          {{ type.label }}
+                        </option>
+                      </optgroup>
+                    </ng-container>
+                  </select>
+
+                  <label for="projectTypeSelect">
+                    <i class="bi bi-diagram-3 me-2 text-muted"></i>Project Type*
+                  </label>
+
+                  <i class="bi bi-info-circle info-icon" data-bs-toggle="tooltip"
+                    title="Choose the best-fit project category."></i>
+                </div>
+              </div>
+
+
+              <!-- Customer Project Switch -->
+              <div class="col-12 col-md-6 d-flex align-items-center justify-content-start justify-content-md-center">
+                <div class="form-check form-switch mb-0">
+                  <input class="form-check-input custom-switch-success" type="checkbox" role="switch"
+                    id="customerProject" formControlName="customerProject">
+                  <label class="form-check-label fw-semibold d-flex align-items-center" for="customerProject">
+                    <span class="ms-1">Customer Project?</span>
+                    <i class="bi bi-info-circle ms-2 text-muted info-icon" data-bs-toggle="tooltip"
+                      title="Enable this if the project is for a client account."></i>
+                  </label>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+
+
           <!-- Step 2 -->
-          <div *ngIf="currentStep === 1" formGroupName="customerInfo">
+          <div *ngIf="currentStep === 2" formGroupName="customerInfo">
             <h4 class="mb-4">Customer Info</h4>
 
             <!-- Select Type Buttons + Search Bar in same row -->
@@ -180,7 +247,7 @@
           </div>
 
           <!-- Step 3 -->
-          <ng-container *ngIf="currentStep === 2">
+          <ng-container *ngIf="currentStep === 3">
             <!-- Title and Search -->
             <div class="d-flex justify-content-between align-items-center mb-4">
               <!-- Heading -->

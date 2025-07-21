@@ -6,10 +6,16 @@
   </div>
 
   <div class="card shadow-sm p-3 resource-card">
-    <!-- Card Heading & Week Navigation -->
+    <!-- Loading Indicator -->
+    <div *ngIf="isLoading" class="text-center py-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2 text-muted">Loading timesheets...</p>
+    </div>
 
-    <div class="card-body py-0">
-
+    <!-- Main Content -->
+    <div *ngIf="!isLoading" class="card-body py-0">
       <!-- Week Navigator as Main Header -->
       <div class="d-flex align-items-center justify-content-between flex-wrap mb-3">
         <div class="d-flex align-items-center gap-3">
@@ -21,32 +27,36 @@
             <i class="fa-solid fa-chevron-right"></i>
           </button>
         </div>
-        <!-- Optional: You can put a summary here, or leave empty -->
       </div>
 
       <!-- Tabs & Filter (as subheader) -->
       <div class="d-flex flex-wrap justify-content-between align-items-center mb-2 gap-2">
         <ul class="nav nav-pills nav-tabs-modern p-1 rounded-3 shadow-sm mb-0">
           <li class="nav-item">
-            <a class="nav-link" [class.active]="activeTab === 'pending'" (click)="activeTab = 'pending'">Pending
-              Review</a>
+            <a class="nav-link" [class.active]="activeTab === 'pending'" (click)="onTabChange('pending')">
+              Pending Review
+            </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" [class.active]="activeTab === 'history'" (click)="activeTab = 'history'">Approved
-              History</a>
+            <a class="nav-link" [class.active]="activeTab === 'history'" (click)="onTabChange('history')">
+              Approved History
+            </a>
           </li>
         </ul>
         <div class="d-flex align-items-center gap-2 ms-auto">
           <label class="mb-0 fw-semibold text-secondary small">Filter:</label>
-          <select class="form-select form-select-sm filter-select" [(ngModel)]="selectedProject">
+          <select class="form-select form-select-sm filter-select"
+                  [(ngModel)]="selectedProject"
+                  (change)="onProjectFilterChange()">
             <option value="">All Projects</option>
-            <option *ngFor="let proj of projects">{{ proj }}</option>
+            <option *ngFor="let proj of projects" [value]="proj">{{ proj }}</option>
           </select>
         </div>
       </div>
     </div>
 
-    <div class="table-responsive ps-3">
+    <!-- Timesheet Table -->
+    <div *ngIf="!isLoading" class="table-responsive ps-3">
       <table class="table table-striped align-middle mb-0">
         <thead>
           <tr>
@@ -54,19 +64,24 @@
             <th>Resource Name</th>
             <th>Role</th>
             <th>Project</th>
+            <th>Total Hours</th>
             <th>Status</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let t of pagedTimesheets">
+          <tr *ngFor="let t of pagedTimesheets; let i = index">
             <td class="py-0">
-              <button class="btn btn-sm icon-button" (click)="viewTimesheet(t)" title="View Timesheet">
+              <button class="btn btn-sm icon-button"
+                      (click)="viewTimesheet(t,i)"
+                      [disabled]="isDetailLoading"
+                      title="View Timesheet">
                 <i class="fa-regular fa-eye icon-action"></i>
               </button>
             </td>
-            <td>{{ t.resource }}</td>
+            <td>{{ t.resourceName }}</td>
             <td>{{ t.role }}</td>
-            <td>{{ t.project }}</td>
+            <td>{{ t.projectCode }}</td>
+            <td>{{ t.totalHours }}</td>
             <td>
               <span [ngClass]="{
                   'text-success': t.status === 'Approved',
@@ -76,14 +91,16 @@
             </td>
           </tr>
           <tr *ngIf="pagedTimesheets.length === 0">
-            <td class="text-center text-muted" colspan="5">No records found.</td>
+            <td class="text-center text-muted" colspan="6">
+              {{ timesheets.length === 0 ? 'No records found.' : 'No records match current filter.' }}
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <!-- Pagination Controls (Modern Style) -->
-    <div class="d-flex justify-content-end align-items-center mt-3">
+    <!-- Pagination Controls -->
+    <div *ngIf="!isLoading && filteredTimesheets.length > 0" class="d-flex justify-content-end align-items-center mt-3">
       <div class="d-flex justify-content-between align-items-center w-100 custom-font">
         <div class="ms-auto text-end me-1">
           <span class="small">
@@ -119,8 +136,10 @@
             (click)="page = totalPages" [disabled]="page === totalPages">
             <span><i class="fa-regular fa-angle-double-right"></i></span>
           </button>
-          <select class="form-select form-select-sm ms-2" style="width: 60px;" [(ngModel)]="pageSize"
-            (change)="onPageSizeChange()">
+          <select class="form-select form-select-sm ms-2"
+                  style="width: 60px;"
+                  [(ngModel)]="pageSize"
+                  (change)="onPageSizeChange()">
             <option [value]="5">5</option>
             <option [value]="10">10</option>
             <option [value]="15">15</option>
@@ -129,23 +148,40 @@
         </div>
       </div>
     </div>
-
   </div>
 
-  <!-- Timesheet Modal Preview (Card Style) -->
-  <div class="bg-white shadow-sm rounded-4 px-3 pt-3 pb-2 mt-3 timesheet-card" *ngIf="selectedTimesheet">
-    <!-- Close button (top right) -->
-    <div class="d-flex justify-content-end mb-2 pb-1">
+  <!-- Timesheet Detail Modal -->
+<div class="bg-white shadow-sm rounded-4 px-3 pt-3 pb-2 mt-3 timesheet-card"
+     *ngIf="selectedTimesheet && processedTimesheetData">
+
+  <!-- Loading Indicator for Detail -->
+  <div *ngIf="isDetailLoading" class="text-center py-4">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2 text-muted">Loading timesheet details...</p>
+  </div>
+
+  <!-- Detail Content -->
+  <div *ngIf="!isDetailLoading">
+    <!-- Header with Resource Info -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <h5 class="mb-1">{{ selectedTimesheet.resource }}</h5>
+        <p class="text-muted mb-0">{{ selectedTimesheet.role }} - {{ selectedTimesheet.project }}</p>
+      </div>
       <button class="btn btn-outline-secondary btn-sm" (click)="closeView()" title="Close">
         <i class="fa fa-times"></i>
       </button>
     </div>
+
+    <!-- Timesheet Table -->
     <div class="table-container table-responsive">
       <table class="table table-borderless align-middle resource-table">
         <thead>
           <tr>
             <th style="background: #f8fbff;">Project</th>
-            <ng-container *ngFor="let day of days">
+            <ng-container *ngFor="let day of processedTimesheetData.days">
               <th style="background: #f8fbff;" class="px-3 text-center">
                 <span class="day-label">{{ day.date | date: 'EEE' }}</span><br />
                 <span class="date-label">{{ day.date | date: 'd MMM' }}</span>
@@ -155,41 +191,43 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let project of projectis; let i = index"
-            [ngStyle]="{'background': i % 2 === 1 ? '#f8fbff' : 'transparent'}">
+          <tr>
             <td>
               <div>
-                <span class="fw-semibold text-dark">{{ project.code }}</span><br />
-                <span class="project-name">{{ project.name }}</span>
+                <span class="fw-semibold text-dark">{{ processedTimesheetData.projects[0].code }}</span><br />
+                <span class="project-name">{{ processedTimesheetData.projects[0].name }}</span>
               </div>
             </td>
-            <ng-container *ngFor="let h of project.hours">
+            <ng-container *ngFor="let h of processedTimesheetData.projects[0].hours">
               <td class="text-center">{{ h }}</td>
             </ng-container>
-            <td class="total-cell text-center">{{ project.rowTotal }}</td>
+            <td class="total-cell text-center">{{ processedTimesheetData.projects[0].rowTotal }}</td>
           </tr>
         </tbody>
         <tfoot>
           <tr>
             <td class="footer-label">Daily Total</td>
-            <ng-container *ngFor="let t of dayTotals">
+            <ng-container *ngFor="let t of processedTimesheetData.dayTotals">
               <td class="day-total text-center">{{ t }}</td>
             </ng-container>
-            <td class="total-cell text-center">{{ grandTotal }}</td>
+            <td class="total-cell text-center">{{ processedTimesheetData.grandTotal }}</td>
           </tr>
         </tfoot>
       </table>
     </div>
-    <!-- Approve/Reject buttons (bottom right) -->
+
+    <!-- Action Buttons -->
     <div class="d-flex justify-content-end gap-2 mt-3">
-      <button class="btn btn-success" (click)="approveTimesheet()" [disabled]="selectedTimesheet.status === 'Approved'">
+      <button class="btn btn-success" (click)="approveTimesheet(true)"
+              [disabled]="selectedTimesheet.status === 'Approved'">
         <i class="fa fa-check-circle me-1"></i> Approve
       </button>
-      <button class="btn btn-danger" (click)="rejectTimesheet()" [disabled]="selectedTimesheet.status === 'Rejected'">
+      <button class="btn btn-danger" (click)="approveTimesheet(false)"
+              [disabled]="selectedTimesheet.status === 'Rejected'">
         <i class="fa fa-times-circle me-1"></i> Reject
       </button>
     </div>
   </div>
-
+</div>
 
 </div>

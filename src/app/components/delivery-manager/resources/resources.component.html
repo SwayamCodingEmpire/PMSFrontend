@@ -9,11 +9,11 @@
     <div class="card-body">
       <div class="d-flex justify-content-between align-items-center mb-3 resource-actions">
         <div class="col-3">
-          <input type="text" class="form-control search-input" placeholder="Search Here" [(ngModel)]="searchTerm"
-            (input)="applySearch()" />
+          <input type="text" class="form-control search-input" placeholder="Search Here"
+            [formControl]="searchControl" />
         </div>
-        <div class="col-auto">
-          <button class="btn btn-outline-dark ms-3 add-resource-btn" (click)="openAddModal()">
+        <div class="col-auto" *ngIf="isAllowedForDML()">
+          <button class="btn btn-outline-dark ms-3 add-resource-btn" (click)="openAddModal()" *ngIf="isAllowedForDML()">
             Add Resource
           </button>
         </div>
@@ -23,38 +23,150 @@
         <table class="table table-borderless table-striped">
           <thead>
             <tr>
-              <th>Action</th>
+              <th>Acion</th>
               <th>ID</th>
+              <th>Email</th>
               <th>Name</th>
               <th>Primary Skill</th>
               <th>Secondary Skill</th>
+              <th>Role</th>
               <th>Designation</th>
               <th>Experience (Years)</th>
+              <th>Reporting Manager</th>
               <th>Allocation</th>
             </tr>
           </thead>
           <tbody>
-            <ng-container *ngIf="paginatedEmployees.length > 0; else noResults">
-              <tr *ngFor="let emp of paginatedEmployees; let i = index" [ngClass]="{ 'zebra-row': i % 2 === 1 }">
+            <ng-container *ngIf="totalItems > 0; else noResults">
+              <tr *ngFor="let emp of employees; let i = index" [ngClass]="{ 'zebra-row': i % 2 === 1 }">
                 <td class="py-1 px-2">
-                  <button type="button" class="btn btn-link p-0 me-2" (click)="editEmployee(emp)" title="Edit">
+                  <button type="button" class="btn btn-link p-0 me-2" (click)="editEmployee(i)" title="Edit"
+                    *ngIf="editingIndex !== i">
                     <i class="fa-regular fa-pencil"></i>
                   </button>
-                  <button type="button" class="btn btn-link p-0" (click)="openDeleteModal(emp)" title="Delete">
-                    <i class="fa-regular fa-trash"></i>
+
+                  <button type="button" class="btn btn-link p-0 me-2" (click)="saveEmployee()" title="Edit"
+                    *ngIf="editingIndex === i">
+                    <i class="fa-solid fa-check"></i>
                   </button>
+
+                  <button type="button" class="btn btn-link p-0 me-2" (click)="cancelEdit()" title="Edit"
+                    *ngIf="editingIndex === i">
+                    <i class="fa-solid fa-xmark"></i>
+                  </button>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <span class="me-2">{{ emp.id }}</span>
+                    <i class="fa-solid fa-copy copy-icon" style="cursor: pointer;" title="Copy ID"
+                      (click)="copyToClipboard(emp.id)"></i>
+                  </div>
                 </td>
-                <td>{{ emp.id }}</td>
+
+
+                <td>
+                  <div class="d-flex align-items-center" style="max-width: 200px;">
+                    <span class="me-2 text-truncate d-inline-block" style="max-width: 10rem;"
+                      [attr.title]="emp.emailId">
+                      {{ emp.emailId }}
+                    </span>
+                    <i class="fa-solid fa-copy copy-icon" style="cursor: pointer;" title="Copy Email"
+                      (click)="copyToClipboard(emp.emailId)"></i>
+                  </div>
+                </td>
+
+
                 <td>{{ emp.name }}</td>
-                <td>{{ emp.primarySkill }}</td>
-                <td>{{ emp.secondarySkill }}</td>
+                <td class="py-1 px-2">
+                  <ng-container *ngIf="editingIndex !== i; else editPrimary">
+                    <div class="d-flex align-items-center justify-content-between skill-cell">
+                      <div class="text-truncate flex-grow-1 pe-2" (click)="openSkillsModal(emp,true)"
+                        style="cursor: pointer;">
+                        <span [attr.title]="getPrimarySkills(emp)" data-bs-toggle="tooltip" data-bs-placement="top"
+                          class="me-2 text-truncate d-inline-block text-secondary" style="max-width: 7rem;">
+
+                            {{ getPrimarySkills(emp) || 'NA' }}
+                        </span>
+                      </div>
+                      <!-- <i class="fa-solid fa-cog text-primary flex-shrink-0" (click)="openSkillsModal(emp, true)"></i> -->
+                    </div>
+                  </ng-container>
+
+                  <ng-template #editPrimary>
+                    <div class="position-relative" style="width: 100%;">
+                      <input type="text" class="form-control form-control-sm pe-5" [value]="getPrimarySkills(emp)"
+                        disabled />
+                      <i class="fa-solid fa-cog position-absolute top-50 end-0 translate-middle-y me-2 text-primary"
+                        (click)="openSkillsModal(emp, true)" style="cursor: pointer;"></i>
+                    </div>
+                  </ng-template>
+
+                </td>
+
+
+
+
+                <td class="py-1 px-2">
+                  <ng-container *ngIf="editingIndex !== i; else editSecondary">
+                    <div class="d-flex align-items-center justify-content-between skill-cell">
+                      <div class="text-truncate flex-grow-1 pe-2" (click)="openSkillsModal(emp, false)"
+                        title="Click to manage secondary skills" style="cursor: pointer;">
+                        <span [attr.title]="getSecondarySkills(emp)" data-bs-toggle="tooltip" data-bs-placement="top"
+                        class="me-2 text-truncate d-inline-block text-secondary">
+
+                            {{ getSecondarySkills(emp) || 'NA' }}
+                        </span>
+                      </div>
+
+                    </div>
+                  </ng-container>
+
+                  <ng-template #editSecondary>
+                    <div class="position-relative" style="width: 100%;">
+                      <input type="text" class="form-control form-control-sm pe-5" [value]="getSecondarySkills(emp)"
+                        disabled />
+                      <i class="fa-solid fa-cog position-absolute top-50 end-0 translate-middle-y me-2 text-primary"
+                        (click)="openSkillsModal(emp, false)" title="Click to manage skills"
+                        style="cursor: pointer;"></i>
+                    </div>
+                  </ng-template>
+                </td>
+
+
+
+
+                <td>
+
+                  <ng-container *ngIf="editingIndex !==i ">
+
+                    <div class="me-2 text-truncate d-inline-block text-secondary">
+                    {{ emp.role || 'NA' }}
+                    </div>
+
+                  </ng-container>
+
+                  <form [formGroup]="editForm" *ngIf="editingIndex === i">
+                    <input type="text" formControlName="role" class="form-control edit-mode" placeholder="Enter role" />
+                  </form>
+
+
+
+                </td>
                 <td>{{ emp.designation }}</td>
                 <td>{{ emp.experience }}</td>
+                <td>{{ emp.reportingManagerName || 'N/A' }}</td>
                 <td>
-                  <span class="project-link" (click)="viewProjectDetails(emp)">
-                    {{ emp.allocation.projectName || "N/A" }}
-                  </span>
+                  <ng-container>
+                    <button class="project-link d-flex align-items-center btn btn-sm cozentus-bg text-white"
+                      (click)="viewProjectDetails(emp)" style="cursor:pointer; text-decoration: none !important;">
+                      <span class="me-2 text-white">View</span>
+                      <span class="badge bg-light text-dark rounded-pill">
+                        {{ getTotalProjects(emp.allocation) }}
+                      </span>
+                    </button>
+
+                  </ng-container>
                 </td>
+
               </tr>
             </ng-container>
 
@@ -74,10 +186,10 @@
           <div class="ms-auto text-end me-1">
             <span class="small">
               Showing
-              {{ ((currentPage - 1) * pageSize) + (paginatedEmployees.length ? 1 : 0) }}
+              {{ ((currentPage - 1) * pageSize) + (employees.length ? 1 : 0) }}
               to
-              {{ ((currentPage - 1) * pageSize) + paginatedEmployees.length }}
-              of {{ employees.length }} entries
+              {{ ((currentPage - 1) * pageSize) + employees.length }}
+              of {{ totalItems }} entries
             </span>
           </div>
           <div class="d-flex align-items-center">
@@ -120,37 +232,93 @@
 
   <!-- Edit Modal -->
   <div class="modal fade" id="editEmployeeModal" tabindex="-1" aria-labelledby="editEmployeeLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content p-3">
         <div class="modal-header">
           <h5 class="modal-title" id="editEmployeeLabel">Edit Resource</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <form #editForm="ngForm">
-            <div class="mb-3">
-              <label>Name</label>
-              <input class="form-control" [(ngModel)]="selectedEmployee.name" name="name" />
+          <form [formGroup]="resourceForm">
+            <!-- Employee Details Form -->
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label>Name</label>
+                <input type="text" class="form-control" formControlName="name" />
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label>Email</label>
+                <input type="email" class="form-control" formControlName="emailId" />
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label>Phone Number</label>
+                <input type="text" class="form-control" formControlName="phoneNumber" />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label>Primary Skill</label>
+                <input type="text" class="form-control" formControlName="primarySkill" />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label>Secondary Skill</label>
+                <input type="text" class="form-control" formControlName="secondarySkill" />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label>Designation</label>
+                <input type="text" class="form-control" formControlName="designation" />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label>Experience (Years)</label>
+                <input type="number" class="form-control" formControlName="experience" />
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label>Role</label>
+                <input type="text" class="form-control" formControlName="role" />
+              </div>
             </div>
-            <div class="mb-3">
-              <label>Primary Skill</label>
-              <input class="form-control" [(ngModel)]="selectedEmployee.primarySkill" name="primarySkill" />
-            </div>
-            <div class="mb-3">
-              <label>Secondary Skill</label>
-              <input class="form-control" [(ngModel)]="selectedEmployee.secondarySkill" name="secondarySkill" />
-            </div>
-            <div class="mb-3">
-              <label>Designation</label>
-              <input class="form-control" [(ngModel)]="selectedEmployee.designation" name="designation" />
-            </div>
-            <div class="mb-3">
-              <label>Experience (Years)</label>
-              <input type="number" class="form-control" [(ngModel)]="selectedEmployee.experience" name="experience" />
-            </div>
-            <div class="mb-3">
-              <label>Project Name</label>
-              <input class="form-control" [(ngModel)]="selectedEmployee.allocation.projectName" name="projectName" />
+
+            <!-- Accordion for Project Manager -->
+            <div class="accordion mt-4" id="managerAccordion">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingManager">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseManager" aria-expanded="false" aria-controls="collapseManager">
+                    Select Project Manager
+                  </button>
+                </h2>
+                <div id="collapseManager" class="accordion-collapse collapse" aria-labelledby="headingManager"
+                  data-bs-parent="#managerAccordion">
+                  <div class="accordion-body p-3">
+                    <!-- Search -->
+                    <input type="text" class="form-control mb-3" placeholder="Search managers..."
+                      [value]="managerSearchText" (input)="managerSearchText = $any($event.target).value" />
+
+                    <!-- Manager List -->
+                    <!-- Manager List (Inside Accordion Body or Any Container) -->
+                    <div class="manager-list overflow-auto" style="max-height: 300px;">
+                      <div *ngFor="let manager of filteredManagers" class="card p-2 mb-2 manager-card"
+                        [class.bg-info]="resourceForm.get('reportingManager')?.value === manager.empId"
+                        (click)="resourceForm.get('reportingManager')?.setValue(manager.empId)"
+                        style="cursor: pointer;">
+                        <div class="d-flex justify-content-between align-items-center">
+                          <div>
+                            <h6 class="mb-0">{{ manager.name }}</h6>
+                            <small class="text-muted">{{ manager.emailId }}</small>
+                          </div>
+                          <input class="form-check-input" type="radio" name="reportingManager" [value]="manager.empId"
+                            [checked]="resourceForm.get('reportingManager')?.value === manager.empId"
+                            (click)="$event.stopPropagation()" />
+                        </div>
+                      </div>
+                    </div>
+
+
+
+                  </div>
+                </div>
+              </div>
             </div>
           </form>
         </div>
@@ -165,33 +333,85 @@
   </div>
 
   <!-- Project Detail Modal -->
-  <div class="modal fade" id="projectDetailsModal" tabindex="-1" aria-labelledby="projectDetailsLabel"
+  <div class="modal fade " id="projectDetailsModal" tabindex="-1" aria-labelledby="projectDetailsLabel"
     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content p-3">
-        <div class="modal-header">
-          <h5 class="modal-title" id="projectDetailsLabel">Project Details</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal-header cozentus-bg text-white">
+          <h5 class="modal-title" id="projectDetailsLabel">
+            Project Details - {{ selectedEmployee.name }}
+          </h5>
+          <button type="button bg-white" class="btn-close" style="filter: brightness(0) invert(1);"
+            data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <p>
-            <strong>Name:</strong> {{ selectedProject.projectName || "N/A" }}
-          </p>
-          <p>
-            <strong>Project Manager:</strong>
-            {{ selectedProject.projectManager || "N/A" }}
-          </p>
-          <p>
-            <strong>Description:</strong>
-            {{ selectedProject.description || "N/A" }}
-          </p>
-          <p>
-            <strong>Start Date:</strong>
-            {{ selectedProject.startDate || "N/A" }}
-          </p>
-          <p>
-            <strong>End Date:</strong> {{ selectedProject.endDate || "N/A" }}
-          </p>
+          <ng-container *ngIf="selectedProjects.length > 0; else noProjects">
+            <div class="accordion" id="projectAccordion">
+              <div class="accordion-item" *ngFor="let project of selectedProjects; let i = index">
+                <h2 class="accordion-header" [id]="'heading' + i">
+                  <button class="accordion-button cozentus-bg" [class.collapsed]="i !== 0" type="button"
+                    data-bs-toggle="collapse" [attr.data-bs-target]="'#collapse' + i" aria-expanded="true"
+                    [attr.aria-controls]="'collapse' + i">
+                    <div class="d-flex justify-content-between w-100 me-3 text-white">
+                      <span class="fw-bold">{{ project.projectName }}</span>
+                      <small class="text-white text-light">{{ project.startDate }} - {{ project.endDate }}</small>
+                    </div>
+                  </button>
+                </h2>
+                <div [id]="'collapse' + i" class="accordion-collapse collapse" [class.show]="i === 0"
+                  [attr.aria-labelledby]="'heading' + i" data-bs-parent="#projectAccordion">
+                  <div class="accordion-body">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <p class="mb-2">
+                          <strong class="cozentus-text-primary">Project Name:</strong><br>
+                          {{ project.projectName }}
+                        </p>
+                        <p class="mb-2">
+                          <strong class="cozentus-text-primary">Project Manager:</strong><br>
+                          {{ project.projectManager || "N/A" }}
+                        </p>
+                      </div>
+                      <div class="col-md-6">
+                        <p class="mb-2">
+                          <strong class="cozentus-text-primary">Start Date:</strong><br>
+                          {{ project.startDate || "N/A" }}
+                        </p>
+                        <p class="mb-2">
+                          <strong class="cozentus-text-primary">End Date:</strong><br>
+                          {{ project.endDate || "N/A" }}
+                        </p>
+                      </div>
+                      <div class="col-12">
+                        <p class="mb-3">
+                          <strong class="cozentus-text-primary">Description:</strong><br>
+                          {{ project.description || "N/A" }}
+                        </p>
+                        <!-- Button aligned to bottom right -->
+                        <div class="text-end" *ngIf="isAllowedForDML()">
+                          <button class="btn btn-danger" (click)="deallocateFromProject(project)">
+                            Deallocate from Project
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
+          <ng-template #noProjects>
+            <div class="text-center text-muted py-4">
+              <i class="fa-regular fa-folder-open fa-3x mb-3"></i>
+              <p class="mb-0">No projects assigned to this resource.</p>
+            </div>
+          </ng-template>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Close
+          </button>
         </div>
       </div>
     </div>
@@ -239,7 +459,8 @@
     </div>
   </div>
 
-  <!-- Add Resource Modal -->
+  <!-- Redesigned Add Resource Modal -->
+  <!-- Refined Modal Using Accordion for Manager Selection -->
   <div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content p-3">
@@ -247,66 +468,233 @@
           <h5 class="modal-title">Add New Resource</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
+
         <div class="modal-body">
-          <form #addForm="ngForm">
+          <form [formGroup]="resourceForm">
+            <!-- Employee Details Form -->
             <div class="row">
               <div class="col-md-6 mb-3">
+                <label>ID</label>
+                <input type="text" class="form-control" formControlName="id" />
+              </div>
+              <div class="col-md-6 mb-3">
                 <label>Name</label>
-                <input class="form-control" [(ngModel)]="newEmployee.name" name="name" />
+                <input type="text" class="form-control" formControlName="name" />
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label>Email</label>
+                <input type="email" class="form-control" formControlName="emailId" />
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label>Phone Number</label>
+                <input type="text" class="form-control" formControlName="phoneNumber" />
               </div>
               <div class="col-md-6 mb-3">
                 <label>Primary Skill</label>
-                <input class="form-control" [(ngModel)]="newEmployee.primarySkill" name="primarySkill" />
+                <input type="text" class="form-control" formControlName="primarySkill" />
               </div>
               <div class="col-md-6 mb-3">
                 <label>Secondary Skill</label>
-                <input class="form-control" [(ngModel)]="newEmployee.secondarySkill" name="secondarySkill" />
+                <input type="text" class="form-control" formControlName="secondarySkill" />
               </div>
               <div class="col-md-6 mb-3">
                 <label>Designation</label>
-                <input class="form-control" [(ngModel)]="newEmployee.designation" name="designation" />
+                <input type="text" class="form-control" formControlName="designation" />
               </div>
               <div class="col-md-6 mb-3">
                 <label>Experience (Years)</label>
-                <input class="form-control" [(ngModel)]="newEmployee.experience" name="experience" />
+                <input type="number" class="form-control" formControlName="experience" />
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label>Role</label>
+                <input type="text" class="form-control" formControlName="role" />
               </div>
             </div>
 
-            <h6 class="mt-3">Project Allocation</h6>
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label>Project Name</label>
-                <input class="form-control" [(ngModel)]="newEmployee.allocation.projectName" name="projectName" />
-              </div>
-              <div class="col-md-6 mb-3">
-                <label>Project Manager</label>
-                <input class="form-control" [(ngModel)]="newEmployee.allocation.projectManager" name="projectManager" />
-              </div>
-              <div class="col-12 mb-3">
-                <label>Project Description</label>
-                <textarea class="form-control" rows="2" [(ngModel)]="newEmployee.allocation.description"
-                  name="projectDescription"></textarea>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label>Start Date</label>
-                <input type="date" class="form-control" [(ngModel)]="newEmployee.allocation.startDate"
-                  name="startDate" />
-              </div>
-              <div class="col-md-6 mb-3">
-                <label>End Date</label>
-                <input type="date" class="form-control" [(ngModel)]="newEmployee.allocation.endDate" name="endDate" />
+            <!-- Accordion for Project Manager -->
+            <div class="accordion mt-4" id="managerAccordion">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingManager">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseManager" aria-expanded="false" aria-controls="collapseManager">
+                    Select Reporting Manager
+                  </button>
+                </h2>
+                <div id="collapseManager" class="accordion-collapse collapse" aria-labelledby="headingManager"
+                  data-bs-parent="#managerAccordion">
+                  <div class="accordion-body p-3">
+                    <!-- Search -->
+                    <input type="text" class="form-control mb-3" placeholder="Search managers..."
+                      [value]="managerSearchText" (input)="managerSearchText = $any($event.target).value" />
+
+                    <!-- Manager List -->
+                    <div class="manager-list overflow-auto" style="max-height: 300px;">
+                      <div *ngFor="let manager of filteredManagers" class="card p-2 mb-2 manager-card"
+                        [class.bg-info]="resourceForm.get('reportingManager')?.value === manager.empId"
+                        (click)="selectManager(manager.empId)">
+                        <div class="d-flex justify-content-between align-items-center">
+                          <div>
+                            <h6 class="mb-0">{{ manager.name }}</h6>
+                            <small class="text-muted">{{ manager.emailId }}</small>
+                          </div>
+                          <input class="form-check-input" type="radio" name="reportingManager" [value]="manager.empId"
+                            formControlName="reportingManager" (click)="$event.stopPropagation()" />
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
               </div>
             </div>
           </form>
         </div>
+
         <div class="modal-footer">
-          <button class="btn btn-primary" (click)="saveNewEmployee()">
-            Add
-          </button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            Cancel
+          <button class="btn btn-primary" (click)="saveNewEmployee()">Add</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+</div>
+
+<!-- Skills Management Modal -->
+<div class="modal fade" id="skillsModal" tabindex="-1" aria-labelledby="skillsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="skillsModalLabel">
+          Manage Skills - {{ selectedEmployee.name }}
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h6 class="mb-0">Skills List</h6>
+          <button class="btn btn-primary btn-sm" (click)="addNewSkill()">
+            <i class="fa-solid fa-plus me-1"></i> Add Skill
           </button>
         </div>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Action</th>
+                <th>Skill Name</th>
+                <th>Experience (Years)</th>
+                <th>Skill Level</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngIf="currentEmployeeSkills.length > 0; else noSkills">
+                <tr *ngFor="let skill of currentEmployeeSkills">
+                  <td>
+                    <button type="button" class="btn btn-link p-0 me-2"
+                      (click)="isEditingSkill(skill.skillName) ? saveSkill(skill) : editSkill(skill)">
+                      <i
+                        [class]="isEditingSkill(skill.skillName) ? 'fa-solid fa-check text-success' : 'fa-regular fa-pen-to-square'"></i>
+                    </button>
+                    <button type="button" class="btn btn-link p-0 me-2" *ngIf="isEditingSkill(skill.skillName)"
+                      (click)="cancelSkillEdit()">
+                      <i class="fa-solid fa-times text-danger"></i>
+                    </button>
+                    <button type="button" class="btn btn-link p-0" (click)="deleteSkill(skill.skillName)"
+                      *ngIf="!isEditingSkill(skill.skillName)">
+                      <i class="fa-solid fa-trash text-danger"></i>
+                    </button>
+                  </td>
+                  <td>
+                    <!-- Dropdown when adding new skill -->
+<ng-container *ngIf="isNewSkill && isEditingSkill(skill.skillName)">
+  <div class="d-flex align-items-center" style="gap: 0.5rem; max-width: 100%;">
+    <select
+      class="form-select form-select-sm"
+      [(ngModel)]="editingSkillData.name"
+      style="width: 150px;">
+      <option value="">Select Skill</option>
+      <option *ngFor="let skillName of skillNames" [value]="skillName">
+        {{ skillName }}
+      </option>
+    </select>
+
+    <button class="btn btn-outline-primary btn-sm" type="button">
+      <i class="fa fa-plus"></i>
+    </button>
+  </div>
+</ng-container>
+
+<ng-template #newSkillInput>
+                        <div class="d-flex align-items-center">
+                          <input type="text" class="form-control form-control-sm me-2" [(ngModel)]="newSkillName" placeholder="Enter new skill name">
+                          <button class="btn btn-success btn-sm me-1" type="button">
+                            <i class="fa fa-check"></i>
+                          </button>
+                          <button class="btn btn-secondary btn-sm" type="button">
+                            <i class="fa fa-times"></i>
+                          </button>
+                        </div>
+                      </ng-template>
+
+
+
+
+                    <!-- Read-only name otherwise -->
+                    <ng-container *ngIf="!isNewSkill || !isEditingSkill(skill.skillName)">
+                      {{ skill.skillName }}
+
+                    </ng-container>
+
+
+
+                  </td>
+
+
+                  <td>
+                    <ng-container *ngIf="!isEditingSkill(skill.skillName)">
+                      {{ skill.skillExperience }}
+                    </ng-container>
+                    <input *ngIf="isEditingSkill(skill.skillName)" type="number" class="form-control form-control-sm"
+                      [(ngModel)]="editingSkillData.experience" min="0" max="20">
+                  </td>
+                  <td>
+                    <ng-container *ngIf="!isEditingSkill(skill.skillName)">
+                      <span class="badge" [class.bg-danger]="skill.level === 'Beginner'"
+                        [class.bg-warning]="skill.level === 'Intermediate'"
+                        [class.bg-success]="skill.level === 'Advanced'">
+                        {{ skill.level }}
+                      </span>
+                    </ng-container>
+                    <select *ngIf="isEditingSkill(skill.skillName)" class="form-select form-select-sm"
+                      [(ngModel)]="editingSkillData.level">
+                      <option *ngFor="let level of skillLevels" [value]="level">
+                        {{ level }}
+                      </option>
+                    </select>
+                  </td>
+                </tr>
+              </ng-container>
+              <ng-template #noSkills>
+                <tr>
+                  <td colspan="5" class="text-center text-muted py-3">
+                    No skills added yet. Click "Add Skill" to get started.
+                  </td>
+                </tr>
+              </ng-template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="close()">
+          Close
+        </button>
       </div>
     </div>
   </div>

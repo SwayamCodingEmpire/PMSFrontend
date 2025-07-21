@@ -2,30 +2,81 @@
   .apexcharts-canvas {
     margin: 0 auto;
   }
- 
+
   .apexcharts-title-text {
     font-weight: 600 !important;
     fill: #495057 !important;
   }
- 
+
   .apexcharts-legend-text {
     color: #495057 !important;
   }
- 
+
   .apexcharts-gridline {
     stroke: #e9ecef !important;
   }
- 
+
   .apexcharts-text {
+    fill: black !important;
+  }
+}
+
+:host ::ng-deep {
+  .apexcharts-datalabel-label {
     fill: #ffffff !important;
   }
 }
- 
+
+
 .cozentus-bg{
   background-color: #2e3c54 !important;
 }
- 
+
 .square-btn {
   width: 40px;
   height: 40px;
+}
+
+/* Table Styles */
+.table {
+  th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    color: #4a5568;
+    border-bottom-width: 1px;
+  }
+  td {
+    vertical-align: middle;
+    padding: 1rem 0.75rem;
+  }
+}
+
+/* Badge Variants */
+.bg-success-light {
+  background-color: rgba(16, 185, 129, 0.1) !important;
+}
+.bg-warning-light {
+  background-color: rgba(245, 158, 11, 0.1) !important;
+}
+.bg-danger-light {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+}
+
+/* Card Styles for Consistency */
+.card {
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    .dashboard-title {
+      margin-bottom: 1rem;
+    }
+  }
 }

@@ -18,19 +18,189 @@
   vertical-align: middle;
 }
 
-.resource-table  tr:hover {
+// Makes multiselect height match inputs
+::ng-deep .p-multiselect.custom-multiselect {
+  min-height: 38px;
+  border-radius: 0.375rem; // matches Bootstrap's rounded-2
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  border: 1px solid #ced4da;
+  background-color: #fff !important;
+  padding: 0.25rem 0.5rem;
+}
+
+// Clean up the header and align the search field
+::ng-deep .p-multiselect-header {
+  padding: 0.5rem 0.75rem;
+  background-color: #fff;
+  border-bottom: 1px solid #dee2e6;
+}
+
+// Remove inset box look
+::ng-deep .p-multiselect-filter-container {
+  background: none !important;
+  border: none !important;
+  display: flex;
+  align-items: center;
+  width: 100%;
+    background-color: white !important;
+}
+
+::ng-deep .p-multiselect-header {
+  background-color: white !important;  // or any of your preferred tints
+  padding: 0.5rem 0.75rem;
+  border: none !important;
+}
+
+// Make input look like normal Bootstrap field
+::ng-deep .p-multiselect-filter {
+  width: 100%;
+  font-size: 0.875rem;
+  border: 1px solid #ced4da;
+  border-radius: 0.375rem;
+  box-shadow: none;
+}
+
+// Reposition the icon inside the input
+::ng-deep .p-multiselect-filter-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: white;
+  font-size: 1rem;
+  pointer-events: none;
+}
+// Wrap the container properly
+// ::ng-deep .p-multiselect-filter-container {
+//   position: relative;
+//   width: 100%;
+//   padding: 0; // remove default paddings
+//   margin: 0;
+//   display: flex;
+//   align-items: center;
+// }
+
+// Style the input field
+::ng-deep .p-multiselect-filter {
+  width: 100%;
+  padding: 0.244rem 0.1rem 0.234rem 5rem; // top-right-bottom-left
+  font-size: 0.875rem;
+  box-shadow: none;
+    padding-left: 0.5rem !important;
+  padding-right: 2.5rem !important;
+}
+
+.resource-card table.table-striped {
+  --bs-table-striped-bg: #f0f8fc !important;   /* Even rows */
+}
+
+/* For odd rows, which you want as white, set the cell background: */
+.resource-card table.table-striped > tbody > tr:nth-of-type(odd) > td {
+  background-color: #f0f8fc !important;           /* Odd rows */
+}
+
+
+// Properly position the search icon inside input
+::ng-deep .p-multiselect-filter-icon {
+  position: absolute;
+  right: 0.75rem;
+  top: 1%;
+  transform: translateY(-100%);
+  pointer-events: none;
+  font-size: 1rem;
+  color: #2e3c54;
+}
+
+
+// Ensures dropdown panel has solid white background and proper layering
+::ng-deep .p-multiselect-panel {
+  background-color: #e9f3f9 !important;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1100 !important;
+  border: 1px solid #e9f3f9;
+  overflow: visible;
+}
+
+// Improves chip look
+::ng-deep .p-multiselect-token {
+  background-color: #2e3c54 !important; // match your cozentus-bg if needed
+  color: #2e3c54 !important; // match your text-primary
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+}
+
+// Checkbox alignment fix (optional)
+::ng-deep .p-multiselect-option .p-checkbox {
+  margin-right: 0.5rem;
+}
+
+::ng-deep .p-checkbox-box {
+  border-color: black; // neutral gray
+}
+
+// FIXED: Dropdown options with greyish background, green hover, blue selected
+::ng-deep .p-multiselect-panel .p-multiselect-option {
+  background: #2e3c54 !important;
+  color: #212529 !important;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  border: none;
+}
+
+// More specific selector to override PrimeNG defaults
+::ng-deep .p-multiselect-option.p-ripple {
+  background: white !important;
+  color: #212529 !important;
+}
+
+// On hover (not selected) - GREEN
+::ng-deep .p-multiselect-option:not(.p-highlight):hover,
+::ng-deep .p-multiselect-option.p-ripple:not(.p-highlight):hover {
+  background: #2e3c54 !important;
+  color: white !important;
+}
+
+
+
+// When option is selected/highlighted - BLUE
+::ng-deep .p-multiselect-option.p-highlight,
+::ng-deep .p-multiselect-option.p-ripple.p-highlight {
+  background: #2e3c54 !important;
+  color: #ffffff !important;
+}
+
+// Override CSS custom properties
+::ng-deep .p-multiselect-panel {
+  --p-multiselect-option-background: #e9f3f9;
+  --p-multiselect-option-color: #212529;
+  --p-multiselect-option-hover-background: #28a745;
+  --p-multiselect-option-hover-color: #ffffff;
+  --p-multiselect-option-selected-background: #003f88;
+  --p-multiselect-option-selected-color: #2e3c54;
+}
+
+.btn-close {
+  filter: brightness(0) invert(1);
+  opacity: 1; // Optional for full visibility
+}
+
+.resource-table tr:hover {
   background: #f0f8fa !important;
   transition: background .2s;
 }
+
 .allocation-form-box {
   background: #e9f7ef;
   border-radius: 1rem;
   box-shadow: 0 2px 16px rgba(20,178,133,0.07);
 }
+
 .btn-info, .btn-success {
   font-weight: 600;
   letter-spacing: 0.5px;
 }
+
 .bg-success-light {
   background: #e4f8ef !important;
 }
@@ -44,9 +214,10 @@
   border-color: #2e3c54 !important;
 }
 
-.btn-outline-primary::hover{
+.btn-outline-primary:hover{
   background-color: #e6f3f7 !important;
 }
+
 .plus-inline-btn {
   border: none;
   background: transparent;
@@ -68,4 +239,30 @@
   background: #f8fbff;
   outline: none;
   border: none;
+}
+
+.slate-grey-bg{
+  background: #6c7a89 !important;
+}
+
+.cool-grey-bg{
+  background: #adb3bd !important;
+}
+
+
+
+::ng-deep .p-multiselect-filter {
+  background: white !important;
+  color: #212529 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+::ng-deep .p-multiselect-filter:focus {
+    background: white !important;
+
+  outline: none !important;
+}
+
+::ng-deep .p-multiselect-filter::placeholder {
+  color: #6c757d !important;
 }

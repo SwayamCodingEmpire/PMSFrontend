@@ -4,14 +4,19 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import { FormsModule } from '@angular/forms';
 import {
   ApexNonAxisChartSeries,
-  ApexAxisChartSeries,
   ApexChart,
   ApexLegend,
   ApexPlotOptions,
   ApexDataLabels,
-  ApexXAxis
+  ApexAxisChartSeries,
+  ApexXAxis,
+  ApexYAxis,
+  ApexTooltip
 } from 'ng-apexcharts';
- 
+import { ChangeDetectorRef } from '@angular/core';
+import { DmDashboardService } from '../../../services/manager/dm-dashboard.service';
+import { ExcelExportService } from '../../../services/shared/excel-export.service';
+declare var bootstrap: any;
 type ChartOptions = {
   series: ApexNonAxisChartSeries;
   chart: ApexChart;
@@ -21,16 +26,88 @@ type ChartOptions = {
   plotOptions?: ApexPlotOptions;
   dataLabels?: ApexDataLabels;
 };
- 
-type BarChartOptions = {
+
+type StackedBarChartOptions = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
   xaxis: ApexXAxis;
+  yaxis: ApexYAxis;
   colors: string[];
+  legend: ApexLegend;
+  plotOptions?: ApexPlotOptions;
   dataLabels?: ApexDataLabels;
-  legend?: ApexLegend;
+  tooltip?: ApexTooltip;
 };
- 
+
+export interface ProjectManager {
+  empId: string;
+  name: string;
+  projectCount: number;
+  projects?: ProjectMinimalData[];
+}
+
+export interface ProjectMinimalData{
+    code: string;
+  name: string;
+  customer: string;
+  resources:number;
+}
+
+export interface ProjectData {
+  code: string;
+  name: string;
+  customer: string;
+  manager: string;
+  billability: number;
+  totalResources: number;
+  plannedUtilization: number;
+  actualUtilization: number;
+}
+
+export interface ProjectData {
+  code: string;
+  name: string;
+  customer: string;
+  manager: string;
+  billability: number;
+  totalResources: number;
+  plannedUtilization: number;
+  actualUtilization: number;
+}
+
+interface KPIData {
+  totalResources: number;
+  billedNotBilled: { billed: number; notBilled: number };
+  customerPlannedUtilization: number;
+  customerActualUtilization: number;
+  nonCustomerPlannedUtilization: number;
+  nonCustomerActualUtilization: number;
+  nonUtilizedResources: number;
+}
+
+// New interfaces for skills
+interface SkillLevel {
+  level: string;
+  count: number;
+  resources: ResourceDetail[];
+}
+
+export interface Skill {
+  name: string;
+  totalCount: number;
+  levels: { level: string; count: number }[]; // no resources initially
+}
+
+export interface ResourceDetail {
+  name: string;
+  employeeId: string;
+  email: string;
+  designation: string;
+  experience: number;
+  currentProject: string;
+  utilization: number;
+}
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -39,32 +116,54 @@ type BarChartOptions = {
   styleUrls: ['./dm-dashboard.component.scss']
 })
 export class DmDashboardComponent implements OnInit {
-  activeResourceDisplay = '0';
-  memberDisplay = '0';
-  projectDisplay = '0';
-  showModal = false;
-  selectedProject: any = null;
-  searchTerm = '';
-  totalActiveResources = 34;
-  totalMembers = 58;
-  totalActiveProjects = 12;
-  availableManagers = 5;
- 
-  projects = [
-    { code: 'CZ011', name: 'Project 1', customer: 'PSA BDP', manager: 'Arbind', status: 'On Track', start: '01-02-2024', end: '01-02-2026' },
-    { code: 'CZ022', name: 'Project 2', customer: 'EWL', manager: 'Milland', status: 'At Risk', start: '01-03-2024', end: '01-12-2026' },
-    { code: 'CZ033', name: 'Project 3', customer: 'DFDS', manager: 'Shanker', status: 'Critical', start: '01-10-2024', end: '01-12-2026' },
-  ];
- 
-  keyProjectsChart: ChartOptions = {
-    series: [6, 3, 2, 1],
+
+  // Make Math available in template
+  Math = Math;
+
+  // KPI Data
+  kpiData: KPIData = {
+    totalResources: 34,
+    billedNotBilled: { billed: 23, notBilled: 11 },
+    customerActualUtilization: 75,
+    customerPlannedUtilization: 80,
+    nonCustomerPlannedUtilization: 15,
+    nonCustomerActualUtilization: 10,
+    nonUtilizedResources: 5
+  };
+
+ ngAfterViewInit(): void {
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.forEach((el: HTMLElement) => {
+      new bootstrap.Tooltip(el);
+    });
+  }
+
+
+  // Projects data with new structure
+  projects: ProjectData[] = [];
+
+
+  // Project Managers data
+  projectManagers: ProjectManager[] = [];
+
+  // Skills data with levels and resources
+  skills: Skill[] = [];
+
+
+  // Chart configuration
+  projectManagerChart: ChartOptions = {
+    series: [],
     chart: {
       type: 'donut',
-      height: 280,
-      animations: { enabled: true, speed: 800 }
+      height: 350,
+      events: {
+        dataPointSelection: (event: any, chartContext: any, config: any) => {
+          this.onManagerSelect(config.dataPointIndex);
+        }
+      }
     },
-    labels: ['Arbind', 'Milland', 'Shanker', 'Priya'],
-    colors: ['#667eea', '#0cebeb', '#a8c0ff', '#b8c6db'],
+    labels: [],
+    colors: ['#667eea', '#0cebeb', '#a8c0ff', '#b8c6db', '#ff6b6b', '#4ecdc4'],
     legend: {
       position: 'bottom',
       fontSize: '13px',
@@ -73,7 +172,7 @@ export class DmDashboardComponent implements OnInit {
     plotOptions: {
       pie: {
         donut: {
-          size: '65%',
+          size: '60%',
           labels: {
             show: true,
             total: {
@@ -86,125 +185,484 @@ export class DmDashboardComponent implements OnInit {
       }
     },
     dataLabels: {
-      enabled: false
-    }
-  };
- 
-  projectStatusChart: ChartOptions = {
-    series: [8, 2, 2],
-    chart: {
-      type: 'radialBar',
-      height: 280,
-      animations: { enabled: true, speed: 800 }
-    },
-    labels: ['On Track', 'At Risk', 'Critical'],
-    colors: ['#10b981', '#f59e0b', '#ef4444'],
-    legend: {
-      position: 'bottom',
-      fontSize: '13px',
-      fontFamily: 'Inter, sans-serif'
-    },
-    plotOptions: {
-      radialBar: {
-        dataLabels: {
-          name: { fontSize: '14px' },
-          value: { fontSize: '16px', fontWeight: 600 },
-          total: {
-            show: true,
-            label: 'Total',
-            formatter: () => '12'
-          }
-        }
+      enabled: true,
+      formatter: function (val: any, opts: any) {
+        return opts.w.config.series[opts.seriesIndex];
       }
     }
   };
- 
-  usersActiveChart: ChartOptions = {
-    series: [40, 18],
-    chart: {
-      type: 'radialBar',
-      height: 280,
-      animations: { enabled: true, speed: 800 }
-    },
-    labels: ['Active', 'Inactive'],
-    colors: ['#3b82f6', '#e2e8f0'],
-    legend: {
-      position: 'bottom',
-      fontSize: '13px',
-      fontFamily: 'Inter, sans-serif'
-    },
-    plotOptions: {
-      radialBar: {
-        startAngle: -135,
-        endAngle: 135,
-        hollow: { margin: 0, size: '70%' },
-        dataLabels: {
-          name: { offsetY: -10, fontSize: '14px' },
-          value: { fontSize: '24px', fontWeight: 600, offsetY: 0 }
-        }
-      }
-    }
-  };
- 
-  // New full-width bar chart below project table
-  projectsByMonthChart: BarChartOptions = {
-    series: [{
-      name: 'Projects',
-      data: [3, 4, 6, 7, 5, 8, 4, 5, 3, 6, 4, 2]
-    }],
+
+  // Skills chart configuration
+  skillsChart: StackedBarChartOptions = {
+    series: [],
     chart: {
       type: 'bar',
-      height: 320,
-      animations: { enabled: true, speed: 800 }
+      height: 350,
+      stacked: true,
+      events: {
+        dataPointSelection: (event: any, chartContext: any, config: any) => {
+          this.onSkillSelect(config.dataPointIndex, config.seriesIndex);
+        }
+      }
     },
     xaxis: {
-      categories: [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-      ]
-    },
-    colors: ['#667eea'],
-    dataLabels: { enabled: false },
-    legend: { show: false }
-  };
- 
-  ngOnInit() {
-    this.animateCount('activeResourceDisplay', this.totalActiveResources, 750);
-    this.animateCount('memberDisplay', this.totalMembers, 950);
-    this.animateCount('projectDisplay', this.totalActiveProjects, 1250);
-  }
- 
-  animateCount(property: 'activeResourceDisplay' | 'memberDisplay' | 'projectDisplay', target: number, duration: number) {
-    let current = 0;
-    const step = Math.ceil(target / (duration / 16));
-    const interval = setInterval(() => {
-      current += step;
-      if (current >= target) {
-        this[property] = target.toString();
-        clearInterval(interval);
-      } else {
-        this[property] = current.toString();
+      categories: [],
+      labels: {
+        style: {
+          fontSize: '12px',
+          fontFamily: 'Inter, sans-serif'
+        }
       }
-    }, 16);
+    },
+    yaxis: {
+      title: {
+        text: 'Resource Count',
+        style: {
+          fontSize: '12px',
+          fontFamily: 'Inter, sans-serif'
+        }
+      }
+    },
+    colors: ['#ff6b6b', '#4ecdc4', '#45b7d1'],
+    legend: {
+      position: 'top',
+      fontSize: '13px',
+      fontFamily: 'Inter, sans-serif'
+    },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        columnWidth: '55%',
+        dataLabels: {
+          position: 'center'
+        }
+      }
+    },
+    dataLabels: {
+      enabled: true,
+      formatter: function (val: any) {
+        return val > 0 ? val : '';
+      },
+      style: {
+        colors: ['#fff']
+      }
+    },
+    tooltip: {
+      shared: true,
+      intersect: false,
+      y: {
+        formatter: function (val: any) {
+          return val + ' resources';
+        }
+      }
+    }
+  };
+
+  // Table and pagination properties
+  searchTerm = '';
+  currentPage = 1;
+  pageSize = 5;
+
+  // Skills resource pagination properties
+  skillResourceSearchTerm = '';
+  skillResourceCurrentPage = 1;
+  skillResourcePageSize = 5;
+
+  // Skills chart pagination properties
+  skillsChartCurrentPage = 1;
+  skillsChartPageSize = 4; // Show 4 skills per page in chart
+
+  // Selected manager and projects
+  selectedManager: ProjectManager | null = null;
+  selectedManagerProjects: ProjectMinimalData[] = [];
+
+  // Selected skill and resources
+  selectedSkill: Skill | null = null;
+  selectedSkillLevel: string | null = null;
+  selectedSkillResources: ResourceDetail[] = [];
+
+  constructor(private cdr: ChangeDetectorRef, private dmDashboardService: DmDashboardService, private excelExportService: ExcelExportService) {}
+
+  ngOnInit() {
+    this.initializeChart();
+    this.initializeSkillsChart();
+    this.loadProjects();
+    this.loadSkillSChartData();
+    this.loadKPICardsData();
+    this.loadProjectCountByManager();
   }
- 
-  filteredProjects() {
+
+  loadProjectCountByManager(): void {
+  this.dmDashboardService.getProjectCountByPM().subscribe({
+    next: (managers: ProjectManager[]) => {
+      this.projectManagers = managers;
+
+      // Update the chart once data is received
+      this.initializeChart();
+
+      // Ensure the view reflects the latest data
+      this.cdr.detectChanges();
+    },
+    error: (err) => {
+      console.error('Error loading project manager data:', err);
+    }
+  });
+}
+
+  exportProjectList(): void {
+    const data = this.projects.map(res => ({
+      Code: res.code,
+      Name: res.name,
+      Customer: res.customer,
+      Manager: res.manager,
+      'Total Resources': res.totalResources,
+      'Planned Utilization': res.plannedUtilization,
+      'Actual Utilization': res.actualUtilization
+    }));
+
+    this.excelExportService.exportAsExcelWithNestedSheets(data, 'project_resources');
+  }
+
+    exportUserSSkillList(): void {
+    const data = this.selectedSkillResources.map(res => ({
+      name: res.name,
+      'Employee ID': res.employeeId,
+      Email: res.email,
+      Designation: res.designation,
+      Experience: res.experience,
+      Utilization: res.utilization
+
+    }));
+    
+    this.excelExportService.exportAsExcelWithNestedSheets(data, 'project_resources');
+  }
+
+
+  loadKPICardsData() {
+    this.dmDashboardService.getKPICardsData().subscribe(
+      (kpiData: any) => {
+        this.kpiData = kpiData;
+        this.cdr.detectChanges();
+      },
+      error => {
+        console.error('Error loading KPI cards:', error);
+      }
+    );
+  }
+
+  loadSkillSChartData(){
+      this.dmDashboardService.getAllSkillCounts().subscribe(
+    (skillPayload: Skill[]) => {
+      this.skills = skillPayload;
+          this.initializeChart();
+    this.initializeSkillsChart();
+    },
+    error => {
+      console.error('Error loading designations:', error);
+    }
+  );
+  }
+
+  initializeChart() {
+    // Map project manager data to chart
+    this.projectManagerChart.series = this.projectManagers.map(pm => pm.projectCount);
+    this.projectManagerChart.labels = this.projectManagers.map(pm => pm.name);
+  }
+
+initializeSkillsChart() {
+  const paginatedSkills = this.paginatedSkills;
+  const levels = ['Beginner', 'Intermediate', 'Advanced'];
+
+  const newXCategories = paginatedSkills.map(skill => skill.name);
+  const newSeries = levels.map(level => ({
+    name: level,
+    data: paginatedSkills.map(skill => {
+      const levelData = skill.levels.find(l => l.level === level);
+      return levelData ? levelData.count : 0;
+    })
+  }));
+
+  // Full reinitialization of skillsChart object
+  this.skillsChart = {
+    series: [...newSeries],
+    chart: {
+      type: 'bar',
+      height: 350,
+      stacked: true,
+      events: {
+        dataPointSelection: (event: any, chartContext: any, config: any) => {
+          this.onSkillSelect(config.dataPointIndex, config.seriesIndex);
+        }
+      }
+    },
+    xaxis: {
+      categories: [...newXCategories],
+      labels: {
+        style: {
+          fontSize: '12px',
+          fontFamily: 'Inter, sans-serif'
+        }
+      }
+    },
+    yaxis: {
+      title: {
+        text: 'Resource Count',
+        style: {
+          fontSize: '12px',
+          fontFamily: 'Inter, sans-serif'
+        }
+      }
+    },
+    colors: ['#ff6b6b', '#4ecdc4', '#45b7d1'],
+    legend: {
+      position: 'top',
+      fontSize: '13px',
+      fontFamily: 'Inter, sans-serif'
+    },
+    plotOptions: {
+      bar: {
+        horizontal: false,
+        columnWidth: '55%',
+        dataLabels: {
+          position: 'center'
+        }
+      }
+    },
+    dataLabels: {
+      enabled: true,
+      formatter: (val: any) => val > 0 ? val : '',
+      style: {
+        colors: ['#fff']
+      }
+    },
+    tooltip: {
+      shared: true,
+      intersect: false,
+      y: {
+        formatter: (val: any) => `${val} resources`
+      }
+    }
+  };
+
+  this.cdr.detectChanges();
+}
+
+
+  // Chart interaction
+onManagerSelect(dataPointIndex: number) {
+  if (dataPointIndex >= 0 && dataPointIndex < this.projectManagers.length) {
+    const manager = this.projectManagers[dataPointIndex];
+    this.selectedManager = manager;
+
+    // Call the service to get projects for this manager
+    this.dmDashboardService.getProjectDetailsByPmId(manager.empId).subscribe({
+      next: (projects: ProjectMinimalData[]) => {
+        // Store projects under selected manager and for display
+manager.projects = projects;
+this.selectedManagerProjects = projects;
+
+
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error(`Error fetching projects for manager ${manager.name}:`, err);
+      }
+    });
+  }
+}
+
+
+
+  // Skills chart interaction - adjusted for pagination
+onSkillSelect(dataPointIndex: number, seriesIndex: number) {
+  const paginatedSkills = this.paginatedSkills;
+  if (dataPointIndex >= 0 && dataPointIndex < paginatedSkills.length && seriesIndex >= 0) {
+    const skill = paginatedSkills[dataPointIndex];
+    const levels = ['Beginner', 'Intermediate', 'Advanced'];
+    const level = levels[seriesIndex];
+
+    this.selectedSkill = skill;
+    this.selectedSkillLevel = level;
+
+    // Reset pagination and search immediately
+    this.skillResourceCurrentPage = 1;
+    this.skillResourceSearchTerm = '';
+
+    // Fetch resource details
+    this.dmDashboardService.getSkillResourceDetails(skill.name, level).subscribe(
+      (resourceDetails: ResourceDetail[]) => {
+        this.selectedSkillResources = resourceDetails;
+        this.skillResourceCurrentPage = 1;
+this.skillResourceSearchTerm = ''; // Optional: reset search
+
+
+        // ⚠️ Call detectChanges *after* the data is assigned
+        this.cdr.detectChanges();
+      },
+      error => {
+        console.error('Error loading skill resources:', error);
+      }
+    );
+  }
+}
+
+
+
+  // Skills chart pagination
+  get paginatedSkills() {
+    const start = (this.skillsChartCurrentPage - 1) * this.skillsChartPageSize;
+    return this.skills.slice(start, start + this.skillsChartPageSize);
+  }
+
+  get skillsChartTotalPages() {
+    return Math.ceil(this.skills.length / this.skillsChartPageSize);
+  }
+
+  // Table filtering and pagination
+  get filteredProjects() {
     if (!this.searchTerm) return this.projects;
     return this.projects.filter(p =>
       p.code.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
       p.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      p.manager.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      p.customer.toLowerCase().includes(this.searchTerm.toLowerCase())
+      p.customer.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+      p.manager.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
   }
- 
-  viewProject(project: any) {
-    this.selectedProject = project;
-    this.showModal = true;
+
+  get paginatedProjects() {
+    const filtered = this.filteredProjects;
+    const start = (this.currentPage - 1) * this.pageSize;
+    return filtered.slice(start, start + this.pageSize);
   }
- 
-  closeModal() {
-    this.showModal = false;
-    this.selectedProject = null;
+
+  get totalPages() {
+    return Math.ceil(this.filteredProjects.length / this.pageSize);
+  }
+
+  // Skills resource filtering and pagination
+get filteredSkillResources(): ResourceDetail[] {
+  if (!this.skillResourceSearchTerm) {
+    return this.selectedSkillResources;
+  }
+
+  const search = this.skillResourceSearchTerm.toLowerCase();
+  return this.selectedSkillResources.filter(resource =>
+    resource.name.toLowerCase().includes(search) ||
+    resource.employeeId.toLowerCase().includes(search) ||
+    resource.designation.toLowerCase().includes(search)
+  );
+}
+
+
+  get paginatedSkillResources() {
+    const filtered = this.filteredSkillResources;
+    const start = (this.skillResourceCurrentPage - 1) * this.skillResourcePageSize;
+    return filtered.slice(start, start + this.skillResourcePageSize);
+  }
+
+  get skillResourceTotalPages() {
+    return Math.ceil(this.filteredSkillResources.length / this.skillResourcePageSize);
+  }
+
+  // Pagination controls for projects
+  goToFirstPage() { this.currentPage = 1; }
+  goToPreviousPage() { if (this.currentPage > 1) this.currentPage--; }
+  goToNextPage() { if (this.currentPage < this.totalPages) this.currentPage++; }
+  goToLastPage() { this.currentPage = this.totalPages; }
+
+  // Pagination controls for skills resources
+  goToFirstPageSkillResource() { this.skillResourceCurrentPage = 1;
+    this.cdr.detectChanges();
+   }
+  goToPreviousPageSkillResource() { if (this.skillResourceCurrentPage > 1) this.skillResourceCurrentPage--;
+    this.cdr.detectChanges();
+  }
+  goToNextPageSkillResource() {
+  if (this.skillResourceCurrentPage < this.skillResourceTotalPages) {
+    this.skillResourceCurrentPage++;
+    this.cdr.detectChanges(); // <-- Force re-render
+  }
+}
+
+  goToLastPageSkillResource() { this.skillResourceCurrentPage = this.skillResourceTotalPages;
+    this.cdr.detectChanges();
+   }
+
+  // Pagination controls for skills chart
+  goToFirstPageSkillsChart() {
+    this.skillsChartCurrentPage = 1;
+    this.clearSelectedSkill();
+    this.initializeSkillsChart();
+  }
+
+  goToPreviousPageSkillsChart() {
+    if (this.skillsChartCurrentPage > 1) {
+      this.skillsChartCurrentPage--;
+      this.clearSelectedSkill();
+      this.initializeSkillsChart();
+    }
+  }
+
+  goToNextPageSkillsChart() {
+    if (this.skillsChartCurrentPage < this.skillsChartTotalPages) {
+      this.skillsChartCurrentPage++;
+      this.clearSelectedSkill();
+      this.initializeSkillsChart();
+    }
+  }
+
+  goToLastPageSkillsChart() {
+    this.skillsChartCurrentPage = this.skillsChartTotalPages;
+    this.clearSelectedSkill();
+    this.initializeSkillsChart();
+  }
+
+  // Helper method to clear selected skill
+  private clearSelectedSkill() {
+    this.selectedSkill = null;
+    this.selectedSkillLevel = null;
+    this.selectedSkillResources = [];
+    this.skillResourceCurrentPage = 1;
+    this.skillResourceSearchTerm = '';
+  }
+
+  // Search functionality
+  onSearchChange() {
+    this.currentPage = 1;
+  }
+
+  // Skills resource search functionality
+  onSkillResourceSearchChange() {
+    this.skillResourceCurrentPage = 1;
+  }
+
+  // Utility method to get skill level badge class
+  getSkillLevelBadgeClass(level: string): string {
+    switch(level) {
+      case 'Beginner': return 'bg-danger';
+      case 'Intermediate': return 'bg-warning';
+      case 'Advanced': return 'bg-success';
+      default: return 'bg-secondary';
+    }
+  }
+
+     loadProjects(): void {
+  this.dmDashboardService.getDashboardData().subscribe({
+    next: (data: ProjectData[]) => {
+      this.projects  = data;
+      console.log('Projects loaded:', this.projects); // Should show array from API
+    },
+    error: (err) => {
+      console.error('Error loading dashboard:', err);
+    }
+  });
+}
+
+  // Utility method to get utilization badge class
+  getUtilizationBadgeClass(utilization: number): string {
+    if (utilization >= 85) return 'bg-success';
+    if (utilization >= 70) return 'bg-warning';
+    if (utilization > 0) return 'bg-danger';
+    return 'bg-secondary';
   }
 }
