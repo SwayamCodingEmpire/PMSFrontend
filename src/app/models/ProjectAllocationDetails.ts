@@ -1,6 +1,7 @@
 export interface ProjectAllocationDetails {
   projectCode: string;
   projectName: string;
+  isCustomer: boolean;
   from: string; // ISO date string (e.g., '2024-07-01')
   to: string;
   role: string;

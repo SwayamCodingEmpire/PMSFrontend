@@ -42,7 +42,7 @@
             <div class="flex-grow-1">
               <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.billedNotBilled.billed }} / {{
                 kpiData.billedNotBilled.notBilled }}</h5>
-              <p class="text-muted mb-0" style="font-size: 0.75rem;">Billability Ratio</p>
+              <p class="text-muted mb-0" style="font-size: 0.75rem;">Billability</p>
             </div>
           </div>
         </div>
@@ -61,7 +61,7 @@
             <div class="flex-grow-1">
               <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.customerActualUtilization }} / {{
                 kpiData.customerPlannedUtilization }}</h5>
-              <p class="text-muted mb-0" style="font-size: 0.75rem;">Customer Utilization</p>
+              <p class="text-muted mb-0" style="font-size: 0.75rem;">Customer Utilized</p>
             </div>
           </div>
         </div>
@@ -80,7 +80,7 @@
             <div class="flex-grow-1">
               <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.nonCustomerActualUtilization }} / {{
                 kpiData.nonCustomerPlannedUtilization }}</h5>
-              <p class="text-muted mb-0" style="font-size: 0.75rem;">Non-Customer Utilization</p>
+              <p class="text-muted mb-0" style="font-size: 0.75rem;">Non-Customer Utilized</p>
             </div>
           </div>
         </div>
@@ -226,7 +226,7 @@
   <!-- Chart and Selected Project Resources Section -->
   <div class="row g-4 mt-4">
     <!-- Project Resource Chart -->
-    <div class="col-xl-6 d-flex">
+    <div class="col-xl-6 d-flex" *ngIf="projectResourceSummaries.length > 0">
       <div class="card shadow-sm border-0 h-100 flex-fill">
         <div class="card-header bg-white pb-0 border-0">
           <h5 class="card-title mb-0 fw-semibold text-dark">
@@ -304,7 +304,7 @@
   <!-- Skills Chart and Selected Skill Resources Section -->
   <div class="row g-4 mt-4">
     <!-- Skills Chart -->
-    <div class="col-xl-6 d-flex">
+    <div class="col-xl-6 d-flex" *ngIf="skills.length > 0">
       <div class="card shadow-sm border-0 h-100 flex-fill">
         <div class="card-header bg-white pb-0 border-0">
           <h5 class="card-title mb-0 fw-semibold text-dark">

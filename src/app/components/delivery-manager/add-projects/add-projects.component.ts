@@ -31,100 +31,24 @@ export class AddProjectsComponent {
   projectData: ProjectPayload | null = null;
   currencyOptions: CurrencyOptionPayload[] = [];
   projectTypeGroups : ProjectTypeDropdownGroup[] = [];
-//   {
-//     label: 'Infrastructure Projects',
-//     options: [
-//       { value: 'Data Center Migration', label: 'Data Center Migration' },
-//       { value: 'Cloud Infrastructure Setup', label: 'Cloud Infrastructure Setup' },
-//       { value: 'Network Redesign', label: 'Network Architecture Redesign' },
-//       { value: 'Disaster Recovery', label: 'Disaster Recovery & Backup' },
-//     ]
-//   },
-//   {
-//     label: 'Software Development Projects',
-//     options: [
-//       { value: 'Web App Development', label: 'Web/Mobile App Development' },
-//       { value: 'Internal Tooling', label: 'Internal Tool Development (HRMS, CRM)' },
-//       { value: 'API Architecture', label: 'API & Microservices' },
-//       { value: 'SaaS Development', label: 'SaaS Product Development' },
-//     ]
-//   },
-//   {
-//     label: 'Maintenance and Support',
-//     options: [
-//       { value: 'App Maintenance', label: 'Application Maintenance' },
-//       { value: 'IT Service Desk', label: 'IT Service Desk' },
-//       { value: 'Patch Management', label: 'Patch/Update Management' },
-//       { value: 'Bug Fixing', label: 'Bug Fixes & Enhancements' },
-//     ]
-//   },
-//   {
-//     label: 'Migration and Upgrade',
-//     options: [
-//       { value: 'DB Migration', label: 'Database Migrations' },
-//       { value: 'Platform Upgrade', label: 'Platform Upgrade (e.g., Win10 → Win11)' },
-//       { value: 'ERP Transition', label: 'ERP Transition (SAP ECC → S/4HANA)' },
-//       { value: 'Code Modernization', label: 'Codebase Modernization' },
-//     ]
-//   },
-//   {
-//     label: 'Business Process Automation',
-//     options: [
-//       { value: 'RPA', label: 'Robotic Process Automation (RPA)' },
-//       { value: 'Workflow Automation', label: 'Workflow Automation (Power Automate, UiPath)' },
-//       { value: 'Doc Automation', label: 'Document Processing Automation' },
-//     ]
-//   },
-//   {
-//     label: 'Digital Transformation',
-//     options: [
-//       { value: 'Customer Engagement', label: 'Omnichannel Engagement' },
-//       { value: 'AI Integration', label: 'AI & Analytics Integration' },
-//       { value: 'Legacy Modernization', label: 'Legacy Modernization' },
-//       { value: 'Agile Transformation', label: 'Agile Transformation' },
-//     ]
-//   },
-//   {
-//     label: 'Cybersecurity Projects',
-//     options: [
-//       { value: 'IAM', label: 'Identity & Access Management (IAM)' },
-//       { value: 'Vulnerability Testing', label: 'Vulnerability & Pen Testing' },
-//       { value: 'SIEM Setup', label: 'SIEM Implementation' },
-//       { value: 'Compliance Audits', label: 'Compliance Audits (GDPR, ISO, etc.)' },
-//     ]
-//   },
-//   {
-//     label: 'Enterprise Applications',
-//     options: [
-//       { value: 'ERP Implementation', label: 'ERP Implementation (SAP, Oracle)' },
-//       { value: 'CRM Setup', label: 'CRM (Salesforce, HubSpot)' },
-//       { value: 'HR Platform', label: 'HR Platforms (Workday)' },
-//     ]
-//   },
-//   {
-//     label: 'Research and Innovation',
-//     options: [
-//       { value: 'AI/ML Research', label: 'AI/ML Prototyping' },
-//       { value: 'Blockchain', label: 'Blockchain Studies' },
-//       { value: 'Quantum Computing', label: 'Quantum Research' },
-//       { value: 'AR/VR', label: 'AR/VR Pilots' },
-//     ]
-//   },
-//   {
-//     label: 'Client-Facing / Delivery',
-//     options: [
-//       { value: 'Client App Dev', label: 'Client-specific App Development' },
-//       { value: 'Managed Services', label: 'IT Managed Services' },
-//       { value: 'SLA Support', label: 'SLA-Driven Support' },
-//     ]
-//   }
-// ];
 
-loadProjectTypes(){
+
+projectTypeToCustomerFlagMap: Record<number, boolean> = {};
+
+loadProjectTypes() {
   this.projectService.getAllProjectTypes().subscribe({
     next: (projectTypes: ProjectTypeDropdownGroup[]) => {
       this.projectTypeGroups = projectTypes;
-      console.log('Project types loaded:', this.projectTypeGroups);
+
+      // Build the projectTypeId → isCustomerType map
+      this.projectTypeToCustomerFlagMap = {};
+      for (const group of projectTypes) {
+        for (const option of group.options) {
+          this.projectTypeToCustomerFlagMap[option.id] = group.isCustomerType;
+        }
+      }
+
+      console.log('Mapped Project Type IDs to Customer Flag:', this.projectTypeToCustomerFlagMap);
     },
     error: (error) => {
       console.error('Error loading project types:', error);
@@ -132,17 +56,12 @@ loadProjectTypes(){
   });
 }
 
-  // managers: ProjectManagerPayload[] = [
-  //   { id: '1', name: 'John Doe', email: 'john@example.com', projects: ['Alpha', 'Beta'] },
-  //   { id: '2', name: 'Jane Smith', email: 'jane@example.com', projects: ['Delta'] },
-  //   { id: '2', name: 'Jane Smith', email: 'jane@example.com', projects: ['Delta'] },
-  //   { id: '2', name: 'Jane Smith', email: 'jane@example.com', projects: ['Delta'] },
-  //   { id: '2', name: 'Jane Smith', email: 'jane@example.com', projects: ['Delta'] },
-  //   { id: '2', name: 'Jane Smith', email: 'jane@example.com', projects: ['Delta'] },
-  //   { id: '2', name: 'Jane Smith', email: 'jane@example.com', projects: ['Delta'] },
-  //   { id: '2', name: 'Jane Smith', email: 'jane@example.com', projects: ['Delta'] },
-  //   { id: '2', name: 'Jane Smith', email: 'jane@example.com', projects: ['Delta'] },
-  // ];
+
+getGroupLabel(isCustomerType: any): string {
+  const isTrue = isCustomerType === true || isCustomerType === 'true';
+  return isTrue ? 'Customer Projects' : 'Non Customer Projects';
+}
+
   searchText: string = '';
 
   loadManagers() {
@@ -205,31 +124,35 @@ loadProjectTypes(){
       }
     });
   }
+ngOnInit(): void {
+  this.mode = this.route.snapshot.data['mode'];
+  this.loadManagers();
+  this.loadClients();
+  this.loadCurrencyOptions();
+  this.loadProjectTypes();
 
- ngOnInit(): void {
-    this.mode = this.route.snapshot.data['mode'];
-    console.log('Mode:', this.mode);
-    this.loadManagers();
-    this.loadClients();
-    this.loadCurrencyOptions();
-    this.loadProjectTypes();
+  // 👇 Listen to projectType changes
+  this.form.get('projectType.projectType')?.valueChanges.subscribe((typeId: number) => {
+    const isCustomer = this.projectTypeToCustomerFlagMap[typeId] ?? false;
 
-    if (this.mode === 'add') {
-      // Add mode logic
-    } else if (this.mode === 'edit') {
-          this.route.paramMap.subscribe(params => {
+    // Automatically update customerProject value and disable it
+    const control = this.form.get('projectType.customerProject');
+    control?.setValue(isCustomer);
+    control?.disable();
+  });
+
+  // 🔄 If in edit mode, load and patch form
+  if (this.mode === 'edit') {
+    this.route.paramMap.subscribe(params => {
       const code = params.get('projectCode');
-
       if (code) {
         this.projectCode = code;
-        console.log('Editing project:', this.projectCode);
         this.loadProjectsForEdit();
-      } else {
-        console.error('Project code not found in route!');
       }
     });
-    }
   }
+}
+
 
     ngAfterViewInit(): void {
     const tooltipTriggerList = this.formContainer.nativeElement.querySelectorAll('[data-bs-toggle="tooltip"]');
@@ -263,16 +186,6 @@ loadProjectTypes(){
     { label: 'Project Manager' }
   ];
 
-  // customers: CustomerPayload[] = [
-  //   { id: 1, name: 'ABC Corp', legalEntity: 'ABC Ltd', businessUnit: 'IT',   },
-  //   { id: 2, name: 'XYZ Inc', legalEntity: 'XYZ Pvt', businessUnit: 'Consulting'},
-  //   { id: 2, name: 'XYZ Inc', legalEntity: 'XYZ Pvt', businessUnit: 'Consulting' },
-  //   { id: 2, name: 'XYZ Inc', legalEntity: 'XYZ Pvt', businessUnit: 'Consulting'},
-  //   { id: 2, name: 'XYZ Inc', legalEntity: 'XYZ Pvt', businessUnit: 'Consulting' },
-  //   { id: 2, name: 'XYZ Inc', legalEntity: 'XYZ Pvt', businessUnit: 'Consulting'},
-  //   { id: 2, name: 'XYZ Inc', legalEntity: 'XYZ Pvt', businessUnit: 'Consulting' },
-  //   { id: 2, name: 'XYZ Inc', legalEntity: 'XYZ Pvt', businessUnit: 'Consulting'}
-  // ];
 
   form: FormGroup;
 
@@ -315,6 +228,7 @@ loadProjectTypes(){
   }),
   managerId: ['', Validators.required]
 });
+this.form.get('projectType.customerProject')?.disable();
 
   }
 

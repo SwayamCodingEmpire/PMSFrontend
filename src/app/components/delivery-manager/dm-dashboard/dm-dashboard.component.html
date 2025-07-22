@@ -6,6 +6,7 @@
         Delivery Manager Dashboard
       </h5>
     </div>
+    <div class="d-flex align-items-center justify-content-end"><button (click)="exportDashboard()" class="cozentus-bg text-light btn col-1" >Export<i class="ps-2 fa-solid fa-file-export"></i></button></div>
   </div>
 
   <!-- KPI Cards Section -->
@@ -42,7 +43,7 @@
             <div class="flex-grow-1">
               <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.billedNotBilled.billed }} / {{
                 kpiData.billedNotBilled.notBilled }}</h5>
-              <p class="text-muted mb-0" style="font-size: 0.75rem;">Billability Ratio</p>
+              <p class="text-muted mb-0" style="font-size: 0.75rem;">Billability</p>
             </div>
           </div>
         </div>
@@ -61,7 +62,7 @@
             <div class="flex-grow-1">
               <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.customerActualUtilization }} / {{
                 kpiData.customerPlannedUtilization }}</h5>
-              <p class="text-muted mb-0" style="font-size: 0.75rem;">Customer Utilization</p>
+              <p class="text-muted mb-0" style="font-size: 0.75rem;">Customer Utilized</p>
             </div>
           </div>
         </div>
@@ -80,7 +81,7 @@
             <div class="flex-grow-1">
               <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.nonCustomerActualUtilization }} / {{
                 kpiData.nonCustomerPlannedUtilization }}</h5>
-              <p class="text-muted mb-0" style="font-size: 0.75rem;">Non-Customer Utilization</p>
+              <p class="text-muted mb-0" style="font-size: 0.75rem;">Non-Customer Utilized</p>
             </div>
           </div>
         </div>
@@ -238,7 +239,7 @@
   <!-- Chart and Selected Manager Projects Section -->
   <div class="row g-4 mt-4">
     <!-- Project Manager Chart -->
-    <div class="col-xl-6 d-flex">
+    <div class="col-xl-6 d-flex" *ngIf="projectManagers.length > 0">
       <div class="card shadow-sm border-0 h-100 flex-fill">
         <div class="card-header bg-white pb-0 border-0">
           <h5 class="card-title mb-0 fw-semibold text-dark">
@@ -312,16 +313,37 @@
   <!-- Skills Chart and Selected Skill Resources Section -->
   <div class="row g-4 mt-4">
     <!-- Skills Chart -->
-    <div class="col-xl-6 d-flex">
+    <div class="col-xl-6 d-flex" *ngIf="skills.length > 0">
       <div class="card shadow-sm border-0 h-100 flex-fill">
-        <div class="card-header bg-white pb-0 border-0">
-          <h5 class="card-title mb-0 fw-semibold text-dark">
-            <i class="bi bi-bar-chart-fill me-2 text-info"></i>
-            Skills Distribution by Level
-            <small class="text-muted ms-2">({{ skills.length }} total skills)</small>
-          </h5>
-          <p class="text-muted small mb-0">Click on a skill level to view resource details</p>
-        </div>
+<div class="card-header bg-white pb-0 border-0 d-flex justify-content-between align-items-start flex-wrap">
+  <div>
+    <h5 class="card-title mb-0 fw-semibold text-dark">
+      <i class="bi bi-bar-chart-fill me-2 text-info"></i>
+      Skills Distribution by Level
+      <small class="text-muted ms-2">({{ skills.length }} total skills)</small>
+    </h5>
+    <p class="text-muted small mb-0">Click on a skill level to view resource details</p>
+  </div>
+
+  <!-- Search Bar -->
+<div class="mt-2 mt-xl-0">
+  <div class="input-group input-group-sm">
+    <input type="text"
+           class="form-control"
+           placeholder="Search skill..."
+           [(ngModel)]="skillsSearchTerm"
+           (keydown.enter)="triggerSkillSearch()" />
+
+    <button class="btn btn-outline-secondary"
+            type="button"
+            (click)="triggerSkillSearch()">
+      <i class="fas fa-search"></i> <!-- Or use Bootstrap icon: <i class="bi bi-search"></i> -->
+    </button>
+  </div>
+</div>
+
+</div>
+
         <div class="card-body">
           <apx-chart [series]="skillsChart.series" [chart]="skillsChart.chart" [xaxis]="skillsChart.xaxis"
             [yaxis]="skillsChart.yaxis" [colors]="skillsChart.colors" [legend]="skillsChart.legend"

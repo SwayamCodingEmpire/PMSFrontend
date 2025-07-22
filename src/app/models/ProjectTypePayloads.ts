@@ -5,6 +5,6 @@ export interface ProjectTypeOption {
 }
 
 export interface ProjectTypeDropdownGroup {
-  label: string;
+  isCustomerType: boolean;
   options: ProjectTypeOption[];
 }

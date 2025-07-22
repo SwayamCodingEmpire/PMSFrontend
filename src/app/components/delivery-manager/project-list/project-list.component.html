@@ -33,7 +33,8 @@
               <th scope="col">Currency</th>
               <th scope="col">Start Date</th>
               <th scope="col">End Date</th>
-              <th scope="col">Project Mgr</th>
+              <th scope="col" *ngIf="isAllowedForDML()">Project Manager</th>
+              <th scope="col" *ngIf="!isAllowedForDML()">Delivery Manager</th>
               <th scope="col" class="text-center">Allocations</th>
             </tr>
           </thead>

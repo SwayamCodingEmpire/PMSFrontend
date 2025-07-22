@@ -14,6 +14,7 @@ import { AddProjectsComponent } from './components/delivery-manager/add-projects
 import { AssignResourceAllocationComponent } from './components/project-manager/assign-resources/assign-resources.component';
 import { ViewAllocationsComponent } from './components/project-manager/view-allocations/view-allocations.component';
 import { authGuard } from './guards/auth.guard';
+import { ProjectTypeMasterComponent } from './components/delivery-manager/project-type-master/project-type-master.component';
 
 export const routes: Routes = [
 
@@ -41,7 +42,8 @@ export const routes: Routes = [
       { path: 'time-sheet', component: ManagerTimesheetComponent },// Placeholder for time-sheet component
       { path: 'add-projects', component: AddProjectsComponent, data: { mode: 'add' } },
       { path: 'edit-projects/:projectCode', component: AddProjectsComponent, data: { mode: 'edit' } },
-      { path : 'view-allocations/:projectCode', component: ViewAllocationsComponent }
+      { path : 'view-allocations/:projectCode', component: ViewAllocationsComponent },
+      { path : 'project-type-master', component: ProjectTypeMasterComponent}
     ]
   },
   {

@@ -9,7 +9,7 @@ import { ProjectResourceDetail, ProjectResourceSummary } from '../../components/
 })
 export class PmDashboardService {
 
-  private baseUrl = `${environment.apiUrl}/manager-dashboard`;
+  private baseUrl = `${environment.apiUrl}/pm-dashboard`;
 
   constructor(private httpClient: HttpClient) { }
 

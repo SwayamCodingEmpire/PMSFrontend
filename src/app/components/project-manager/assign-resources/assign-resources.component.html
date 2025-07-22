@@ -99,13 +99,99 @@
                 <th style="background: #f0f8fc;">Secondary Skill</th>
                 <th style="background: #f0f8fc;">Designation</th>
                 <th style="background: #f0f8fc; ">Exp</th>
-                <th style="background: #f0f8fc;">Allocation</th>
-                <th style="background: #f0f8fc; ">Billable %</th>
-                <th style="background: #f0f8fc; ">Planned Utilization %</th>
-                <th style="background: #f0f8fc; ">Actual Utilization %</th>
+                <th style="background: #f0f8fc; position: relative;">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span>Allocation</span>
+                    <i class="pi pi-filter text-muted" style="cursor: pointer; font-size: 0.9rem;"
+                        (click)="toggleAllocationFilter($event)"
+                       ></i>
+                  </div>
+                  <!-- Allocation Filter Dropdown -->
+                  <div *ngIf="showAllocationFilter" class="filter-dropdown position-absolute"
+                       style="top: 100%; right: 0; z-index: 1000; background: white; border: 1px solid #ddd; border-radius: 4px; padding: 10px; min-width: 180px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                         <div class="form-check">
+                       <input class="form-check-input" type="radio" name="allocationType" id="customerProject"
+                              [(ngModel)]="allocationFilter" value="customer" (change)="onAllocationFilterChange()">
+                       <label class="form-check-label" for="customerProject">
+                         Customer Project
+                       </label>
+                     </div>
+                     <div class="form-check mt-2">
+                       <input class="form-check-input" type="radio" name="allocationType" id="nonCustomerProject"
+                              [(ngModel)]="allocationFilter" value="non-customer" (change)="onAllocationFilterChange()">
+                       <label class="form-check-label" for="nonCustomerProject">
+                         Non-Customer Project
+                       </label>
+                     </div>
+                     <div class="form-check mt-2">
+                       <input class="form-check-input" type="radio" name="allocationType" id="allProjects"
+                              [(ngModel)]="allocationFilter" value="all" (change)="onAllocationFilterChange()">
+                       <label class="form-check-label" for="allProjects">
+                         All Projects
+                       </label>
+                     </div>
+                  </div>
+                </th>
+                <th style="background: #f0f8fc; position: relative;">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span>Billable %</span>
+                    <i class="pi pi-filter text-muted" style="cursor: pointer; font-size: 0.9rem;"
+                       (click)="toggleBillableFilter($event)"></i>
+                  </div>
+                  <!-- Billable Filter Slider -->
+                  <div *ngIf="showBillableFilter" class="filter-dropdown position-absolute"
+                       style="top: 100%; right: 0; z-index: 1000; background: white; border: 1px solid #ddd; border-radius: 4px; padding: 15px; min-width: 200px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <label class="form-label small">Show resources with Billable % below</label>
+                    <div class="range-container">
+                      <input type="range" class="form-range" min="0" max="100"
+                             [(ngModel)]="billableFilter" (input)="onBillableFilterChange()">
+                      <div class="text-center small text-muted mt-2">
+                        <span class="fw-bold">{{billableFilter}}%</span>
+                      </div>
+                    </div>
+                  </div>
+                </th>
+                <th style="background: #f0f8fc; position: relative;">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span>Planned Utilization %</span>
+                    <i class="pi pi-filter text-muted" style="cursor: pointer; font-size: 0.9rem;"
+                       (click)="togglePlannedUtilFilter($event)"></i>
+                  </div>
+                  <!-- Planned Utilization Filter Slider -->
+                  <div *ngIf="showPlannedUtilFilter" class="filter-dropdown position-absolute"
+                       style="top: 100%; right: 0; z-index: 1000; background: white; border: 1px solid #ddd; border-radius: 4px; padding: 15px; min-width: 200px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <label class="form-label small">Show resources with Planned Utilization % below</label>
+                    <div class="range-container">
+                      <input type="range" class="form-range" min="0" max="100"
+                             [(ngModel)]="plannedUtilFilter" (input)="onPlannedUtilFilterChange()">
+                      <div class="text-center small text-muted mt-2">
+                        <span class="fw-bold">{{plannedUtilFilter}}%</span>
+                      </div>
+                    </div>
+                  </div>
+                </th>
+                <th style="background: #f0f8fc; position: relative;">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span>Actual Utilization %</span>
+                    <i class="pi pi-filter text-muted" style="cursor: pointer; font-size: 0.9rem;"
+                       (click)="toggleActualUtilFilter($event)"></i>
+                  </div>
+                  <!-- Actual Utilization Filter Slider -->
+                  <div *ngIf="showActualUtilFilter" class="filter-dropdown position-absolute"
+                       style="top: 100%; right: 0; z-index: 1000; background: white; border: 1px solid #ddd; border-radius: 4px; padding: 15px; min-width: 200px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <label class="form-label small">Show resources with Actual Utilization % below</label>
+                    <div class="range-container">
+                      <input type="range" class="form-range" min="0" max="100"
+                             [(ngModel)]="actualUtilFilter" (input)="onActualUtilFilterChange()">
+                      <div class="text-center small text-muted mt-2">
+                        <span class="fw-bold">{{actualUtilFilter}}%</span>
+                      </div>
+                    </div>
+                  </div>
+                </th>
               </tr>
             </thead>
-            <tbody *ngIf="project">
+            <tbody *ngIf="resources.length > 0 && project">
               <tr *ngFor="let res of resources; let i = index"
                 [class.table-primary]="isSelected(res)">
                 <td>
@@ -115,11 +201,19 @@
                 <td>
                   <span class="fw-semibold text-primary">{{ res.name }}</span>
                 </td>
-                <td>
-                  <span class=" text-primary">{{ getPrimarySkills(res) }}</span>
+                <td style="width: 1rem; max-width: 10rem;">
+                  <div class="text-truncate text-secondary" style="width: 100%; overflow: hidden;"
+     [attr.title]="getPrimarySkills(res)">
+  {{ getPrimarySkills(res) }}
+</div>
+
                 </td>
-                <td>
-                  <span *ngIf="res.secondarySkill" class="bg-secondary-light">{{ getSecondarySkills(res) }}</span>
+                <td style="width: 1rem; max-width: 10rem;">
+                  <div class="text-truncate text-secondary" style="width: 100%; overflow: hidden;"
+     [attr.title]="getSecondarySkills(res)">
+  {{ getSecondarySkills(res) }}
+</div>
+
                 </td>
                 <td>{{ res.designation }}</td>
                 <td>{{ res.experience }}y</td>
@@ -159,7 +253,7 @@
                       <span *ngIf="res.currentAllocation.length === 0"
                         class="badge cool-grey-bg text-white rounded-pill">
                         <i class="pi pi-minus-circle me-4"></i>None
-                                 </span>
+                                 </span>
                     </ng-template>
                   </ng-template>
                 </td>
@@ -188,6 +282,18 @@
                     }" role="progressbar" [style.width]="res.actualUtil + '%'"></div>
                   </div>
                   <small class="text-muted">{{ res.actualUtil }}%</small>
+                </td>
+              </tr>
+            </tbody>
+            <tbody *ngIf="resources.length === 0">
+              <tr>
+                <td colspan="11" class="text-center py-5">
+                  <i class="pi pi-search text-muted" style="font-size: 3rem;"></i>
+                  <h5 class="text-muted mt-3">No resources found</h5>
+                  <p class="text-muted">Try adjusting your search filters</p>
+                  <button class="btn btn-outline-primary rounded-pill" (click)="clearFilters()">
+                    <i class="pi pi-filter-slash me-2"></i>Clear Filters
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -236,16 +342,6 @@
               </select>
             </div>
           </div>
-        </div>
-
-        <!-- Empty State -->
-        <div *ngIf="resources.length === 0" class="text-center py-5">
-          <i class="pi pi-search text-muted" style="font-size: 3rem;"></i>
-          <h5 class="text-muted mt-3">No resources found</h5>
-          <p class="text-muted">Try adjusting your search filters</p>
-          <button class="btn btn-outline-primary rounded-pill">
-            <i class="pi pi-filter-slash me-2"></i>Clear Filters
-          </button>
         </div>
 
         <!-- Allocation Form For Selected Resources -->

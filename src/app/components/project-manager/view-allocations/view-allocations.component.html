@@ -81,13 +81,20 @@
               <td>
                 <span class="fw-semibold text-primary">{{ res.name }}</span>
               </td>
-              <td>
-                <span class="text-primary">{{getPrimarySkills(res) }}</span>
-              </td>
-              <td>
-                <span *ngIf="res.secondarySkill" class="bg">{{getSecondarySkills(res)}}</span>
-                <span *ngIf="!res.secondarySkill" class="text-muted">-</span>
-              </td>
+   <td style="width: 1rem; max-width: 10rem;">
+                  <div class="text-truncate text-secondary" style="width: 100%; overflow: hidden;"
+     [attr.title]="getPrimarySkills(res)">
+  {{ getPrimarySkills(res) }}
+</div>
+
+                </td>
+                <td style="width: 1rem; max-width: 10rem;">
+                  <div class="text-truncate text-secondary" style="width: 100%; overflow: hidden;"
+     [attr.title]="getSecondarySkills(res)">
+  {{ getSecondarySkills(res) }}
+</div>
+
+                </td>
               <td>{{ res.designation }}</td>
               <td>{{ res.experience }}y</td>
               <!-- <td class="small">

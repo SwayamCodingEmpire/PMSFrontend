@@ -179,6 +179,11 @@ initializeTimesheetForm() {
     }
   }
 
+  console.log('Creating form controls for:');
+console.log('Projects:', this.projects);
+console.log('Days:', this.days);
+
+
   this.timesheetForm = new FormGroup(group);
 }
 

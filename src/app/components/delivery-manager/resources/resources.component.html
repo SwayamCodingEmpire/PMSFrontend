@@ -54,37 +54,36 @@
                     *ngIf="editingIndex === i">
                     <i class="fa-solid fa-xmark"></i>
                   </button>
+                </td>
+
                 <td>
                   <div class="d-flex align-items-center">
                     <span class="me-2">{{ emp.id }}</span>
-                    <i class="fa-solid fa-copy copy-icon" style="cursor: pointer;" title="Copy ID"
+                    <i class="fa-solid fa-copy copy-icon" style="cursor: pointer" title="Copy ID"
                       (click)="copyToClipboard(emp.id)"></i>
                   </div>
                 </td>
 
-
                 <td>
-                  <div class="d-flex align-items-center" style="max-width: 200px;">
-                    <span class="me-2 text-truncate d-inline-block" style="max-width: 10rem;"
-                      [attr.title]="emp.emailId">
+                  <div class="d-flex align-items-center" style="max-width: 200px">
+                    <span class="me-2 text-truncate d-inline-block" style="max-width: 10rem" [attr.title]="emp.emailId">
                       {{ emp.emailId }}
                     </span>
-                    <i class="fa-solid fa-copy copy-icon" style="cursor: pointer;" title="Copy Email"
+                    <i class="fa-solid fa-copy copy-icon" style="cursor: pointer" title="Copy Email"
                       (click)="copyToClipboard(emp.emailId)"></i>
                   </div>
                 </td>
 
-
                 <td>{{ emp.name }}</td>
+
+                <!-- Primary Skill -->
                 <td class="py-1 px-2">
                   <ng-container *ngIf="editingIndex !== i; else editPrimary">
                     <div class="d-flex align-items-center justify-content-between skill-cell">
-                      <div class="text-truncate flex-grow-1 pe-2" (click)="openSkillsModal(emp,true)"
-                        style="cursor: pointer;">
+                      <div class="text-truncate flex-grow-1 pe-2">
                         <span [attr.title]="getPrimarySkills(emp)" data-bs-toggle="tooltip" data-bs-placement="top"
-                          class="me-2 text-truncate d-inline-block text-secondary" style="max-width: 7rem;">
-
-                            {{ getPrimarySkills(emp) || 'NA' }}
+                          class="me-2 text-truncate d-inline-block text-secondary" style="max-width: 7rem">
+                          {{ getPrimarySkills(emp) || "NA" }}
                         </span>
                       </div>
                       <!-- <i class="fa-solid fa-cog text-primary flex-shrink-0" (click)="openSkillsModal(emp, true)"></i> -->
@@ -92,81 +91,52 @@
                   </ng-container>
 
                   <ng-template #editPrimary>
-                    <div class="position-relative" style="width: 100%;">
+                    <div class="position-relative" style="width: 100%">
                       <input type="text" class="form-control form-control-sm pe-5" [value]="getPrimarySkills(emp)"
                         disabled />
                       <i class="fa-solid fa-cog position-absolute top-50 end-0 translate-middle-y me-2 text-primary"
-                        (click)="openSkillsModal(emp, true)" style="cursor: pointer;"></i>
+                        (click)="openSkillsModal(emp, true)" style="cursor: pointer"></i>
                     </div>
                   </ng-template>
-
                 </td>
 
-
-
-
+                <!-- Secondary Skill -->
                 <td class="py-1 px-2">
-                  <ng-container *ngIf="editingIndex !== i; else editSecondary">
-                    <div class="d-flex align-items-center justify-content-between skill-cell">
-                      <div class="text-truncate flex-grow-1 pe-2" (click)="openSkillsModal(emp, false)"
-                        title="Click to manage secondary skills" style="cursor: pointer;">
-                        <span [attr.title]="getSecondarySkills(emp)" data-bs-toggle="tooltip" data-bs-placement="top"
+                  <div class="d-flex align-items-center justify-content-between skill-cell">
+                    <div class="text-truncate flex-grow-1 pe-2">
+                      <span [attr.title]="getSecondarySkills(emp)" data-bs-toggle="tooltip" data-bs-placement="top"
                         class="me-2 text-truncate d-inline-block text-secondary">
-
-                            {{ getSecondarySkills(emp) || 'NA' }}
-                        </span>
-                      </div>
-
+                        {{ getSecondarySkills(emp) || "NA" }}
+                      </span>
                     </div>
-                  </ng-container>
-
-                  <ng-template #editSecondary>
-                    <div class="position-relative" style="width: 100%;">
-                      <input type="text" class="form-control form-control-sm pe-5" [value]="getSecondarySkills(emp)"
-                        disabled />
-                      <i class="fa-solid fa-cog position-absolute top-50 end-0 translate-middle-y me-2 text-primary"
-                        (click)="openSkillsModal(emp, false)" title="Click to manage skills"
-                        style="cursor: pointer;"></i>
-                    </div>
-                  </ng-template>
+                  </div>
                 </td>
-
-
-
 
                 <td>
-
-                  <ng-container *ngIf="editingIndex !==i ">
-
+                  <ng-container *ngIf="editingIndex !== i">
                     <div class="me-2 text-truncate d-inline-block text-secondary">
-                    {{ emp.role || 'NA' }}
+                      {{ emp.role || "NA" }}
                     </div>
-
                   </ng-container>
 
                   <form [formGroup]="editForm" *ngIf="editingIndex === i">
                     <input type="text" formControlName="role" class="form-control edit-mode" placeholder="Enter role" />
                   </form>
-
-
-
                 </td>
                 <td>{{ emp.designation }}</td>
                 <td>{{ emp.experience }}</td>
-                <td>{{ emp.reportingManagerName || 'N/A' }}</td>
+                <td>{{ emp.reportingManagerName || "N/A" }}</td>
                 <td>
                   <ng-container>
                     <button class="project-link d-flex align-items-center btn btn-sm cozentus-bg text-white"
-                      (click)="viewProjectDetails(emp)" style="cursor:pointer; text-decoration: none !important;">
+                      (click)="viewProjectDetails(emp)" style="cursor: pointer; text-decoration: none !important">
                       <span class="me-2 text-white">View</span>
                       <span class="badge bg-light text-dark rounded-pill">
                         {{ getTotalProjects(emp.allocation) }}
                       </span>
                     </button>
-
                   </ng-container>
                 </td>
-
               </tr>
             </ng-container>
 
@@ -186,38 +156,64 @@
           <div class="ms-auto text-end me-1">
             <span class="small">
               Showing
-              {{ ((currentPage - 1) * pageSize) + (employees.length ? 1 : 0) }}
+              {{ (currentPage - 1) * pageSize + (employees.length ? 1 : 0) }}
               to
-              {{ ((currentPage - 1) * pageSize) + employees.length }}
+              {{ (currentPage - 1) * pageSize + employees.length }}
               of {{ totalItems }} entries
             </span>
           </div>
           <div class="d-flex align-items-center">
-            <button class="btn btn-outline-secondary btn-sm mx-1"
-              style="width: 25px; height: 25px; padding: 0; display: flex; align-items: center; justify-content: center;"
-              (click)="goToFirstPage()" [disabled]="currentPage === 1">
+            <button class="btn btn-outline-secondary btn-sm mx-1" style="
+                width: 25px;
+                height: 25px;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              " (click)="goToFirstPage()" [disabled]="currentPage === 1">
               <span><i class="fa-regular fa-angle-double-left"></i></span>
             </button>
-            <button class="btn btn-outline-secondary btn-sm mx-1"
-              style="width: 25px; height: 25px; padding: 0; display: flex; align-items: center; justify-content: center;"
-              (click)="goToPreviousPage()" [disabled]="currentPage === 1">
+            <button class="btn btn-outline-secondary btn-sm mx-1" style="
+                width: 25px;
+                height: 25px;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              " (click)="goToPreviousPage()" [disabled]="currentPage === 1">
               <span><i class="fa-regular fa-angle-left"></i></span>
             </button>
-            <button class="btn btn-outline-secondary btn-sm mx-1"
-              style="width: 25px; height: 25px; padding: 0; display: flex; align-items: center; justify-content: center;">
+            <button class="btn btn-outline-secondary btn-sm mx-1" style="
+                width: 25px;
+                height: 25px;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              ">
               {{ currentPage }}
             </button>
-            <button class="btn btn-outline-secondary btn-sm mx-1"
-              style="width: 25px; height: 25px; padding: 0; display: flex; align-items: center; justify-content: center;"
-              (click)="goToNextPage()" [disabled]="currentPage === totalPages">
+            <button class="btn btn-outline-secondary btn-sm mx-1" style="
+                width: 25px;
+                height: 25px;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              " (click)="goToNextPage()" [disabled]="currentPage === totalPages">
               <span><i class="fa-regular fa-angle-right"></i></span>
             </button>
-            <button class="btn btn-outline-secondary btn-sm mx-1"
-              style="width: 25px; height: 25px; padding: 0; display: flex; align-items: center; justify-content: center;"
-              (click)="goToLastPage()" [disabled]="currentPage === totalPages">
+            <button class="btn btn-outline-secondary btn-sm mx-1" style="
+                width: 25px;
+                height: 25px;
+                padding: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              " (click)="goToLastPage()" [disabled]="currentPage === totalPages">
               <span><i class="fa-regular fa-angle-double-right"></i></span>
             </button>
-            <select class="form-select form-select-sm ms-2" style="width: 60px;" [(ngModel)]="pageSize"
+            <select class="form-select form-select-sm ms-2" style="width: 60px" [(ngModel)]="pageSize"
               (change)="onPageSizeChange()">
               <option [value]="5">5</option>
               <option [value]="10">10</option>
@@ -297,25 +293,30 @@
 
                     <!-- Manager List -->
                     <!-- Manager List (Inside Accordion Body or Any Container) -->
-                    <div class="manager-list overflow-auto" style="max-height: 300px;">
-                      <div *ngFor="let manager of filteredManagers" class="card p-2 mb-2 manager-card"
-                        [class.bg-info]="resourceForm.get('reportingManager')?.value === manager.empId"
-                        (click)="resourceForm.get('reportingManager')?.setValue(manager.empId)"
-                        style="cursor: pointer;">
+                    <div class="manager-list overflow-auto" style="max-height: 300px">
+                      <div *ngFor="let manager of filteredManagers" class="card p-2 mb-2 manager-card" [class.bg-info]="
+                          resourceForm.get('reportingManager')?.value ===
+                          manager.empId
+                        " (click)="
+                          resourceForm
+                            .get('reportingManager')
+                            ?.setValue(manager.empId)
+                        " style="cursor: pointer">
                         <div class="d-flex justify-content-between align-items-center">
                           <div>
                             <h6 class="mb-0">{{ manager.name }}</h6>
-                            <small class="text-muted">{{ manager.emailId }}</small>
+                            <small class="text-muted">{{
+                              manager.emailId
+                              }}</small>
                           </div>
                           <input class="form-check-input" type="radio" name="reportingManager" [value]="manager.empId"
-                            [checked]="resourceForm.get('reportingManager')?.value === manager.empId"
-                            (click)="$event.stopPropagation()" />
+                            [checked]="
+                              resourceForm.get('reportingManager')?.value ===
+                              manager.empId
+                            " (click)="$event.stopPropagation()" />
                         </div>
                       </div>
                     </div>
-
-
-
                   </div>
                 </div>
               </div>
@@ -333,7 +334,7 @@
   </div>
 
   <!-- Project Detail Modal -->
-  <div class="modal fade " id="projectDetailsModal" tabindex="-1" aria-labelledby="projectDetailsLabel"
+  <div class="modal fade" id="projectDetailsModal" tabindex="-1" aria-labelledby="projectDetailsLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content p-3">
@@ -341,7 +342,7 @@
           <h5 class="modal-title" id="projectDetailsLabel">
             Project Details - {{ selectedEmployee.name }}
           </h5>
-          <button type="button bg-white" class="btn-close" style="filter: brightness(0) invert(1);"
+          <button type="button bg-white" class="btn-close" style="filter: brightness(0) invert(1)"
             data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
@@ -364,31 +365,31 @@
                     <div class="row">
                       <div class="col-md-6">
                         <p class="mb-2">
-                          <strong class="cozentus-text-primary">Project Name:</strong><br>
+                          <strong class="cozentus-text-primary">Project Name:</strong><br />
                           {{ project.projectName }}
                         </p>
                         <p class="mb-2">
-                          <strong class="cozentus-text-primary">Project Manager:</strong><br>
+                          <strong class="cozentus-text-primary">Project Manager:</strong><br />
                           {{ project.projectManager || "N/A" }}
                         </p>
                       </div>
                       <div class="col-md-6">
                         <p class="mb-2">
-                          <strong class="cozentus-text-primary">Start Date:</strong><br>
+                          <strong class="cozentus-text-primary">Start Date:</strong><br />
                           {{ project.startDate || "N/A" }}
                         </p>
                         <p class="mb-2">
-                          <strong class="cozentus-text-primary">End Date:</strong><br>
+                          <strong class="cozentus-text-primary">End Date:</strong><br />
                           {{ project.endDate || "N/A" }}
                         </p>
                       </div>
                       <div class="col-12">
                         <p class="mb-3">
-                          <strong class="cozentus-text-primary">Description:</strong><br>
+                          <strong class="cozentus-text-primary">Description:</strong><br />
                           {{ project.description || "N/A" }}
                         </p>
                         <!-- Button aligned to bottom right -->
-                        <div class="text-end" *ngIf="isAllowedForDML()">
+                        <div class="text-end">
                           <button class="btn btn-danger" (click)="deallocateFromProject(project)">
                             Deallocate from Project
                           </button>
@@ -491,14 +492,14 @@
                 <label>Phone Number</label>
                 <input type="text" class="form-control" formControlName="phoneNumber" />
               </div>
-              <div class="col-md-6 mb-3">
+              <!-- <div class="col-md-6 mb-3">
                 <label>Primary Skill</label>
                 <input type="text" class="form-control" formControlName="primarySkill" />
               </div>
               <div class="col-md-6 mb-3">
                 <label>Secondary Skill</label>
                 <input type="text" class="form-control" formControlName="secondarySkill" />
-              </div>
+              </div> -->
               <div class="col-md-6 mb-3">
                 <label>Designation</label>
                 <input type="text" class="form-control" formControlName="designation" />
@@ -531,21 +532,23 @@
                       [value]="managerSearchText" (input)="managerSearchText = $any($event.target).value" />
 
                     <!-- Manager List -->
-                    <div class="manager-list overflow-auto" style="max-height: 300px;">
-                      <div *ngFor="let manager of filteredManagers" class="card p-2 mb-2 manager-card"
-                        [class.bg-info]="resourceForm.get('reportingManager')?.value === manager.empId"
-                        (click)="selectManager(manager.empId)">
+                    <div class="manager-list overflow-auto" style="max-height: 300px">
+                      <div *ngFor="let manager of filteredManagers" class="card p-2 mb-2 manager-card" [class.bg-info]="
+                          resourceForm.get('reportingManager')?.value ===
+                          manager.empId
+                        " (click)="selectManager(manager.empId)">
                         <div class="d-flex justify-content-between align-items-center">
                           <div>
                             <h6 class="mb-0">{{ manager.name }}</h6>
-                            <small class="text-muted">{{ manager.emailId }}</small>
+                            <small class="text-muted">{{
+                              manager.emailId
+                              }}</small>
                           </div>
                           <input class="form-check-input" type="radio" name="reportingManager" [value]="manager.empId"
                             formControlName="reportingManager" (click)="$event.stopPropagation()" />
                         </div>
                       </div>
                     </div>
-
                   </div>
                 </div>
               </div>
@@ -554,15 +557,16 @@
         </div>
 
         <div class="modal-footer">
-          <button class="btn btn-primary" (click)="saveNewEmployee()">Add</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button class="btn btn-primary" (click)="saveNewEmployee()">
+            Add
+          </button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Cancel
+          </button>
         </div>
       </div>
     </div>
   </div>
-
-
-
 </div>
 
 <!-- Skills Management Modal -->
@@ -596,10 +600,16 @@
               <ng-container *ngIf="currentEmployeeSkills.length > 0; else noSkills">
                 <tr *ngFor="let skill of currentEmployeeSkills">
                   <td>
-                    <button type="button" class="btn btn-link p-0 me-2"
-                      (click)="isEditingSkill(skill.skillName) ? saveSkill(skill) : editSkill(skill)">
-                      <i
-                        [class]="isEditingSkill(skill.skillName) ? 'fa-solid fa-check text-success' : 'fa-regular fa-pen-to-square'"></i>
+                    <button type="button" class="btn btn-link p-0 me-2" (click)="
+                        isEditingSkill(skill.skillName)
+                          ? saveSkill(skill)
+                          : editSkill(skill)
+                      ">
+                      <i [class]="
+                          isEditingSkill(skill.skillName)
+                            ? 'fa-solid fa-check text-success'
+                            : 'fa-regular fa-pen-to-square'
+                        "></i>
                     </button>
                     <button type="button" class="btn btn-link p-0 me-2" *ngIf="isEditingSkill(skill.skillName)"
                       (click)="cancelSkillEdit()">
@@ -612,56 +622,47 @@
                   </td>
                   <td>
                     <!-- Dropdown when adding new skill -->
-<ng-container *ngIf="isNewSkill && isEditingSkill(skill.skillName)">
-  <div class="d-flex align-items-center" style="gap: 0.5rem; max-width: 100%;">
-    <select
-      class="form-select form-select-sm"
-      [(ngModel)]="editingSkillData.name"
-      style="width: 150px;">
-      <option value="">Select Skill</option>
-      <option *ngFor="let skillName of skillNames" [value]="skillName">
-        {{ skillName }}
-      </option>
-    </select>
+                    <ng-container *ngIf="isNewSkill && isEditingSkill(skill.skillName)">
+                      <div class="d-flex align-items-center" style="gap: 0.5rem; max-width: 100%">
+                        <select class="form-select form-select-sm" [(ngModel)]="editingSkillData.name"
+                          style="width: 150px">
+                          <option value="">Select Skill</option>
+                          <option *ngFor="let skillName of skillNames" [value]="skillName">
+                            {{ skillName }}
+                          </option>
+                        </select>
 
-    <button class="btn btn-outline-primary btn-sm" type="button">
-      <i class="fa fa-plus"></i>
-    </button>
-  </div>
-</ng-container>
+                        <button class="btn btn-outline-primary btn-sm" type="button">
+                          <i class="fa fa-plus"></i>
+                        </button>
+                      </div>
+                    </ng-container>
 
-<ng-template #newSkillInput>
-                        <div class="d-flex align-items-center">
-                          <input type="text" class="form-control form-control-sm me-2" [(ngModel)]="newSkillName" placeholder="Enter new skill name">
-                          <button class="btn btn-success btn-sm me-1" type="button">
-                            <i class="fa fa-check"></i>
-                          </button>
-                          <button class="btn btn-secondary btn-sm" type="button">
-                            <i class="fa fa-times"></i>
-                          </button>
-                        </div>
-                      </ng-template>
-
-
-
+                    <ng-template #newSkillInput>
+                      <div class="d-flex align-items-center">
+                        <input type="text" class="form-control form-control-sm me-2" [(ngModel)]="newSkillName"
+                          placeholder="Enter new skill name" />
+                        <button class="btn btn-success btn-sm me-1" type="button">
+                          <i class="fa fa-check"></i>
+                        </button>
+                        <button class="btn btn-secondary btn-sm" type="button">
+                          <i class="fa fa-times"></i>
+                        </button>
+                      </div>
+                    </ng-template>
 
                     <!-- Read-only name otherwise -->
                     <ng-container *ngIf="!isNewSkill || !isEditingSkill(skill.skillName)">
                       {{ skill.skillName }}
-
                     </ng-container>
-
-
-
                   </td>
-
 
                   <td>
                     <ng-container *ngIf="!isEditingSkill(skill.skillName)">
                       {{ skill.skillExperience }}
                     </ng-container>
                     <input *ngIf="isEditingSkill(skill.skillName)" type="number" class="form-control form-control-sm"
-                      [(ngModel)]="editingSkillData.experience" min="0" max="20">
+                      [(ngModel)]="editingSkillData.experience" min="0" max="20" />
                   </td>
                   <td>
                     <ng-container *ngIf="!isEditingSkill(skill.skillName)">

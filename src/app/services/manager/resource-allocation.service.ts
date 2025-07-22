@@ -17,11 +17,8 @@ export class ResourceAllocationService {
 
   constructor(private http: HttpClient) { }
 
-  getAllResourceAllocations(page: number, size: number): Observable<PaginatedResourceAllocationPayload> {
-    let params = new HttpParams()
-      .set('page', page)
-      .set('size', size);
-    return this.http.get<PaginatedResourceAllocationPayload>(`${this.baseUrl}/all`, { params });
+  getAllResourceAllocations(): Observable<ResourceAllocations[]> {
+    return this.http.get<ResourceAllocations[]>(`${this.baseUrl}/all`);
   }
 
   saveResourceAllocations(allocations: AllocationPayload): Observable<any> {
@@ -29,11 +26,8 @@ export class ResourceAllocationService {
   }
 
 
-  searchAllResourceAllocations(page: number, size: number, resourceFlterPayload: ResourceFilterPayload): Observable<PaginatedResourceAllocationPayload> {
-    let params = new HttpParams()
-      .set('page', page)
-      .set('size', size);
-    return this.http.post<PaginatedResourceAllocationPayload>(`${this.baseUrl}/search`, resourceFlterPayload, { params });
+ searchAllResourceAllocations(resourceFlterPayload: ResourceFilterPayload): Observable<ResourceAllocations[]>  {
+    return this.http.post<ResourceAllocations[]>(`${this.baseUrl}/search`, resourceFlterPayload);
   }
 
   getAllResourceAllocationsForProject(page: number, size: number, projectCode: string): Observable<ProjectAllocationViewPayload> {

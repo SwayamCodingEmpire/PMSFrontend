@@ -128,6 +128,9 @@ export class NavbarComponent {
   return base === 'project-manager' || base === 'delivery-manager' ? `/${base}` : '';
 }
 
+  isDeliveryManager(): boolean {
+    return this.router.url.startsWith('/delivery-manager');
+  }
 
 
 

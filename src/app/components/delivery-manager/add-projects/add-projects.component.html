@@ -132,7 +132,7 @@
                     <option value="" disabled>Select Project Type</option>
 
                     <ng-container *ngFor="let group of projectTypeGroups">
-                      <optgroup [label]="group.label">
+                      <optgroup [label]="getGroupLabel(group.isCustomerType)">
                         <option *ngFor="let type of group.options" [value]="type.id">
                           {{ type.label }}
                         </option>
@@ -152,15 +152,18 @@
 
               <!-- Customer Project Switch -->
               <div class="col-12 col-md-6 d-flex align-items-center justify-content-start justify-content-md-center">
+                <!-- Customer Project Switch (made readonly) -->
                 <div class="form-check form-switch mb-0">
                   <input class="form-check-input custom-switch-success" type="checkbox" role="switch"
-                    id="customerProject" formControlName="customerProject">
+                    id="customerProject" formControlName="customerProject" />
                   <label class="form-check-label fw-semibold d-flex align-items-center" for="customerProject">
                     <span class="ms-1">Customer Project?</span>
                     <i class="bi bi-info-circle ms-2 text-muted info-icon" data-bs-toggle="tooltip"
-                      title="Enable this if the project is for a client account."></i>
+                      title="This field is set automatically based on selected Project Type.">
+                    </i>
                   </label>
                 </div>
+
               </div>
 
             </div>

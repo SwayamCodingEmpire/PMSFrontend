@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProjectTransferService } from '../../../services/shared/project-transfer.service';
@@ -20,7 +20,7 @@ import { PublicService } from '../../../services/public/public.service';
   templateUrl: './assign-resources.component.html',
   styleUrls: ['./assign-resources.component.scss']
 })
-export class AssignResourceAllocationComponent {
+export class AssignResourceAllocationComponent implements OnInit, OnDestroy {
 
   mode: 'all' | 'search' = 'all';
   filterForm!: FormGroup;
@@ -35,6 +35,17 @@ export class AssignResourceAllocationComponent {
   pageSize = 5;
   totalPages = 1;
   totalItems = 0;
+
+  // Filter properties
+  showAllocationFilter = false;
+  showBillableFilter = false;
+  showPlannedUtilFilter = false;
+  showActualUtilFilter = false;
+
+  allocationFilter: 'all' | 'customer' | 'non-customer' = 'all';
+  billableFilter = 100;  // Show resources with billable % below this value
+  plannedUtilFilter = 100;  // Show resources with planned utilization % below this value
+  actualUtilFilter = 100;  // Show resources with actual utilization % below this value
 
   project: ProjectBasicModel | null = {
     name: 'Project Alpha',
@@ -105,22 +116,129 @@ filterDesignations() {
     this.loadResourceAllocationsData();
   }
 
+  ngOnDestroy() {
+    // Cleanup if needed
+  }
+
+  // Host listener to close dropdowns when clicking outside
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    const target = event.target as HTMLElement;
+
+    // Check if click is outside any filter dropdown
+    if (!target.closest('.filter-dropdown') && !target.closest('.pi-filter')) {
+      this.closeAllFilters();
+    }
+  }
+
+  // Filter Methods
+  toggleAllocationFilter(event: Event) {
+    event.stopPropagation();
+    this.closeAllFilters();
+    this.showAllocationFilter = !this.showAllocationFilter;
+  }
+
+  toggleBillableFilter(event: Event) {
+    event.stopPropagation();
+    this.closeAllFilters();
+    this.showBillableFilter = !this.showBillableFilter;
+  }
+
+  togglePlannedUtilFilter(event: Event) {
+    event.stopPropagation();
+    this.closeAllFilters();
+    this.showPlannedUtilFilter = !this.showPlannedUtilFilter;
+  }
+
+  toggleActualUtilFilter(event: Event) {
+    event.stopPropagation();
+    this.closeAllFilters();
+    this.showActualUtilFilter = !this.showActualUtilFilter;
+  }
+
+  closeAllFilters() {
+    this.showAllocationFilter = false;
+    this.showBillableFilter = false;
+    this.showPlannedUtilFilter = false;
+    this.showActualUtilFilter = false;
+  }
+
+  // Apply all filters and update paginated resources
+  applyAllFilters() {
+    let filtered = [...this.allResources];
+
+    // Allocation type filter
+    if (this.allocationFilter === 'customer') {
+      filtered = filtered.filter(res =>
+        res.currentAllocation && res.currentAllocation.some((a: any) => a.isCustomer === true)
+      );
+    } else if (this.allocationFilter === 'non-customer') {
+      filtered = filtered.filter(res =>
+        res.currentAllocation && res.currentAllocation.some((a: any) => a.isCustomer === false || a.isCustomer === null)
+      );
+    }
+
+    // Billability filter
+    if (this.billableFilter < 100) {
+      filtered = filtered.filter(res => res.billability < this.billableFilter);
+    }
+
+    // Planned Utilization filter
+    if (this.plannedUtilFilter < 100) {
+      filtered = filtered.filter(res => res.plannedUtil < this.plannedUtilFilter);
+    }
+
+    // Actual Utilization filter
+    if (this.actualUtilFilter < 100) {
+      filtered = filtered.filter(res => res.actualUtil < this.actualUtilFilter);
+    }
+
+    this.totalItems = filtered.length;
+    this.totalPages = Math.ceil(this.totalItems / this.pageSize) || 1;
+    // Clamp currentPage if needed
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = this.totalPages;
+    }
+    const startIdx = (this.currentPage - 1) * this.pageSize;
+    const endIdx = startIdx + this.pageSize;
+    this.resources = filtered.slice(startIdx, endIdx);
+  }
+
+  // Filter change handlers
+  onAllocationFilterChange() {
+    this.currentPage = 1;
+    this.applyAllFilters();
+    this.closeAllFilters();
+  }
+
+  onBillableFilterChange() {
+    this.currentPage = 1;
+    this.applyAllFilters();
+  }
+
+  onPlannedUtilFilterChange() {
+    this.currentPage = 1;
+    this.applyAllFilters();
+  }
+
+  onActualUtilFilterChange() {
+    this.currentPage = 1;
+    this.applyAllFilters();
+  }
+
   loadResourceAllocationsData() {
     if (this.mode === 'search') {
       this.currentPage = 1; // Reset to first page if switching to search mode
       this.mode = 'all';
     }
-      const page = this.currentPage - 1;
-      this.resourceAllocationService.getAllResourceAllocations(page, this.pageSize).subscribe(
-        (paginatedData: PaginatedResourceAllocationPayload) => {
-          this.resources = paginatedData.content || [];
-          this.totalPages = paginatedData.totalPages || 1;
-          this.totalItems = paginatedData.totalElements || 0;
-
-          // Initialize allocation forms for each resource
-
-        }
-      );
+    const page = this.currentPage - 1;
+    this.resourceAllocationService.getAllResourceAllocations().subscribe(
+      (resources: ResourceAllocations[]) => {
+        this.allResources = resources || [];
+        this.currentPage = 1;
+        this.applyAllFilters();
+      }
+    );
   }
 
     getPrimarySkills(employee: ResourceAllocations): string {
@@ -151,6 +269,7 @@ filterDesignations() {
   };
 
   resources: ResourceAllocations[] = [];
+  allResources: ResourceAllocations[] = [];
   //   {
   //     id: 1,
   //     name: 'Jane Doe',
@@ -365,6 +484,7 @@ filterDesignations() {
   allocation: ProjectAllocationDetails = {
     projectCode: this.project?.code || '',
     projectName: this.project?.name || '',
+    isCustomer: false,
     from: '',
     to: '',
     role: '',
@@ -413,9 +533,9 @@ filterDesignations() {
   //     allocation: r.allocation
   //   })));
   //   alert(
-  //     `Allocated ${this.selectedResources.length} resource(s):\n\n` +
+  //     Allocated ${this.selectedResources.length} resource(s):\n\n +
   //     this.selectedResources.map(r =>
-  //       `${r.name}: ${r.allocation.start} to ${r.allocation.end}, Role: ${r.allocation.role}, Billability: ${r.allocation.billability}, Planned: ${r.allocation.plannedUtil}`
+  //       ${r.name}: ${r.allocation.start} to ${r.allocation.end}, Role: ${r.allocation.role}, Billability: ${r.allocation.billability}, Planned: ${r.allocation.plannedUtil}
   //     ).join('\n')
   //   );
   //   this.selectedResources = [];
@@ -454,6 +574,7 @@ filterDesignations() {
     this.allocation = {
       projectCode: this.project.code,
       projectName: this.project.name,
+      isCustomer: false,
       from: '',
       to: '',
       role: '',
@@ -479,60 +600,34 @@ filterDesignations() {
 
     if (this.currentPage > 1) {
       this.currentPage = 1;
-      if (this.mode === 'search') {
-        this.searchResources();
-      }
-      else {
-        this.loadResourceAllocationsData();
-      }
-
+      this.applyAllFilters();
     }
   }
 
   goToPreviousPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
-      if (this.mode === 'search') {
-        this.searchResources();
-      }
-      else {
-        this.loadResourceAllocationsData();
-      }
+      this.applyAllFilters();
     }
   }
 
   goToNextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
-      if (this.mode === 'search') {
-        this.searchResources();
-      }
-      else {
-        this.loadResourceAllocationsData();
-      }
+      this.applyAllFilters();
     }
   }
 
   goToLastPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage = this.totalPages;
-      if (this.mode === 'search') {
-        this.searchResources();
-      }
-      else {
-        this.loadResourceAllocationsData();
-      }
+      this.applyAllFilters();
     }
   }
 
   onPageSizeChange(): void {
     this.currentPage = 1;
-    if (this.mode === 'search') {
-      this.searchResources();
-    }
-    else {
-      this.loadResourceAllocationsData();
-    }
+    this.applyAllFilters();
   }
 
 
@@ -589,11 +684,11 @@ filterDesignations() {
     console.log('Searching resources with filters:', filters);
 
     const page = this.currentPage - 1;
-    this.resourceAllocationService.searchAllResourceAllocations(page, this.pageSize, filters).subscribe(
-      (paginatedData: PaginatedResourceAllocationPayload) => {
-        this.resources = paginatedData.content || [];
-        this.totalPages = paginatedData.totalPages || 1;
-        this.totalItems = paginatedData.totalElements || 0;
+    this.resourceAllocationService.searchAllResourceAllocations(filters).subscribe(
+      (resources: ResourceAllocations[]) => {
+        this.allResources = resources || [];
+        this.currentPage = 1;
+        this.applyAllFilters();
 
         // Initialize allocation forms for each resource
 
@@ -671,7 +766,14 @@ filterDesignations() {
   }
 
   clearFilters(){
+    this.allocationFilter = 'all';
+    this.billableFilter = 100;
+    this.plannedUtilFilter = 100;
+    this.actualUtilFilter = 100;
+    this.currentPage = 1;
+    this.mode = 'all';
     this.loadResourceAllocationsData();
+    this.applyAllFilters();
   }
 
   allocateAllResources() {
@@ -693,12 +795,17 @@ filterDesignations() {
     };
 
 
-    this.resourceAllocationService.saveResourceAllocations(allocations).subscribe(
-      response => {
-        console.log('Resource allocation successful:', response);
-        this.loadResourceAllocationsData();
-      }
-    );
+this.resourceAllocationService.saveResourceAllocations(allocations).subscribe({
+  next: response => {
+    console.log('Resource allocation successful:', response);
+    this.loadResourceAllocationsData(); // ✅ Only triggered on success
+  },
+  error: err => {
+    console.error('Resource allocation failed:', err);
+    // ❌ Do NOT call loadResourceAllocationsData here
+    // Optionally: show toast or error message to user
+  }
+});
 
 
     this.selectedResources = [];

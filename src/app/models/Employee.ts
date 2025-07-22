@@ -6,8 +6,8 @@ export interface Employee {
   name: string;
   emailId: string;
   phoneNumber: string;
-  primarySkill: SkillDTO[];
-  secondarySkill: SkillDTO[];
+  primarySkill?: SkillDTO[];
+  secondarySkill?: SkillDTO[];
   designation: string;
   experience: number;
   role: string; // e.g., "Developer", "Tester", etc.

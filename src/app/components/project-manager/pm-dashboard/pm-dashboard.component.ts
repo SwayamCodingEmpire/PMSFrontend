@@ -133,46 +133,31 @@ export class PmDashboardComponent implements OnInit {
   // Make Math available in template
   Math = Math;
   projectResourceSummaries: ProjectResourceSummary[] = [];
-selectedProjectSummary: ProjectResourceSummary | null = null;
+  selectedProjectSummary: ProjectResourceSummary | null = null;
 
 
-loadResourceCountPerProject(): void {
-  this.pmDashboardService.getProjectResourceSummary().subscribe({
-    next: (data: ProjectResourceSummary[]) => {
-      this.projectResourceSummaries = data;
 
-      this.projectChart.series = data.map(p => p.resourceCount);
-      this.projectChart.labels = data.map(p => p.code);
+  onProjectSelect(dataPointIndex: number) {
+    if (dataPointIndex >= 0 && dataPointIndex < this.projectResourceSummaries.length) {
+      const selected = this.projectResourceSummaries[dataPointIndex];
 
-      this.cdr.detectChanges();
-    },
-    error: (err) => {
-      console.error('Error loading project summaries:', err);
-    }
-  });
-}
-
-onProjectSelect(dataPointIndex: number) {
-  if (dataPointIndex >= 0 && dataPointIndex < this.projectResourceSummaries.length) {
-    const selected = this.projectResourceSummaries[dataPointIndex];
-
-    if (!selected.resources) {
-      this.pmDashboardService.getProjectResourcesByProject(selected.code).subscribe({
-        next: (resources: ProjectResourceDetail[]) => {
-          selected.resources = resources; // Update the original object
-          this.selectedProjectSummary = selected;
-          this.cdr.detectChanges();
-        },
-        error: (err) => {
-          console.error(`Error loading resources for project ${selected.code}`, err);
-        }
-      });
-    } else {
-      this.selectedProjectSummary = selected; // Set directly if resources already exist
-      this.cdr.detectChanges();
+      if (!selected.resources) {
+        this.pmDashboardService.getProjectResourcesByProject(selected.code).subscribe({
+          next: (resources: ProjectResourceDetail[]) => {
+            selected.resources = resources; // Update the original object
+            this.selectedProjectSummary = selected;
+            this.cdr.detectChanges();
+          },
+          error: (err) => {
+            console.error(`Error loading resources for project ${selected.code}`, err);
+          }
+        });
+      } else {
+        this.selectedProjectSummary = selected; // Set directly if resources already exist
+        this.cdr.detectChanges();
+      }
     }
   }
-}
 
 
 
@@ -334,31 +319,95 @@ onProjectSelect(dataPointIndex: number) {
   constructor(private cdr: ChangeDetectorRef, private dmDashboardService: DmDashboardService, private pmDashboardService: PmDashboardService) { }
 
   ngOnInit() {
-    this.loadResourceCountPerProject();
-        this.initializeProjectChart();
-    this.initializeSkillsChart();
-    this.loadProjects();
-    this.loadSkillSChartData();
+    this.loadResourceCountPerProject(); // ✅ this correctly sets chart.series and labels
+    // ❌ REMOVE this.initializeProjectChart();
 
+    this.loadProjects();          // Other data
+    this.loadSkillSChartData();   // For skills bar chart
+    this.initializeSkillsChart(); // This is okay
     this.loadKPICardsData();
   }
 
-       loadProjects(): void {
-  this.dmDashboardService.getDashboardData().subscribe({
-    next: (data: ProjectData[]) => {
-      this.projects  = data;
-      console.log('Projects loaded:', this.projects); // Should show array from API
+
+  loadProjects(): void {
+    this.dmDashboardService.getDashboardData().subscribe({
+      next: (data: ProjectData[]) => {
+        this.projects = data;
+        console.log('Projects loaded:', this.projects); // Should show array from API
+      },
+      error: (err) => {
+        console.error('Error loading dashboard:', err);
+      }
+    });
+  }
+
+  loadResourceCountPerProject(): void {
+  console.log('Loading project resource summaries...');
+  this.pmDashboardService.getProjectResourceSummary().subscribe({
+    next: (data: ProjectResourceSummary[]) => {
+
+      console.log('Project resource summaries:', data);
+      this.projectResourceSummaries = data;
+
+      console.log('Chart series:', this.projectChart.series);
+console.log('Chart labels:', this.projectChart.labels);
+
+
+      // ✅ FULL reinitialization of chart config
+      this.projectChart = {
+        series: data.map(p => p.resourceCount),
+        labels: data.map(p => p.code),
+        chart: {
+          type: 'donut',
+          height: 350,
+          events: {
+            dataPointSelection: (event: any, chartContext: any, config: any) => {
+              this.onProjectSelect(config.dataPointIndex);
+            }
+          }
+        },
+        colors: ['#667eea', '#0cebeb', '#a8c0ff', '#b8c6db', '#ff6b6b', '#4ecdc4'],
+        legend: {
+          position: 'bottom',
+          fontSize: '13px',
+          fontFamily: 'Inter, sans-serif'
+        },
+        plotOptions: {
+          pie: {
+            donut: {
+              size: '60%',
+              labels: {
+                show: true,
+                total: {
+                  show: true,
+                  label: 'Total Resources',
+                  fontSize: '14px'
+                }
+              }
+            }
+          }
+        },
+        dataLabels: {
+          enabled: true,
+          formatter: function (val: any, opts: any) {
+            return opts?.w?.config?.series?.[opts.seriesIndex] ?? '';
+          }
+        }
+      };
+
+      this.cdr.detectChanges();
     },
     error: (err) => {
-      console.error('Error loading dashboard:', err);
+      console.error('Error loading project summaries:', err);
     }
   });
 }
 
 
 
+
   loadSkillSChartData() {
-    this.dmDashboardService.getAllSkillCounts().subscribe(
+    this.dmDashboardService.getAllSkillCounts(null).subscribe(
       (skillPayload: Skill[]) => {
         this.skills = skillPayload;
         // this.initializeChart();
@@ -377,85 +426,85 @@ onProjectSelect(dataPointIndex: number) {
   // }
 
   initializeSkillsChart() {
-  const paginatedSkills = this.paginatedSkills;
-  const levels = ['Beginner', 'Intermediate', 'Advanced'];
+    const paginatedSkills = this.paginatedSkills;
+    const levels = ['Beginner', 'Intermediate', 'Advanced'];
 
-  const newXCategories = paginatedSkills.map(skill => skill.name);
-  console.log('New X Categories:', newXCategories);
-  const newSeries = levels.map(level => ({
-    name: level,
-    data: paginatedSkills.map(skill => {
-      const levelData = skill.levels.find(l => l.level === level);
-      return levelData ? levelData.count : 0;
-    })
-  }));
+    const newXCategories = paginatedSkills.map(skill => skill.name);
+    console.log('New X Categories:', newXCategories);
+    const newSeries = levels.map(level => ({
+      name: level,
+      data: paginatedSkills.map(skill => {
+        const levelData = skill.levels.find(l => l.level === level);
+        return levelData ? levelData.count : 0;
+      })
+    }));
 
-  // Full reinitialization of skillsChart object
-  this.skillsChart = {
-    series: [...newSeries],
-    chart: {
-      type: 'bar',
-      height: 350,
-      stacked: true,
-      events: {
-        dataPointSelection: (event: any, chartContext: any, config: any) => {
-          this.onSkillSelect(config.dataPointIndex, config.seriesIndex);
+    // Full reinitialization of skillsChart object
+    this.skillsChart = {
+      series: [...newSeries],
+      chart: {
+        type: 'bar',
+        height: 350,
+        stacked: true,
+        events: {
+          dataPointSelection: (event: any, chartContext: any, config: any) => {
+            this.onSkillSelect(config.dataPointIndex, config.seriesIndex);
+          }
         }
-      }
-    },
-   xaxis: {
-  categories: [...newXCategories],
-  labels: {
-    style: {
-      fontSize: '12px',
-      fontFamily: 'Inter, sans-serif',
-      colors: '#495057' // <-- ADD THIS LINE
-    }
-  }
-},
+      },
+      xaxis: {
+        categories: [...newXCategories],
+        labels: {
+          style: {
+            fontSize: '12px',
+            fontFamily: 'Inter, sans-serif',
+            colors: '#495057' // <-- ADD THIS LINE
+          }
+        }
+      },
 
-    yaxis: {
-      title: {
-        text: 'Resource Count',
+      yaxis: {
+        title: {
+          text: 'Resource Count',
+          style: {
+            fontSize: '12px',
+            fontFamily: 'Inter, sans-serif'
+          }
+        }
+      },
+      colors: ['#ff6b6b', '#4ecdc4', '#45b7d1'],
+      legend: {
+        position: 'top',
+        fontSize: '13px',
+        fontFamily: 'Inter, sans-serif'
+      },
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          columnWidth: '55%',
+          dataLabels: {
+            position: 'center'
+          }
+        }
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: (val: any) => val > 0 ? val : '',
         style: {
-          fontSize: '12px',
-          fontFamily: 'Inter, sans-serif'
+          colors: ['#fff']
+        }
+      },
+      tooltip: {
+        shared: true,
+        intersect: false,
+        y: {
+          formatter: (val: any) => `${val} resources`
         }
       }
-    },
-    colors: ['#ff6b6b', '#4ecdc4', '#45b7d1'],
-    legend: {
-      position: 'top',
-      fontSize: '13px',
-      fontFamily: 'Inter, sans-serif'
-    },
-    plotOptions: {
-      bar: {
-        horizontal: false,
-        columnWidth: '55%',
-        dataLabels: {
-          position: 'center'
-        }
-      }
-    },
-    dataLabels: {
-      enabled: true,
-      formatter: (val: any) => val > 0 ? val : '',
-      style: {
-        colors: ['#fff']
-      }
-    },
-    tooltip: {
-      shared: true,
-      intersect: false,
-      y: {
-        formatter: (val: any) => `${val} resources`
-      }
-    }
-  };
+    };
 
-  this.cdr.detectChanges();
-}
+    this.cdr.detectChanges();
+  }
 
   loadKPICardsData() {
     this.dmDashboardService.getKPICardsData().subscribe(
@@ -469,11 +518,11 @@ onProjectSelect(dataPointIndex: number) {
     );
   }
 
-  initializeProjectChart() {
-    // Map project data to chart (show resource count per project)
-    this.projectChart.series = this.projects.map(p => p.totalResources);
-    this.projectChart.labels = this.projects.map(p => p.code);
-  }
+  // initializeProjectChart() {
+  //   // Map project data to chart (show resource count per project)
+  //   this.projectChart.series = this.projects.map(p => p.totalResources);
+  //   this.projectChart.labels = this.projects.map(p => p.code);
+  // }
 
 
 
@@ -492,7 +541,7 @@ onProjectSelect(dataPointIndex: number) {
       this.skillResourceCurrentPage = 1;
       this.skillResourceSearchTerm = '';
 
-      this.dmDashboardService.getSkillResourceDetails(skill.name, level).subscribe(
+      this.dmDashboardService.getSkillResourceDetails(skill.name, level, null).subscribe(
         (resourceDetails: ResourceDetail[]) => {
           this.selectedSkillResources = resourceDetails;
           this.skillResourceCurrentPage = 1;
@@ -563,22 +612,25 @@ onProjectSelect(dataPointIndex: number) {
   goToNextPage() { if (this.currentPage < this.totalPages) this.currentPage++; }
   goToLastPage() { this.currentPage = this.totalPages; }
 
-  goToFirstPageSkillResource() { this.skillResourceCurrentPage = 1;
+  goToFirstPageSkillResource() {
+    this.skillResourceCurrentPage = 1;
     this.cdr.detectChanges();
-   }
-  goToPreviousPageSkillResource() { if (this.skillResourceCurrentPage > 1) this.skillResourceCurrentPage--;
+  }
+  goToPreviousPageSkillResource() {
+    if (this.skillResourceCurrentPage > 1) this.skillResourceCurrentPage--;
     this.cdr.detectChanges();
   }
   goToNextPageSkillResource() {
-  if (this.skillResourceCurrentPage < this.skillResourceTotalPages) {
-    this.skillResourceCurrentPage++;
-    this.cdr.detectChanges(); // <-- Force re-render
+    if (this.skillResourceCurrentPage < this.skillResourceTotalPages) {
+      this.skillResourceCurrentPage++;
+      this.cdr.detectChanges(); // <-- Force re-render
+    }
   }
-}
 
-  goToLastPageSkillResource() { this.skillResourceCurrentPage = this.skillResourceTotalPages;
+  goToLastPageSkillResource() {
+    this.skillResourceCurrentPage = this.skillResourceTotalPages;
     this.cdr.detectChanges();
-   }
+  }
 
   // Pagination controls for skills chart
   goToFirstPageSkillsChart() {

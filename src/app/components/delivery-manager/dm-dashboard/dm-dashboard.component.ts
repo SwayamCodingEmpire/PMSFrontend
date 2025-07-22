@@ -16,6 +16,7 @@ import {
 import { ChangeDetectorRef } from '@angular/core';
 import { DmDashboardService } from '../../../services/manager/dm-dashboard.service';
 import { ExcelExportService } from '../../../services/shared/excel-export.service';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 declare var bootstrap: any;
 type ChartOptions = {
   series: ApexNonAxisChartSeries;
@@ -284,10 +285,10 @@ export class DmDashboardComponent implements OnInit {
   constructor(private cdr: ChangeDetectorRef, private dmDashboardService: DmDashboardService, private excelExportService: ExcelExportService) {}
 
   ngOnInit() {
-    this.initializeChart();
-    this.initializeSkillsChart();
+    // this.initializeChart();
+    // this.initializeSkillsChart();
     this.loadProjects();
-    this.loadSkillSChartData();
+    this.loadSkillSChartData(null);
     this.loadKPICardsData();
     this.loadProjectCountByManager();
   }
@@ -323,6 +324,14 @@ export class DmDashboardComponent implements OnInit {
     this.excelExportService.exportAsExcelWithNestedSheets(data, 'project_resources');
   }
 
+  skillsSearchTerm: string = '';
+
+onSkillSearchChange() {
+  // Example: filter skills or fetch data from backend
+
+}
+
+
     exportUserSSkillList(): void {
     const data = this.selectedSkillResources.map(res => ({
       name: res.name,
@@ -333,7 +342,7 @@ export class DmDashboardComponent implements OnInit {
       Utilization: res.utilization
 
     }));
-    
+
     this.excelExportService.exportAsExcelWithNestedSheets(data, 'project_resources');
   }
 
@@ -350,11 +359,10 @@ export class DmDashboardComponent implements OnInit {
     );
   }
 
-  loadSkillSChartData(){
-      this.dmDashboardService.getAllSkillCounts().subscribe(
+  loadSkillSChartData(searchTerm: string | null): void {
+      this.dmDashboardService.getAllSkillCounts(searchTerm).subscribe(
     (skillPayload: Skill[]) => {
       this.skills = skillPayload;
-          this.initializeChart();
     this.initializeSkillsChart();
     },
     error => {
@@ -489,7 +497,7 @@ onSkillSelect(dataPointIndex: number, seriesIndex: number) {
     this.skillResourceSearchTerm = '';
 
     // Fetch resource details
-    this.dmDashboardService.getSkillResourceDetails(skill.name, level).subscribe(
+    this.dmDashboardService.getSkillResourceDetails(skill.name, level, this.skillsSearchTerm).subscribe(
       (resourceDetails: ResourceDetail[]) => {
         this.selectedSkillResources = resourceDetails;
         this.skillResourceCurrentPage = 1;
@@ -665,4 +673,33 @@ get filteredSkillResources(): ResourceDetail[] {
     if (utilization > 0) return 'bg-danger';
     return 'bg-secondary';
   }
+
+triggerSkillSearch(): void {
+  const term = this.skillsSearchTerm?.trim().toLowerCase();
+
+  if (!term) {
+    console.error('Skill search term is empty');
+    return;
+  }
+
+  this.loadSkillSChartData1(term);
+}
+
+  loadSkillSChartData1(searchTerm: string | null): void {
+      this.dmDashboardService.getAllSkillCounts(searchTerm).subscribe(
+    (skillPayload: Skill[]) => {
+      this.skills = skillPayload;
+      console.log('Skills loaded:', this.skills); // Should show array from API
+    this.initializeSkillsChart();
+    },
+    error => {
+      console.error('Error loading designations:', error);
+    }
+  );
+  }
+
+    exportDashboard() {
+  this.dmDashboardService.fetchAndExportAll();
+}
+
 }
