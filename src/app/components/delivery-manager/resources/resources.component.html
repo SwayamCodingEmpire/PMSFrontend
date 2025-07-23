@@ -77,21 +77,40 @@
                 <td>{{ emp.name }}</td>
 
                 <!-- Primary Skill -->
-
-                <td style="width: 1rem; max-width: 10rem;">
+                <td class="py-1 px-2" style="width: 1rem; max-width: 10rem;">
+                  <ng-container *ngIf="editingIndex !== i; else editPrimary">
+                    <div class="d-flex align-items-center justify-content-between skill-cell">
+                      <div class="text-truncate flex-grow-1 pe-2">
                   <div class="text-truncate text-secondary" style="width: 100%; overflow: hidden;"
-                    [attr.title]="getPrimarySkills(emp)">
-                    {{ getPrimarySkills(emp) }}
-                  </div>
+     [attr.title]="getPrimarySkills(emp)" data-bs-toggle="tooltip" data-bs-placement="top">
+  {{ getPrimarySkills(emp) }}
+</div>
+                      </div>
+                      <!-- <i class="fa-solid fa-cog text-primary flex-shrink-0" (click)="openSkillsModal(emp, true)"></i> -->
+                    </div>
+                  </ng-container>
 
+                  <ng-template #editPrimary>
+                    <div class="position-relative" style="width: 100%">
+                      <input type="text" class="form-control form-control-sm pe-5" [value]="getPrimarySkills(emp)"
+                        disabled />
+                      <i class="fa-solid fa-cog position-absolute top-50 end-0 translate-middle-y me-2 text-primary"
+                        (click)="openSkillsModal(emp, true)" style="cursor: pointer"></i>
+                    </div>
+                  </ng-template>
                 </td>
 
                 <!-- Secondary Skill -->
-                <td style="width: 1rem; max-width: 10rem;">
-                  <div class="text-truncate text-secondary" style="width: 100%; overflow: hidden;"
-                    [attr.title]="getSecondarySkills(emp)">
-                    {{ getSecondarySkills(emp) }}
+                <td class="py-1 px-2">
+                  <div class="d-flex align-items-center justify-content-between skill-cell">
+                    <div class="text-truncate flex-grow-1 pe-2">
+                      <span [attr.title]="getSecondarySkills(emp)" data-bs-toggle="tooltip" data-bs-placement="top"
+                        class="me-2 text-truncate d-inline-block text-secondary">
+                        {{ getSecondarySkills(emp) || "NA" }}
+                      </span>
+                    </div>
                   </div>
+                </td>
 
                 <td>
                   <ng-container *ngIf="editingIndex !== i">
@@ -443,92 +462,182 @@
 
   <!-- Redesigned Add Resource Modal -->
   <!-- Refined Modal Using Accordion for Manager Selection -->
+ <!-- Redesigned Add Resource Modal -->
+  <!-- Refined Modal Using Accordion for Manager Selection -->
   <div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content p-3">
-        <div class="modal-header">
-          <h5 class="modal-title">Add New Resource</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal-header cozentus-bg text-white">
+          <h5 class="modal-title text-white">Add New Resource</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
 
         <div class="modal-body">
           <form [formGroup]="resourceForm">
-            <!-- Employee Details Form -->
             <div class="row">
+              <!-- ID -->
               <div class="col-md-6 mb-3">
-                <label>ID</label>
-                <input type="text" class="form-control" formControlName="id" />
-              </div>
-              <div class="col-md-6 mb-3">
-                <label>Name</label>
-                <input type="text" class="form-control" formControlName="name" />
-              </div>
-
-              <div class="col-md-6 mb-3">
-                <label>Email</label>
-                <input type="email" class="form-control" formControlName="emailId" />
-              </div>
-
-              <div class="col-md-6 mb-3">
-                <label>Phone Number</label>
-                <input type="text" class="form-control" formControlName="phoneNumber" />
-              </div>
-              <!-- <div class="col-md-6 mb-3">
-                <label>Primary Skill</label>
-                <input type="text" class="form-control" formControlName="primarySkill" />
-              </div>
-              <div class="col-md-6 mb-3">
-                <label>Secondary Skill</label>
-                <input type="text" class="form-control" formControlName="secondarySkill" />
-              </div> -->
-              <div class="col-md-6 mb-3">
-                <label>Designation</label>
-                <input type="text" class="form-control" formControlName="designation" />
-              </div>
-              <div class="col-md-6 mb-3">
-                <label>Experience (Years)</label>
-                <input type="number" class="form-control" formControlName="experience" />
+                <label>ID <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" formControlName="id" [ngClass]="{
+                    'is-invalid':
+                      resourceForm.get('id')?.invalid &&
+                      resourceForm.get('id')?.touched
+                  }" />
+                <div class="invalid-feedback" *ngIf="
+                    resourceForm.get('id')?.invalid &&
+                    resourceForm.get('id')?.touched
+                  ">
+                  ID is required
+                </div>
               </div>
 
+              <!-- Name -->
               <div class="col-md-6 mb-3">
-                <label>Role</label>
-                <input type="text" class="form-control" formControlName="role" />
+                <label>Name <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" formControlName="name" [ngClass]="{
+                    'is-invalid':
+                      resourceForm.get('name')?.invalid &&
+                      resourceForm.get('name')?.touched
+                  }" />
+                <div class="invalid-feedback"
+                  *ngIf="resourceForm.get('name')?.errors?.['required'] && resourceForm.get('name')?.touched">
+                  Name is required
+                </div>
+                <div class="invalid-feedback"
+                  *ngIf="resourceForm.get('name')?.errors?.['pattern'] && resourceForm.get('name')?.touched">
+                  Only alphabets and spaces allowed
+                </div>
+              </div>
+
+              <!-- Email -->
+              <div class="col-md-6 mb-3">
+                <label>Email <span class="text-danger">*</span></label>
+                <input type="email" class="form-control" formControlName="emailId" [ngClass]="{
+                    'is-invalid':
+                      resourceForm.get('emailId')?.invalid &&
+                      resourceForm.get('emailId')?.touched
+                  }" />
+                <div class="invalid-feedback"
+                  *ngIf="resourceForm.get('emailId')?.errors?.['required'] && resourceForm.get('emailId')?.touched">
+                  Email is required
+                </div>
+                <div class="invalid-feedback"
+                  *ngIf="resourceForm.get('emailId')?.errors?.['email'] && resourceForm.get('emailId')?.touched">
+                  Enter a valid email
+                </div>
+              </div>
+
+              <!-- Phone Number -->
+              <div class="col-md-6 mb-3">
+                <label>Phone Number <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" formControlName="phoneNumber" [ngClass]="{
+                    'is-invalid':
+                      resourceForm.get('phoneNumber')?.invalid &&
+                      resourceForm.get('phoneNumber')?.touched
+                  }" />
+                <div class="invalid-feedback"
+                  *ngIf="resourceForm.get('phoneNumber')?.errors?.['required'] && resourceForm.get('phoneNumber')?.touched">
+                  Phone number is required
+                </div>
+                <div class="invalid-feedback"
+                  *ngIf="resourceForm.get('phoneNumber')?.errors?.['pattern'] && resourceForm.get('phoneNumber')?.touched">
+                  Enter a valid 10-digit mobile number
+                </div>
+              </div>
+
+              <!-- Designation -->
+              <div class="col-md-6 mb-3">
+                <label>Designation <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" formControlName="designation" [ngClass]="{
+                    'is-invalid':
+                      resourceForm.get('designation')?.invalid &&
+                      resourceForm.get('designation')?.touched
+                  }" />
+                <div class="invalid-feedback"
+                  *ngIf="resourceForm.get('designation')?.errors?.['required'] && resourceForm.get('designation')?.touched">
+                  Designation is required
+                </div>
+                <div class="invalid-feedback"
+                  *ngIf="resourceForm.get('designation')?.errors?.['pattern'] && resourceForm.get('designation')?.touched">
+                  Only alphabets allowed
+                </div>
+              </div>
+
+              <!-- Experience -->
+              <div class="col-md-6 mb-3">
+                <label>Experience (Years) <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" formControlName="experience" [ngClass]="{
+                    'is-invalid':
+                      resourceForm.get('experience')?.invalid &&
+                      resourceForm.get('experience')?.touched
+                  }" />
+                <div class="invalid-feedback"
+                  *ngIf="resourceForm.get('experience')?.errors?.['required'] && resourceForm.get('experience')?.touched">
+                  Experience is required
+                </div>
+                <div class="invalid-feedback"
+                  *ngIf="resourceForm.get('experience')?.errors?.['min'] && resourceForm.get('experience')?.touched">
+                  Experience must be 0 or more
+                </div>
+                <div class="invalid-feedback"
+                  *ngIf="resourceForm.get('experience')?.errors?.['pattern'] && resourceForm.get('experience')?.touched">
+                  Enter valid experience (e.g., 2.5)
+                </div>
+              </div>
+
+              <!-- Role -->
+              <div class="col-md-6 mb-3">
+                <label>Role <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" formControlName="role" [ngClass]="{
+                    'is-invalid':
+                      resourceForm.get('role')?.invalid &&
+                      resourceForm.get('role')?.touched
+                  }" />
+                <div class="invalid-feedback"
+                  *ngIf="resourceForm.get('role')?.errors?.['required'] && resourceForm.get('role')?.touched">
+                  Role is required
+                </div>
+                <div class="invalid-feedback"
+                  *ngIf="resourceForm.get('role')?.errors?.['pattern'] && resourceForm.get('role')?.touched">
+                  Only alphabets allowed
+                </div>
               </div>
             </div>
 
-            <!-- Accordion for Project Manager -->
+            <!-- Reporting Manager -->
             <div class="accordion mt-4" id="managerAccordion">
               <div class="accordion-item">
                 <h2 class="accordion-header" id="headingManager">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#collapseManager" aria-expanded="false" aria-controls="collapseManager">
+                  <button class="accordion-button collapsed cozentus-bg text-white" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#collapseManager" aria-expanded="false"
+                    aria-controls="collapseManager">
                     Select Reporting Manager
                   </button>
                 </h2>
                 <div id="collapseManager" class="accordion-collapse collapse" aria-labelledby="headingManager"
                   data-bs-parent="#managerAccordion">
                   <div class="accordion-body p-3">
-                    <!-- Search -->
                     <input type="text" class="form-control mb-3" placeholder="Search managers..."
                       [value]="managerSearchText" (input)="managerSearchText = $any($event.target).value" />
 
-                    <!-- Manager List -->
                     <div class="manager-list overflow-auto" style="max-height: 300px">
-                      <div *ngFor="let manager of filteredManagers" class="card p-2 mb-2 manager-card" [class.bg-info]="
-                          resourceForm.get('reportingManager')?.value ===
-                          manager.empId
-                        " (click)="selectManager(manager.empId)">
+                      <div *ngFor="let manager of filteredManagers" class="card p-2 mb-2 manager-card"
+                        [class.bg-info]="resourceForm.get('reportingManager')?.value === manager.empId"
+                        (click)="selectManager(manager.empId)">
                         <div class="d-flex justify-content-between align-items-center">
                           <div>
                             <h6 class="mb-0">{{ manager.name }}</h6>
-                            <small class="text-muted">{{
-                              manager.emailId
-                              }}</small>
+                            <small class="text-muted">{{ manager.emailId }}</small>
                           </div>
                           <input class="form-check-input" type="radio" name="reportingManager" [value]="manager.empId"
                             formControlName="reportingManager" (click)="$event.stopPropagation()" />
                         </div>
                       </div>
+                    </div>
+
+                    <div class="text-danger mt-2"
+                      *ngIf="resourceForm.get('reportingManager')?.invalid && resourceForm.get('reportingManager')?.touched">
+                      Please select a reporting manager
                     </div>
                   </div>
                 </div>
@@ -537,8 +646,9 @@
           </form>
         </div>
 
+        <!-- Modal Footer -->
         <div class="modal-footer">
-          <button class="btn btn-primary" (click)="saveNewEmployee()">
+          <button class="btn cozentus-bg text-white" (click)="saveNewEmployee()">
             Add
           </button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
@@ -547,8 +657,6 @@
         </div>
       </div>
     </div>
-  </div>
-</div>
 
 <!-- Skills Management Modal -->
 <div class="modal fade" id="skillsModal" tabindex="-1" aria-labelledby="skillsModalLabel" aria-hidden="true">

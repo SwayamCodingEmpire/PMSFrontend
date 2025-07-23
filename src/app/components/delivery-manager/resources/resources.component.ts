@@ -301,24 +301,23 @@ export class ResourcesComponent implements OnInit {
 
 
   constructor(private fb: FormBuilder, private resourceService: ResourceService, private usersService: UsersService, private publicService: PublicService, private reesourceAllocation: ResourceAllocationService) {
-    this.resourceForm = this.fb.group({
+        this.resourceForm = this.fb.group({
       id: ['', Validators.required],
-      name: ['', Validators.required],
+      name: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]+$')]],
       emailId: ['', [Validators.required, Validators.email]],
-      phoneNumber: ['', [Validators.required]],
-      designation: ['', Validators.required],
-      experience: ['', [Validators.required, Validators.min(0)]],
-      role: ['', Validators.required],
+      phoneNumber: ['', [Validators.required, Validators.pattern('^(\\+91[-\\s]?)?[6-9]\\d{9}$')]],
+      designation: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]+$')]],
+      experience: ['', [Validators.required, Validators.min(0), Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]],
+      role: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]+$')]],
       reportingManager: ['', Validators.required]
     });
-
     this.editForm = this.fb.group({
       id: ['', Validators.required],
       primarySkill: ['', Validators.required],
       secondarySkill: [''],
       role: ['', Validators.required],
-
     });
+
   }
 
 

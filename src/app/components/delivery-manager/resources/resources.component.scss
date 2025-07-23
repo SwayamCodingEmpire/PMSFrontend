@@ -130,3 +130,7 @@ select:focus {
 }
 
 
+.accordion-button.cozentus-bg::after {
+  filter: brightness(0) invert(1); // Makes the arrow white
+}
+
