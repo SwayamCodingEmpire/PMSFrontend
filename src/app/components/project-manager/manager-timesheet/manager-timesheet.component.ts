@@ -444,6 +444,7 @@ onTabChange(tab: 'pending' | 'history'): void {
       this.mnagerTimeSheetService.approveTimeSheetData(timesheetApprovalPayload).subscribe({
         next: (response) => {
           console.log('Timesheet approval response:', response);
+          this.loadTimesheets();
         },
         error: (error) => {
           this.handleError('Error approving timesheet', error.message);

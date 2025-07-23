@@ -77,40 +77,21 @@
                 <td>{{ emp.name }}</td>
 
                 <!-- Primary Skill -->
-                <td class="py-1 px-2">
-                  <ng-container *ngIf="editingIndex !== i; else editPrimary">
-                    <div class="d-flex align-items-center justify-content-between skill-cell">
-                      <div class="text-truncate flex-grow-1 pe-2">
-                        <span [attr.title]="getPrimarySkills(emp)" data-bs-toggle="tooltip" data-bs-placement="top"
-                          class="me-2 text-truncate d-inline-block text-secondary" style="max-width: 7rem">
-                          {{ getPrimarySkills(emp) || "NA" }}
-                        </span>
-                      </div>
-                      <!-- <i class="fa-solid fa-cog text-primary flex-shrink-0" (click)="openSkillsModal(emp, true)"></i> -->
-                    </div>
-                  </ng-container>
 
-                  <ng-template #editPrimary>
-                    <div class="position-relative" style="width: 100%">
-                      <input type="text" class="form-control form-control-sm pe-5" [value]="getPrimarySkills(emp)"
-                        disabled />
-                      <i class="fa-solid fa-cog position-absolute top-50 end-0 translate-middle-y me-2 text-primary"
-                        (click)="openSkillsModal(emp, true)" style="cursor: pointer"></i>
-                    </div>
-                  </ng-template>
+                <td style="width: 1rem; max-width: 10rem;">
+                  <div class="text-truncate text-secondary" style="width: 100%; overflow: hidden;"
+                    [attr.title]="getPrimarySkills(emp)">
+                    {{ getPrimarySkills(emp) }}
+                  </div>
+
                 </td>
 
                 <!-- Secondary Skill -->
-                <td class="py-1 px-2">
-                  <div class="d-flex align-items-center justify-content-between skill-cell">
-                    <div class="text-truncate flex-grow-1 pe-2">
-                      <span [attr.title]="getSecondarySkills(emp)" data-bs-toggle="tooltip" data-bs-placement="top"
-                        class="me-2 text-truncate d-inline-block text-secondary">
-                        {{ getSecondarySkills(emp) || "NA" }}
-                      </span>
-                    </div>
+                <td style="width: 1rem; max-width: 10rem;">
+                  <div class="text-truncate text-secondary" style="width: 100%; overflow: hidden;"
+                    [attr.title]="getSecondarySkills(emp)">
+                    {{ getSecondarySkills(emp) }}
                   </div>
-                </td>
 
                 <td>
                   <ng-container *ngIf="editingIndex !== i">

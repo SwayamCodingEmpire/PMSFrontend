@@ -57,11 +57,10 @@ export class ResourceTimesheetComponent {
     this.weekStart.setHours(0, 0, 0, 0); // Reset time to start of day
   }
 
-  ngOnInit() {
-      const today = new Date();
-      this.loadTimesheetData(today);
-  // Calculate start and end of current week (Monday to Sunday)
-
+ngOnInit() {
+  const today = new Date();
+  this.setCurrentWeekStart(); // Ensure week start is set first
+  this.loadTimesheetData(today);
 }
 
 checkButtonDisabled(day: { date: Date }): boolean {
@@ -92,30 +91,44 @@ getDayIndex(date: Date): number {
 
 
 loadTimesheetData(today: Date) {
+  // Use the same calculation as setCurrentWeekStart for consistency
+  const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
 
-  const weekStart = new Date(today);
-  weekStart.setDate(today.getDate() - today.getDay() + 1); // Monday
-  this.weekStart = weekStart;
+  this.weekStart = new Date(today);
+  this.weekStart.setDate(today.getDate() - daysToSubtract);
+  this.weekStart.setHours(0, 0, 0, 0); // Reset time to start of day
 
-  const weekEnd = new Date(weekStart);
-  weekEnd.setDate(weekStart.getDate() + 6); // Sunday
+  const weekEnd = new Date(this.weekStart);
+  weekEnd.setDate(this.weekStart.getDate() + 6); // Sunday
 
-  const startDateStr = weekStart.toISOString().split('T')[0];
+  const startDateStr = this.weekStart.toISOString().split('T')[0];
   const endDateStr = weekEnd.toISOString().split('T')[0];
+
+  console.log('Week range:', startDateStr, 'to', endDateStr);
 
   // Fetch from API
   this.resourceTimesheetService.getTimeSheetData(startDateStr, endDateStr).subscribe((timeSheetData) => {
-    const weekDates = Array.from({ length: 7 }, (_, i) => {
-      const date = new Date(this.weekStart);
-      date.setDate(this.weekStart.getDate() + i);
-      return date.toDateString(); // for matching
-    });
+    // Generate week dates BEFORE processing data
+    this.updateWeekDays();
+
+    const weekDates = this.days.map(day => day.date.toDateString());
+    console.log('Generated week dates:', weekDates);
 
     this.projects = [];
     this.timesheet = {};
 
+    // Remove duplicates from projects
+    const seenProjects = new Set();
     for (const entry of timeSheetData) {
-      this.projects.push({ code: entry.projectCode, name: entry.projectName });
+      console.log('Processing entry:', entry);
+      if (!seenProjects.has(entry.projectCode)) {
+        this.projects.push({ code: entry.projectCode, name: entry.projectName });
+        seenProjects.add(entry.projectCode);
+      }
+
+      console.log('Project resources for:', entry.projectCode, entry.projectTimeSheet);
+      console.log('Seen projects:', seenProjects);
 
       this.timesheet[entry.projectCode] = weekDates.map(dateStr => {
         const matched = entry.projectTimeSheet.find(
@@ -129,10 +142,11 @@ loadTimesheetData(today: Date) {
       });
     }
 
-    this.updateWeekDays();
+    console.log('Final projects:', this.projects);
+    console.log('Final timesheet data:', this.timesheet);
+    console.log('Days array:', this.days);
+
     this.initializeTimesheetForm();
-
-
   });
 }
 
@@ -192,14 +206,15 @@ console.log('Days:', this.days);
 
 
 
-  updateWeekDays() {
-    this.days = [];
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(this.weekStart);
-      date.setDate(date.getDate() + i);
-      this.days.push({ date });
-    }
+updateWeekDays() {
+  this.days = [];
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(this.weekStart);
+    date.setDate(this.weekStart.getDate() + i);
+    this.days.push({ date });
   }
+  console.log('Updated days:', this.days.map(d => `${d.date.toDateString()} (${d.date.getDay()})`));
+}
 
   initializeTimesheetWithData() {
     const formControls: any = {};
@@ -241,17 +256,38 @@ console.log('Days:', this.days);
   }
 
 prevWeek() {
-  // Friday of previous week = current weekStart - 3 days
+  console.log('Previous week clicked, current weekStart:', this.weekStart);
   const prevFriday = new Date(this.weekStart);
   prevFriday.setDate(prevFriday.getDate() - 3);
+  console.log('Loading data for:', prevFriday);
   this.loadTimesheetData(prevFriday);
 }
 
 nextWeek() {
-  // Pass Monday of next week
+  console.log('Next week clicked, current weekStart:', this.weekStart);
   const nextMonday = new Date(this.weekStart);
-  nextMonday.setDate(nextMonday.getDate() + 7); // Move to next Monday
+  nextMonday.setDate(nextMonday.getDate() + 7);
+  console.log('Loading data for:', nextMonday);
   this.loadTimesheetData(nextMonday);
+}
+
+// 5. Alternative approach - more explicit week calculation
+private calculateWeekDates(referenceDate: Date): Date[] {
+  const dates: Date[] = [];
+  const dayOfWeek = referenceDate.getDay();
+  const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+
+  const monday = new Date(referenceDate);
+  monday.setDate(referenceDate.getDate() - daysToSubtract);
+  monday.setHours(0, 0, 0, 0);
+
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(monday);
+    date.setDate(monday.getDate() + i);
+    dates.push(date);
+  }
+
+  return dates;
 }
 
 
