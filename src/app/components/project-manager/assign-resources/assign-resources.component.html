@@ -19,7 +19,7 @@
       </div>
 
       <!-- Filter Section -->
-      <div class="bg-white rounded-4 pt-3 pb-1">
+    <div class="bg-white rounded-4 pt-3 pb-1">
         <div fxLayout="row" fxLayoutAlign="start center" class="mb-2">
           <h5 class="fw-bold text-primary mb-0">Resource Allocation</h5>
           <button type="button" class="btn p-0 ms-2 d-flex align-items-center justify-content-center"
@@ -58,7 +58,7 @@
           <div fxFlex.gt-sm="15" fxFlex="100" fxLayoutAlign="end center" class="pt-4">
             <button *ngIf="mode === 'all'" type="button" class="btn cozentus-bg text-white rounded-pill px-4"
               (click)="searchResources()">
-              <i class="pi pi-search me-2"></i>Search
+             <i class="pi pi-search me-2"></i>Search
             </button>
 
             <button *ngIf="mode === 'search'" type="button" class="btn cozentus-bg text-white rounded-pill px-4"
@@ -71,6 +71,7 @@
 
 
       </div>
+
 
       <!-- Matching Resources Table -->
       <div class="bg-white rounded-4 ">
@@ -92,14 +93,14 @@
 
             <thead>
               <tr>
-                <th style="background: #f8fbff;">
+                <th style="background: #f8fbff; width:1%">
                 </th>
-                <th style="background: #f0f8fc;">Name</th>
-                <th style="background: #f0f8fc;">Primary Skill</th>
-                <th style="background: #f0f8fc;">Secondary Skill</th>
-                <th style="background: #f0f8fc;">Designation</th>
-                <th style="background: #f0f8fc; ">Exp</th>
-                <th style="background: #f0f8fc; position: relative;">
+                <th style="background: #f0f8fc; width: 12%;">Name</th>
+                <th style="background: #f0f8fc; width:10%;">Primary Skill</th>
+                <th style="background: #f0f8fc; width:10%;">Secondary Skill</th>
+                <th style="background: #f0f8fc; width:10%;">Designation</th>
+                <th style="background: #f0f8fc; width:5%;">Exp</th>
+                <th style="background: #f0f8fc; width:1%;position: relative;">
                   <div class="d-flex justify-content-between align-items-center">
                     <span>Allocation</span>
                     <i class="pi pi-filter text-muted" style="cursor: pointer; font-size: 0.9rem;"
@@ -132,7 +133,7 @@
                      </div>
                   </div>
                 </th>
-                <th style="background: #f0f8fc; position: relative;">
+                <th style="background: #f0f8fc;width:12%; position: relative;">
                   <div class="d-flex justify-content-between align-items-center">
                     <span>Billable %</span>
                     <i class="pi pi-filter text-muted" style="cursor: pointer; font-size: 0.9rem;"
@@ -151,7 +152,7 @@
                     </div>
                   </div>
                 </th>
-                <th style="background: #f0f8fc; position: relative;">
+                <th style="background: #f0f8fc; width:12%; position: relative;">
                   <div class="d-flex justify-content-between align-items-center">
                     <span>Planned Utilization %</span>
                     <i class="pi pi-filter text-muted" style="cursor: pointer; font-size: 0.9rem;"
@@ -170,7 +171,7 @@
                     </div>
                   </div>
                 </th>
-                <th style="background: #f0f8fc; position: relative;">
+                <th style="background: #f0f8fc; width:12%; position: relative;">
                   <div class="d-flex justify-content-between align-items-center">
                     <span>Actual Utilization %</span>
                     <i class="pi pi-filter text-muted" style="cursor: pointer; font-size: 0.9rem;"
@@ -249,12 +250,14 @@
                     </ng-container>
 
                     <!-- No allocations -->
-                    <ng-template #noAlloc>
-                      <span *ngIf="res.currentAllocation.length === 0"
-                        class="badge cool-grey-bg text-white rounded-pill">
-                        <i class="pi pi-minus-circle me-4"></i>None
-                                 </span>
-                    </ng-template>
+                   <ng-template #noAlloc>
+  <span *ngIf="res.currentAllocation.length === 0"
+        class="badge cool-grey-bg text-white rounded-pill d-flex align-items-center justify-content-center px-3 py-1"
+        style="min-width: 80px;">
+    <i class="pi pi-minus-circle me-2"></i>None
+  </span>
+</ng-template>
+
                   </ng-template>
                 </td>
 

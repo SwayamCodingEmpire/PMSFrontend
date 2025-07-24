@@ -18,6 +18,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { DmDashboardService } from '../../../services/manager/dm-dashboard.service';
 import { ProjectData, ResourceDetail, Skill } from '../../delivery-manager/dm-dashboard/dm-dashboard.component';
 import { PmDashboardService } from '../../../services/manager/pm-dashboard.service';
+import { ExcelExportService } from '../../../services/shared/excel-export.service';
 
 type ChartOptions = {
   series: ApexNonAxisChartSeries;
@@ -211,7 +212,8 @@ export class PmDashboardComponent implements OnInit {
             total: {
               show: true,
               label: 'Total Resources',
-              fontSize: '14px'
+              fontSize: '14px',
+              
             }
           }
         }
@@ -316,7 +318,7 @@ export class PmDashboardComponent implements OnInit {
 
 
 
-  constructor(private cdr: ChangeDetectorRef, private dmDashboardService: DmDashboardService, private pmDashboardService: PmDashboardService) { }
+  constructor(private cdr: ChangeDetectorRef, private excelExportService: ExcelExportService,private dmDashboardService: DmDashboardService, private pmDashboardService: PmDashboardService) { }
 
   ngOnInit() {
     this.loadResourceCountPerProject(); // ✅ this correctly sets chart.series and labels
@@ -698,4 +700,7 @@ console.log('Chart labels:', this.projectChart.labels);
     return 'bg-secondary';
   }
 
+  exportDashboard() {
+  this.dmDashboardService.fetchAndExportAll();
+}
 }

@@ -337,16 +337,35 @@ configureEmailProject(proj: any, i: number): void {
     this.router.navigate(['/delivery-manager/add-projects']);
   }
 
-  goToResourceAllocationPage(projectCode: string, projectName: string, customerName: string): void {
-    let projectForTransfer : ProjectBasicModel = {
-      name: projectName,
-      code: projectCode,
-      customer: customerName
-    };
-    this.router.navigate(['/project-manager/allocate-resources', projectCode]);
-    this.projectTransferService.setProject(projectForTransfer);
-    localStorage.setItem('project', JSON.stringify(projectForTransfer));
+ 
+
+goToResourceAllocationPage(projectCode: string, projectName: string, customerName: string): void {
+  const projectForTransfer: ProjectBasicModel = {
+    name: projectName,
+    code: projectCode,
+    customer: customerName
+  };
+
+  // Save project context
+  this.projectTransferService.setProject(projectForTransfer);
+  localStorage.setItem('project', JSON.stringify(projectForTransfer));
+
+  // Determine base route from URL
+  const currentUrl = this.router.url;
+  let basePath = '';
+
+  if (currentUrl.includes('/project-manager')) {
+    basePath = 'project-manager';
+  } else if (currentUrl.includes('/delivery-manager')) {
+    basePath = 'delivery-manager';
+  } else {
+    console.warn('Unknown base path. Defaulting to project-manager');
+    basePath = 'project-manager'; // fallback or set based on role
   }
+
+  this.router.navigate([`/${basePath}/allocate-resources`, projectCode]);
+}
+
 
 
 

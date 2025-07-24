@@ -62,41 +62,38 @@
       <!-- Responsive Table -->
       <div class="table-responsive mb-3">
         <table class="table table-borderless align-middle resource-table mb-0">
-          <thead>
-            <tr>
-              <th style="background: #f8fbff;">Name</th>
-              <th style="background: #f8fbff;">Primary Skill</th>
-              <th style="background: #f8fbff;">Secondary Skill</th>
-              <th style="background: #f8fbff;">Designation</th>
-              <th style="background: #f8fbff; width: 80px;">Exp</th>
-              <!-- <th style="background: #f8fbff;">Allocation Period</th> -->
-              <th style="background: #f8fbff; width: 100px;">Billable %</th>
-              <th style="background: #f8fbff; width: 100px;">Planned Utilization %</th>
-              <th style="background: #f8fbff; width: 100px;">Actual Utilization %</th>
-            </tr>
-          </thead>
+        <thead>
+  <tr>
+    <th style="background: #f8fbff; width: 12%;">Name</th>
+    <th style="background: #f8fbff; width: 10%;">Primary Skill</th>
+    <th style="background: #f8fbff; width: 10%;">Secondary Skill</th>
+    <th style="background: #f8fbff; width: 8%;">Designation</th>
+    <th style="background: #f8fbff; width: 8%;">Exp</th>
+    <th style="background: #f8fbff; width: 14%;">Billable %</th>
+    <th style="background: #f8fbff; width: 19%;">Planned Utilization %</th>
+    <th style="background: #f8fbff; width: 19%;">Actual Utilization %</th>
+  </tr>
+</thead>
+
           <tbody>
             <tr *ngFor="let res of pagedResources; let i = index"
               [ngStyle]="{'background': i % 2 === 0 ? '#f8fbff' : 'transparent'}">
               <td>
                 <span class="fw-semibold text-primary">{{ res.name }}</span>
               </td>
-   <td style="width: 1rem; max-width: 10rem;">
-                  <div class="text-truncate text-secondary" style="width: 100%; overflow: hidden;"
-     [attr.title]="getPrimarySkills(res)">
-  {{ getPrimarySkills(res) }}
-</div>
+  <td style="width: 10%;">
+  <div class="text-truncate text-secondary" [attr.title]="getPrimarySkills(res)">
+    {{ getPrimarySkills(res) }}
+  </div>
+</td>
+<td style="width: 10%;">
+  <div class="text-truncate text-secondary" [attr.title]="getSecondarySkills(res)">
+    {{ getSecondarySkills(res) }}
+  </div>
+</td>
 
-                </td>
-                <td style="width: 1rem; max-width: 10rem;">
-                  <div class="text-truncate text-secondary" style="width: 100%; overflow: hidden;"
-     [attr.title]="getSecondarySkills(res)">
-  {{ getSecondarySkills(res) }}
-</div>
-
-                </td>
-              <td>{{ res.designation }}</td>
-              <td>{{ res.experience }}y</td>
+              <td style="width: 2rem;">{{ res.designation }}</td>
+              <td style="width: 2rem;">{{ res.experience }}y</td>
               <!-- <td class="small">
                 <div *ngIf="res.allocationPeriod">
                   <div class="fw-semibold">{{ res.allocationPeriod.startDate | date:'shortDate' }} - {{ res.allocationPeriod.endDate | date:'shortDate' }}</div>
@@ -104,29 +101,31 @@
                 </div>
                 <span *ngIf="!res.allocationPeriod" class="text-muted">No allocation data</span>
               </td> -->
-              <td>
-                <div class="progress" style="height: 6px;">
-                  <div class="progress-bar bg-info" role="progressbar" [style.width]="(res.billability || 0) + '%'"></div>
-                </div>
-                <small class="text-muted">{{ res.billability || 0 }}%</small>
-              </td>
-              <td>
-                <div class="progress" style="height: 6px;">
-                  <div class="progress-bar cozentus-bg" role="progressbar" [style.width]="(res.plannedUtil || 0) + '%'">
-                  </div>
-                </div>
-                <small class="text-muted">{{ res.plannedUtil || 0 }}%</small>
-              </td>
-              <td>
-                <div class="progress" style="height: 6px;">
-                  <div class="progress-bar" [ngClass]="{
-               'bg-success': (res.actualUtil || 0) >= 80,
-               'bg-warning': (res.actualUtil || 0) >= 50 && (res.actualUtil || 0) < 80,
-               'bg-danger': (res.actualUtil || 0) < 50
-             }" role="progressbar" [style.width]="(res.actualUtil || 0) + '%'"></div>
-                </div>
-                <small class="text-muted">{{ res.actualUtil || 0 }}%</small>
-              </td>
+             <td style="min-width: 12%;">
+  <div class="progress" style="height: 6px;">
+    <div class="progress-bar bg-info" role="progressbar" [style.width]="(res.billability || 0) + '%'"></div>
+  </div>
+  <small class="text-muted">{{ res.billability || 0 }}%</small>
+</td>
+
+<td style="min-width: 12%;">
+  <div class="progress" style="height: 6px;">
+    <div class="progress-bar cozentus-bg" role="progressbar" [style.width]="(res.plannedUtil || 0) + '%'"></div>
+  </div>
+  <small class="text-muted">{{ res.plannedUtil || 0 }}%</small>
+</td>
+
+<td style="min-width: 12%;">
+  <div class="progress" style="height: 6px;">
+    <div class="progress-bar" [ngClass]="{
+      'bg-success': (res.actualUtil || 0) >= 80,
+      'bg-warning': (res.actualUtil || 0) >= 50 && (res.actualUtil || 0) < 80,
+      'bg-danger': (res.actualUtil || 0) < 50
+    }" role="progressbar" [style.width]="(res.actualUtil || 0) + '%'"></div>
+  </div>
+  <small class="text-muted">{{ res.actualUtil || 0 }}%</small>
+</td>
+
             </tr>
           </tbody>
         </table>

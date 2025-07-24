@@ -12,6 +12,7 @@ import { AllocationPayload } from '../../../models/AllocationPayload';
 import { PaginatedResourceAllocationPayload } from '../../../models/PaginatedResourceAllocationPayload';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { PublicService } from '../../../services/public/public.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-add-resources',
@@ -254,7 +255,8 @@ filterDesignations() {
     public fb: FormBuilder,
     private projectTransferService: ProjectTransferService,
     private resourceAllocationService: ResourceAllocationService,
-    private publicService: PublicService
+    private publicService: PublicService,
+    private toastr: ToastrService
   ) { }
 
   isAllocatedToProject(resource: any, projectName: string): boolean {
@@ -798,9 +800,12 @@ filterDesignations() {
 this.resourceAllocationService.saveResourceAllocations(allocations).subscribe({
   next: response => {
     console.log('Resource allocation successful:', response);
+    this.toastr.success('Resource allocation successful', 'Success');
+
     this.loadResourceAllocationsData(); // ✅ Only triggered on success
   },
   error: err => {
+    this.toastr.error('Error');
     console.error('Resource allocation failed:', err);
     // ❌ Do NOT call loadResourceAllocationsData here
     // Optionally: show toast or error message to user

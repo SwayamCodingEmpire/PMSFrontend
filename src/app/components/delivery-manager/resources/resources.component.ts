@@ -64,6 +64,7 @@ export class ResourcesComponent implements OnInit {
     this.selectedEmployee = { ...emp };
     this.loadEmployeeSkills(emp.id);
     this.isPrimary = isPrimary;
+    console.log('Opening skills modal for employee:', emp.name, 'Primary:', isPrimary);
     setTimeout(() => {
       const modalEl = document.getElementById('skillsModal');
       if (modalEl) {
@@ -191,14 +192,18 @@ export class ResourcesComponent implements OnInit {
     this.editingSkillData = { name: '', experience: 0, level: '' };
   }
 
-  copyToClipboard(text: string) {
-    navigator.clipboard.writeText(text).then(() => {
-      // Optional: You can show a toast or console log for feedback
-      console.log(`Copied to clipboard: ${text}`);
-    }).catch(err => {
-      console.error('Failed to copy: ', err);
-    });
-  }
+  copiedItem: string | null = null;
+  copyToClipboard(text: string, label: string) {
+  navigator.clipboard.writeText(text).then(() => {
+    this.copiedItem = text;
+
+    setTimeout(() => {
+      this.copiedItem = null;
+    }, 1500);
+  }).catch(err => {
+    console.error(`Copy failed for ${label}:`, err);
+  });
+}
 
 
   isEditingSkill(skillId: string): boolean {
@@ -305,6 +310,7 @@ export class ResourcesComponent implements OnInit {
       id: ['', Validators.required],
       name: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]+$')]],
       emailId: ['', [Validators.required, Validators.email]],
+
       phoneNumber: ['', [Validators.required, Validators.pattern('^(\\+91[-\\s]?)?[6-9]\\d{9}$')]],
       designation: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]+$')]],
       experience: ['', [Validators.required, Validators.min(0), Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]],

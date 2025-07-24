@@ -49,12 +49,15 @@
         </a>
       </li>
 
-      <li class="nav-item">
-        <a class="nav-link text-white" href="#" role="button" routerLinkActive="active" [routerLink]="[getManagerBaseRoute(),'project-list']"
-          [routerLinkActiveOptions]="{ exact: true }">
-          <i class="fa-regular fa-file-pen me-2"></i> Project List
-        </a>
-      </li>
+<li class="nav-item">
+  <a class="nav-link text-white"
+     [ngClass]="{ 'active': isProjectListNavActive() }"
+     [routerLink]="[getManagerBaseRoute(), 'project-list']"
+     role="button">
+    <i class="fa-regular fa-file-pen me-1"></i> Projects
+  </a>
+</li>
+
 
       <li class="nav-item">
         <a class="nav-link text-white" role="button" routerLinkActive="active"

@@ -5,22 +5,22 @@ import { Observable, of, delay } from 'rxjs';
 import { ManagerTimesheetService } from '../../../services/manager/manager-timesheet.service';
 import { TimesheetSummary } from '../../../models/TimesheetSummary';
 import { TimesheetApprovalPayload } from '../../../models/TimesheetApprovalPayload';
-
+ 
 // Interfaces
 export interface TimeSheetFetchPayload {
   projectCode: string;
   projectName: string;
   projectTimeSheet: ProjectTimeSheet[];
 }
-
+ 
 export interface ProjectTimeSheet {
   date: Date;
   attendanceStatus: boolean;
   hoursWorked: number;
 }
-
-
-
+ 
+ 
+ 
 export interface TimesheetDetail {
   id: string;
   resource: string;
@@ -29,13 +29,13 @@ export interface TimesheetDetail {
   status: string;
   timesheetData: TimeSheetFetchPayload;
 }
-
+ 
 export interface ApiResponse<T> {
   success: boolean;
   data: T;
   message: string;
 }
-
+ 
 @Component({
   selector: 'app-manager-timesheet',
   imports: [CommonModule, FormsModule],
@@ -45,23 +45,23 @@ export interface ApiResponse<T> {
 export class ManagerTimesheetComponent implements OnInit {
   // Current week tracking
   currentStartDate: Date = new Date();
-
+ 
   // UI State
   selectedProject = '';
   selectedTimesheet: TimesheetDetail | null = null;
   activeTab: 'pending' | 'history' = 'pending';
   page = 1;
   pageSize = 5;
-
+ 
   // Data
   timesheets: TimesheetSummary[] = [];
   projects: string[] = [];
   isLoading = false;
   isDetailLoading = false;
-
+ 
   // Static Data - Replace with API calls later
   private staticTimesheets: TimesheetSummary[] = [];
-
+ 
   // private static staticTimesheetDetails: { [key: string]: TimesheetDetail } = {
   //   '1': {
   //     id: '1',
@@ -204,56 +204,56 @@ export class ManagerTimesheetComponent implements OnInit {
   //     ]
   //   }
   // };
-
+ 
   constructor(private mnagerTimeSheetService:ManagerTimesheetService) {
     this.setCurrentWeekStart();
   }
-
+ 
   ngOnInit(): void {
     this.loadTimesheets();
   }
-
+ 
   // Week Management
   private setCurrentWeekStart(): void {
     const today = new Date();
     const dayOfWeek = today.getDay();
     const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-
+ 
     this.currentStartDate = new Date(today);
     this.currentStartDate.setDate(today.getDate() + mondayOffset);
     this.currentStartDate.setHours(0, 0, 0, 0);
   }
-
+ 
   private getWeekEndDate(): Date {
     const endDate = new Date(this.currentStartDate);
     endDate.setDate(endDate.getDate() + 4); // Friday (Monday + 4 days)
     endDate.setHours(23, 59, 59, 999);
     return endDate;
   }
-
-
-
+ 
+ 
+ 
   get currentWeekRange(): string {
     const end = this.getWeekEndDate();
     return `${this.formatDate(this.currentStartDate)} - ${this.formatDate(end)}`;
   }
-
+ 
   private formatDate(date: Date): string {
     return `${date.toLocaleString('default', { month: 'short' })} ${date.getDate()}`;
   }
-
+ 
   private formatDateForBackend(date: Date): string {
    return `${date.toLocaleString('default', { month: 'short' })} ${date.getDate()}`;
 }
-
-
+ 
+ 
   // Static Data Load Methods (Replace with API service calls later)
   private loadTimesheets(): void {
-
+ 
     // Simulate API call with delay
     this.mnagerTimeSheetService.getAllTimesheetSummaryReviewForManager(this.currentStartDate.toISOString().split('T')[0] ,this.getWeekEndDate().toISOString().split('T')[0]).subscribe({
       next: (response) => {
-
+ 
           this.timesheets = response;
           this.isLoading = false;
           this.updateProjects();
@@ -265,27 +265,27 @@ export class ManagerTimesheetComponent implements OnInit {
       }
     });
   }
-
+ 
   // private getTimesheets(): Observable<ApiResponse<TimesheetSummary[]>> {
   //   const startDate = this.currentStartDate;
   //   const endDate = this.getWeekEndDate();
-
+ 
   //   // Filter timesheets by current week and tab
   //   const filteredData = ManagerTimesheetComponent.staticTimesheets.filter(timesheet => {
   //     const weekStart = new Date(timesheet.weekStartDate);
   //     const weekEnd = new Date(timesheet.weekEndDate);
-
+ 
   //     // Check if timesheet week overlaps with current week
   //     const isInDateRange = (weekStart <= endDate && weekEnd >= startDate);
-
+ 
   //     // Filter by tab
   //     const isInTab = this.activeTab === 'pending'
   //       ? timesheet.status !== 'Approved'
   //       : timesheet.status === 'Approved';
-
+ 
   //     return isInDateRange && isInTab;
   //   });
-
+ 
   //   // Simulate API delay
   //   return of({
   //     success: true,
@@ -293,10 +293,10 @@ export class ManagerTimesheetComponent implements OnInit {
   //     message: 'Timesheets loaded successfully'
   //   }).pipe(delay(500));
   // }
-
+ 
   // private getTimesheetDetail(id: string): Observable<ApiResponse<TimesheetDetail>> {
   //   const detail = ManagerTimesheetComponent.staticTimesheetDetails[id];
-
+ 
   //   if (detail) {
   //     return of({
   //       success: true,
@@ -311,75 +311,75 @@ export class ManagerTimesheetComponent implements OnInit {
   //     }).pipe(delay(100));
   //   }
   // }
-
+ 
   // private approveTimesheetApi(id: string): Observable<ApiResponse<any>> {
   //   // Update static data
   //   const timesheet = ManagerTimesheetComponent.staticTimesheets.find(t => t.id === id);
   //   if (timesheet) {
   //     timesheet.status = 'Approved';
   //   }
-
+ 
   //   const detail = ManagerTimesheetComponent.staticTimesheetDetails[id];
   //   if (detail) {
   //     detail.status = 'Approved';
   //   }
-
+ 
   //   return of({
   //     success: true,
   //     data: { id, status: 'Approved' },
   //     message: 'Timesheet approved successfully'
   //   }).pipe(delay(400));
   // }
-
+ 
   // private rejectTimesheetApi(id: string): Observable<ApiResponse<any>> {
   //   // Update static data
   //   const timesheet = ManagerTimesheetComponent.staticTimesheets.find(t => t.id === id);
   //   if (timesheet) {
   //     timesheet.status = 'Rejected';
   //   }
-
+ 
   //   const detail = ManagerTimesheetComponent.staticTimesheetDetails[id];
   //   if (detail) {
   //     detail.status = 'Rejected';
   //   }
-
+ 
   //   return of({
   //     success: true,
   //     data: { id, status: 'Rejected' },
   //     message: 'Timesheet rejected successfully'
   //   }).pipe(delay(400));
   // }
-
+ 
   // UI Event Handlers
   nextWeek(): void {
     this.currentStartDate.setDate(this.currentStartDate.getDate() + 7);
     this.currentStartDate = new Date(this.currentStartDate);
     this.loadTimesheets();
   }
-
+ 
   prevWeek(): void {
     this.currentStartDate.setDate(this.currentStartDate.getDate() - 7);
     this.currentStartDate = new Date(this.currentStartDate);
     this.loadTimesheets();
   }
-
-
-
-
+ 
+ 
+ 
+ 
 onTabChange(tab: 'pending' | 'history'): void {
   this.activeTab = tab;
   this.page = 1; // Reset to first page
 }
-
-
+ 
+ 
   onProjectFilterChange(): void {
     this.resetPagination();
   }
-
+ 
   onPageSizeChange(): void {
     this.resetPagination();
   }
-
+ 
   viewTimesheet(timesheet: TimesheetSummary, index:number): void {
     this.isDetailLoading = true;
     this.selectedTimesheet = {
@@ -394,10 +394,10 @@ onTabChange(tab: 'pending' | 'history'): void {
         projectTimeSheet: []
       }
     };
-
-    this.mnagerTimeSheetService.getTimesheetForResourceAndProject(timesheet.resourceId, timesheet.projectCode, this.currentStartDate.toISOString().split('T')[0] ,this.getWeekEndDate().toISOString().split('T')[0]).subscribe({
+ 
+    this.mnagerTimeSheetService.getTimesheetForResourceAndProject(timesheet.resourceId, timesheet.projectCode, this.currentStartDate ,this.getWeekEndDate()).subscribe({
       next: (response) => {
-
+ 
         console.log('Timesheet details loaded:', response);
           if (this.selectedTimesheet) {
             console.log('Updating existing timesheet data');
@@ -406,9 +406,9 @@ onTabChange(tab: 'pending' | 'history'): void {
             this.selectedTimesheet.timesheetData.projectTimeSheet = response.projectTimeSheet;
           }
           this.isDetailLoading = false;
-
+ 
           console.log('Setting selected timesheet:', this.selectedTimesheet?.timesheetData);
-
+ 
       },
       error: (error) => {
         this.handleError('Error loading timesheet details', error.message);
@@ -416,11 +416,11 @@ onTabChange(tab: 'pending' | 'history'): void {
       }
     });
   }
-
+ 
   closeView(): void {
     this.selectedTimesheet = null;
   }
-
+ 
   approveTimesheet(apporve: boolean): void {
     if (!this.selectedTimesheet)
     {
@@ -429,7 +429,7 @@ onTabChange(tab: 'pending' | 'history'): void {
     }
     else{
       console.log('Approving timesheet:', this.selectedTimesheet);
-
+ 
       const { startDate, endDate } = this.getTimesheetDateRange(this.selectedTimesheet);
       let timesheetApprovalPayload: TimesheetApprovalPayload = {
         resourceId: this.selectedTimesheet.id,
@@ -438,9 +438,9 @@ onTabChange(tab: 'pending' | 'history'): void {
         endDate: endDate,
         approve: apporve
       };
-
+ 
       console.log('Timesheet approval payload:', timesheetApprovalPayload);
-
+ 
       this.mnagerTimeSheetService.approveTimeSheetData(timesheetApprovalPayload).subscribe({
         next: (response) => {
           console.log('Timesheet approval response:', response);
@@ -450,14 +450,14 @@ onTabChange(tab: 'pending' | 'history'): void {
           this.handleError('Error approving timesheet', error.message);
         }
       });
-
+ 
     }
-
+ 
   }
-
+ 
   // rejectTimesheet(): void {
   //   if (!this.selectedTimesheet) return;
-
+ 
   //   this.rejectTimesheetApi(this.selectedTimesheet.id).subscribe({
   //     next: (response) => {
   //       if (response.success) {
@@ -474,78 +474,78 @@ onTabChange(tab: 'pending' | 'history'): void {
   //     }
   //   });
   // }
-
+ 
   // Data Processing
   private updateProjects(): void {
     this.projects = [...new Set(this.timesheets.map(t => t.projectCode))];
   }
-
+ 
   private resetPagination(): void {
     this.page = 1;
   }
-
+ 
   // Computed Properties
 get filteredTimesheets(): TimesheetSummary[] {
   let filtered = this.timesheets;
-
+ 
   // Filter by active tab
   if (this.activeTab === 'pending') {
     filtered = filtered.filter(t => t.status === 'PENDING' || t.status === 'SUBMITTED');
   } else if (this.activeTab === 'history') {
     filtered = filtered.filter(t => t.status !== 'PENDING');
   }
-
+ 
   // Filter by selected project
   if (this.selectedProject) {
     filtered = filtered.filter(t => t.projectCode === this.selectedProject);
   }
-
+ 
   // Reset page if current page is out of range
   if ((this.page - 1) * this.pageSize >= filtered.length && filtered.length > 0) {
     this.page = 1;
   }
-
+ 
   return filtered;
 }
-
-
+ 
+ 
   get pagedTimesheets(): TimesheetSummary[] {
     const start = (this.page - 1) * this.pageSize;
     return this.filteredTimesheets.slice(start, start + this.pageSize);
   }
-
+ 
   get totalPages(): number {
     return Math.ceil(this.filteredTimesheets.length / this.pageSize);
   }
-
+ 
 get processedTimesheetData(): any {
   if (!this.selectedTimesheet) return null;
-
+ 
   const days = this.getWeekDays();
   const project = this.selectedTimesheet.timesheetData;
-
+ 
   const hours = days.map(day => {
     const dayData = project.projectTimeSheet.find(ts =>
       new Date(ts.date).toDateString() === day.toDateString()
     );
     return dayData ? dayData.hoursWorked : 0;
   });
-
+ 
   const rowTotal = hours.reduce((sum, h) => sum + h, 0);
-
+ 
   const projectData = [{
     code: project.projectCode,
     name: project.projectName,
     hours,
     rowTotal
   }];
-
+ 
   const dayTotals = days.map((_, dayIndex) =>
     projectData.reduce((sum, proj) => sum + proj.hours[dayIndex], 0)
   );
-
+ 
   const grandTotal = dayTotals.reduce((sum, total) => sum + total, 0);
-
+ 
   return {
     projects: projectData,
     dayTotals,
@@ -553,8 +553,8 @@ get processedTimesheetData(): any {
     days: days.map(date => ({ date }))
   };
 }
-
-
+ 
+ 
   private getWeekDays(): Date[] {
     const days = [];
     for (let i = 0; i < 5; i++) { // Monday to Friday
@@ -564,28 +564,28 @@ get processedTimesheetData(): any {
     }
     return days;
   }
-
+ 
   // Utility Methods
   private handleError(title: string, message: string): void {
     console.error(title, message);
     alert(`${title}: ${message}`);
   }
-
+ 
   private showSuccessMessage(message: string): void {
     alert(message);
   }
-
+ 
   private getTimesheetDateRange(timesheet: TimesheetDetail): { startDate: Date; endDate: Date } {
   const dates = timesheet.timesheetData.projectTimeSheet.map(pt => new Date(pt.date));
-
+ 
   if (dates.length === 0) {
     throw new Error('No dates available in projectTimeSheet');
   }
-
+ 
   const startDate = new Date(Math.min(...dates.map(d => d.getTime())));
   const endDate = new Date(Math.max(...dates.map(d => d.getTime())));
-
+ 
   return { startDate, endDate };
 }
-
+ 
 }

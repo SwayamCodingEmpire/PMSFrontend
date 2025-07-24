@@ -64,6 +64,17 @@ export class NavbarComponent {
     this.userInitials = this.getInitials(this.userName);
   }
 
+isProjectListNavActive(): boolean {
+  const base = this.getManagerBaseRoute(); // e.g. '/manager'
+  const url = this.router.url;
+
+  return url.startsWith(`${base}/project-list`) ||
+         url.startsWith(`${base}/allocate-resources/`) ||
+         url.startsWith(`${base}/view-allocations/`);
+}
+
+
+
   getInitials(name: string): string {
     if (!name) return '';
     const nameParts = name.trim().split(/\s+/);

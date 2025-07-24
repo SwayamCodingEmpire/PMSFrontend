@@ -134,3 +134,31 @@ select:focus {
   filter: brightness(0) invert(1); // Makes the arrow white
 }
 
+
+
+
+ 
+.copy-tooltip {
+  position: absolute;
+  top: -1.5rem;
+  left: auto;
+  right: 0; /* aligns to the right of icon */
+  background-color: #343a40;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.95;
+  animation: fadeInOut 1.5s ease-in-out;
+}
+ 
+@keyframes fadeInOut {
+  0%   { opacity: 0; transform: translateY(-5px); }
+  20%  { opacity: 1; transform: translateY(0); }
+  80%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-5px); }
+}
+ 

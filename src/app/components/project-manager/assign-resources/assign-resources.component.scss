@@ -249,20 +249,27 @@
   background: #adb3bd !important;
 }
 
-
-
-::ng-deep .p-multiselect-filter {
-  background: white !important;
-  color: #212529 !important;
-  margin-bottom: 0.5rem !important;
+::ng-deep .custom-multiselect .p-multiselect-panel {
+  width: 100% !important; /* Match the multiselect width */
+  min-width: unset;
+  box-sizing: border-box;
 }
-
-::ng-deep .p-multiselect-filter:focus {
-    background: white !important;
-
-  outline: none !important;
+ 
+::ng-deep .custom-multiselect .p-multiselect-header {
+  box-sizing: border-box;
+  padding: 0.5rem;
 }
-
-::ng-deep .p-multiselect-filter::placeholder {
-  color: #6c757d !important;
+ 
+::ng-deep .custom-multiselect .p-multiselect-filter-container {
+  width: calc(100% + 1rem); /* Stretch to cover scrollbar space */
+  margin-right: -0.5rem;     /* Pulls it over the scrollbar */
+  box-sizing: border-box;
+}
+ 
+::ng-deep .custom-multiselect .p-multiselect-filter {
+  width: 100% !important;
+  padding: 0.45rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #ced4da;
+  box-sizing: border-box;
 }

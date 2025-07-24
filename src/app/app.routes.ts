@@ -31,7 +31,7 @@ export const routes: Routes = [
   {
     path: 'delivery-manager',
         canActivate: [authGuard],
-    data: { roles: ['DELIVERY_MANAGER', 'PROJECT_MANAGER'] },
+    data: { role: 'DELIVERY_MANAGER' },
     component: DeliveryManagerLayoutComponent,
     children: [
       // ✅ Default admin route
@@ -42,6 +42,7 @@ export const routes: Routes = [
       { path: 'time-sheet', component: ManagerTimesheetComponent },// Placeholder for time-sheet component
       { path: 'add-projects', component: AddProjectsComponent, data: { mode: 'add' } },
       { path: 'edit-projects/:projectCode', component: AddProjectsComponent, data: { mode: 'edit' } },
+       { path: 'allocate-resources/:projectCode', component: AssignResourceAllocationComponent },
       { path : 'view-allocations/:projectCode', component: ViewAllocationsComponent },
       { path : 'project-type-master', component: ProjectTypeMasterComponent}
     ]
@@ -60,7 +61,7 @@ export const routes: Routes = [
   {
     path: 'project-manager',
             canActivate: [authGuard],
-    data: { roles: ['DELIVERY_MANAGER', 'PROJECT_MANAGER'] },
+    data: { role: 'PROJECT_MANAGER' },
     component: ProjectManagerLayoutComponent,
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },

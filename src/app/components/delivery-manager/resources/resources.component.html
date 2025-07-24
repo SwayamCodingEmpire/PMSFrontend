@@ -27,8 +27,9 @@
               <th>ID</th>
               <th>Email</th>
               <th>Name</th>
-              <th>Primary Skill</th>
-              <th>Secondary Skill</th>
+<th style="width: 10rem;">Primary Skill</th>
+<th style="width: 10rem;">Secondary Skill</th>
+
               <th>Role</th>
               <th>Designation</th>
               <th>Experience (Years)</th>
@@ -56,23 +57,38 @@
                   </button>
                 </td>
 
+                <!-- Copy ID -->
                 <td>
-                  <div class="d-flex align-items-center">
+                  <div class="d-flex align-items-center position-relative">
                     <span class="me-2">{{ emp.id }}</span>
-                    <i class="fa-solid fa-copy copy-icon" style="cursor: pointer" title="Copy ID"
-                      (click)="copyToClipboard(emp.id)"></i>
+                    <i class="fa-solid fa-copy copy-icon" style="cursor: pointer;"
+                      (click)="copyToClipboard(emp.id, 'ID')">
+                    </i>
+
+                    <!-- Tooltip shown when copiedItem matches ID -->
+                    <span *ngIf="copiedItem === emp.id" class="copy-tooltip">
+                      Copied!
+                    </span>
                   </div>
                 </td>
 
+                <!-- Copy Email -->
                 <td>
-                  <div class="d-flex align-items-center" style="max-width: 200px">
+                  <div class="d-flex align-items-center position-relative" style="max-width: 200px">
                     <span class="me-2 text-truncate d-inline-block" style="max-width: 10rem" [attr.title]="emp.emailId">
                       {{ emp.emailId }}
                     </span>
-                    <i class="fa-solid fa-copy copy-icon" style="cursor: pointer" title="Copy Email"
-                      (click)="copyToClipboard(emp.emailId)"></i>
+                    <i class="fa-solid fa-copy copy-icon" style="cursor: pointer;"
+                      (click)="copyToClipboard(emp.emailId, 'Email')">
+                    </i>
+
+                    <!-- Tooltip shown when copiedItem matches Email -->
+                    <span *ngIf="copiedItem === emp.emailId" class="copy-tooltip">
+                      Copied!
+                    </span>
                   </div>
                 </td>
+
 
                 <td>{{ emp.name }}</td>
 
@@ -80,12 +96,13 @@
                 <td class="py-1 px-2" style="width: 1rem; max-width: 10rem;">
                   <ng-container *ngIf="editingIndex !== i; else editPrimary">
                     <div class="d-flex align-items-center justify-content-between skill-cell">
-                      <div class="text-truncate flex-grow-1 pe-2">
-                  <div class="text-truncate text-secondary" style="width: 100%; overflow: hidden;"
-     [attr.title]="getPrimarySkills(emp)" data-bs-toggle="tooltip" data-bs-placement="top">
+<div
+  class="text-truncate text-secondary"
+  style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+  [attr.title]="getPrimarySkills(emp)">
   {{ getPrimarySkills(emp) }}
 </div>
-                      </div>
+
                       <!-- <i class="fa-solid fa-cog text-primary flex-shrink-0" (click)="openSkillsModal(emp, true)"></i> -->
                     </div>
                   </ng-container>
@@ -103,12 +120,14 @@
                 <!-- Secondary Skill -->
                 <td class="py-1 px-2">
                   <div class="d-flex align-items-center justify-content-between skill-cell">
-                    <div class="text-truncate flex-grow-1 pe-2">
-                      <span [attr.title]="getSecondarySkills(emp)" data-bs-toggle="tooltip" data-bs-placement="top"
-                        class="me-2 text-truncate d-inline-block text-secondary">
-                        {{ getSecondarySkills(emp) || "NA" }}
-                      </span>
-                    </div>
+<div
+  class="text-truncate text-secondary"
+  style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+  [attr.title]="getSecondarySkills(emp)">
+  {{ getSecondarySkills(emp) }}
+</div>
+
+
                   </div>
                 </td>
 
@@ -252,14 +271,14 @@
                 <label>Phone Number</label>
                 <input type="text" class="form-control" formControlName="phoneNumber" />
               </div>
-              <div class="col-md-6 mb-3">
+              <!-- <div class="col-md-6 mb-3">
                 <label>Primary Skill</label>
                 <input type="text" class="form-control" formControlName="primarySkill" />
               </div>
               <div class="col-md-6 mb-3">
                 <label>Secondary Skill</label>
                 <input type="text" class="form-control" formControlName="secondarySkill" />
-              </div>
+              </div> -->
               <div class="col-md-6 mb-3">
                 <label>Designation</label>
                 <input type="text" class="form-control" formControlName="designation" />
@@ -462,7 +481,7 @@
 
   <!-- Redesigned Add Resource Modal -->
   <!-- Refined Modal Using Accordion for Manager Selection -->
- <!-- Redesigned Add Resource Modal -->
+  <!-- Redesigned Add Resource Modal -->
   <!-- Refined Modal Using Accordion for Manager Selection -->
   <div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -657,9 +676,8 @@
         </div>
       </div>
     </div>
-
-<!-- Skills Management Modal -->
-<div class="modal fade" id="skillsModal" tabindex="-1" aria-labelledby="skillsModalLabel" aria-hidden="true">
+    </div>
+    <div class="modal fade" id="skillsModal" tabindex="-1" aria-labelledby="skillsModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <div class="modal-header">
@@ -789,3 +807,6 @@
     </div>
   </div>
 </div>
+    </div>
+
+    <!-- Skills Management Modal -->

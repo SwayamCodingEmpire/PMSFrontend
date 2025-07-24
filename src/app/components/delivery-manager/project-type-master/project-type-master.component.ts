@@ -31,7 +31,7 @@ export class ProjectTypeMasterComponent implements OnInit {
   ) {
     this.form = this.fb.group({
       projectType: ['', Validators.required],
-      customer: [false, Validators.required]
+      isCustomerProject: [false, Validators.required]
     });
   }
 
@@ -59,6 +59,7 @@ export class ProjectTypeMasterComponent implements OnInit {
 
     this.saving = true;
     const payload = this.form.value;
+    console.log('Form Submitted:', payload);
     const request$ = this.editMode && this.editId !== null
       ? this.projectTypeService.update({ id: this.editId, ...payload })
       : this.projectTypeService.create(payload);
@@ -81,7 +82,7 @@ export class ProjectTypeMasterComponent implements OnInit {
     this.editId = project.id;
     this.form.patchValue({
       projectType: project.projectType,
-      customer: !!project.customer
+      isCustomerProject: !!project.isCustomerProject
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -127,8 +128,9 @@ export class ProjectTypeMasterComponent implements OnInit {
     this.setPage(1);
   }
 
-  toggleCustomer(): void {
-    const control = this.form.get('customer');
-    control?.setValue(!control?.value);
-  }
+toggleCustomer(): void {
+  const control = this.form.get('isCustomerProject');
+  control?.setValue(!control?.value);
+}
+
 }

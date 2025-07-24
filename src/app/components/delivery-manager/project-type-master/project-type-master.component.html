@@ -12,10 +12,15 @@
     <div class="col-md-4">
       <label class="form-label fw-semibold">Is Customer Project</label>
       <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" id="customerSwitch"
-          [checked]="form.get('customer')?.value" (change)="toggleCustomer()" />
+       <input
+  class="form-check-input"
+  type="checkbox"
+  id="customerSwitch"
+  formControlName="isCustomerProject"
+/>
+
         <label class="form-check-label" for="customerSwitch">
-          {{ form.get('customer')?.value ? 'Yes' : 'No' }}
+          {{ form.get('isCustomerProject')?.value ? 'Yes' : 'No' }}
         </label>
       </div>
     </div>
@@ -41,8 +46,8 @@
         <tr *ngFor="let type of pagedProjectTypes">
           <td>{{ type.projectType }}</td>
           <td>
-            <span class="badge" [ngClass]="type.customer ? 'bg-success' : 'bg-secondary'">
-              {{ type.customer ? 'Yes' : 'No' }}
+            <span class="badge" [ngClass]="type.isCustomerProject ? 'bg-success' : 'bg-secondary'">
+              {{ type.isCustomerProject ? 'Yes' : 'No' }}
             </span>
           </td>
           <td class="text-center">

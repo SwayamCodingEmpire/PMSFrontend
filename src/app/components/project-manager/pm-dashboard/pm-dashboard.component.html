@@ -6,106 +6,91 @@
         Project Manager Dashboard
       </h5>
     </div>
+        <div class="d-flex align-items-center justify-content-end"><button (click)="exportDashboard()" class="cozentus-bg text-light btn col-1" >Export<i class="ps-2 fa-solid fa-file-export"></i></button></div>
+
   </div>
 
   <!-- KPI Cards Section -->
-  <div class="row g-3 mb-4">
+<div class="row g-3 mb-4">
 
-    <!-- Total Resources -->
-    <div class="col-xl col-lg col-md-6 col-sm-6">
-      <div class="card border-0 shadow-sm border-start border-4 border-primary h-100">
-        <div class="card-body p-2">
-          <div class="d-flex align-items-center">
-            <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-primary"
-              style="width: 40px; height: 40px; flex-shrink: 0;" data-bs-toggle="tooltip"
-              title="Includes all active & bench">
-              <i class="fas fa-users text-white" style="font-size: 16px;"></i>
-            </div>
-            <div class="flex-grow-1">
-              <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.totalResources }}</h5>
-              <p class="text-muted mb-0" style="font-size: 0.75rem;">Total Resources</p>
-            </div>
+  <!-- Total Resources -->
+  <div class="col-xl col-lg col-md-6 col-sm-6">
+    <div class="card border-0 shadow-sm border-start border-4 border-primary h-100">
+      <div class="card-body p-2">
+        <div class="d-flex align-items-center">
+          <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-primary"
+            style="width: 40px; height: 40px; flex-shrink: 0;" data-bs-toggle="tooltip"
+            title="Includes all active & bench">
+            <i class="fas fa-users text-white" style="font-size: 16px;"></i>
+          </div>
+          <div class="flex-grow-1">
+            <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.totalResources }}</h5>
+            <p class="text-muted mb-0" style="font-size: 0.75rem;">Total Resources</p>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- Billability Ratio -->
-    <div class="col-xl col-lg col-md-6 col-sm-6">
-      <div class="card border-0 shadow-sm border-start border-4 border-success h-100">
-        <div class="card-body p-2">
-          <div class="d-flex align-items-center">
-            <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-success"
-              style="width: 40px; height: 40px; flex-shrink: 0;" data-bs-toggle="tooltip" title="Billed / Not Billed">
-              <i class="fas fa-tachometer-alt text-white" style="font-size: 16px;"></i>
-            </div>
-            <div class="flex-grow-1">
-              <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.billedNotBilled.billed }} / {{
-                kpiData.billedNotBilled.notBilled }}</h5>
-              <p class="text-muted mb-0" style="font-size: 0.75rem;">Billability</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Customer Utilization -->
-    <div class="col-xl col-lg col-md-6 col-sm-6">
-      <div class="card border-0 shadow-sm border-start border-4 border-info h-100">
-        <div class="card-body p-2">
-          <div class="d-flex align-items-center">
-            <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-info"
-              style="width: 40px; height: 40px; flex-shrink: 0;" data-bs-toggle="tooltip" title="Actual / Planned">
-              <i class="fas fa-briefcase text-white" style="font-size: 16px;"></i>
-            </div>
-            <div class="flex-grow-1">
-              <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.customerActualUtilization }} / {{
-                kpiData.customerPlannedUtilization }}</h5>
-              <p class="text-muted mb-0" style="font-size: 0.75rem;">Customer Utilized</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Non-Customer Utilization -->
-    <div class="col-xl col-lg col-md-6 col-sm-6">
-      <div class="card border-0 shadow-sm border-start border-4 border-warning h-100">
-        <div class="card-body p-2">
-          <div class="d-flex align-items-center">
-            <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-warning"
-              style="width: 40px; height: 40px; flex-shrink: 0;" data-bs-toggle="tooltip" title="Actual / Planned">
-              <i class="fas fa-tools text-white" style="font-size: 16px;"></i>
-            </div>
-            <div class="flex-grow-1">
-              <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.nonCustomerActualUtilization }} / {{
-                kpiData.nonCustomerPlannedUtilization }}</h5>
-              <p class="text-muted mb-0" style="font-size: 0.75rem;">Non-Customer Utilized</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Non Utilized Resources -->
-    <div class="col-xl col-lg col-md-6 col-sm-6">
-      <div class="card border-0 shadow-sm border-start border-4 border-danger h-100">
-        <div class="card-body p-2">
-          <div class="d-flex align-items-center">
-            <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-danger"
-              style="width: 40px; height: 40px; flex-shrink: 0;" data-bs-toggle="tooltip" title="Currently on bench">
-              <i class="fas fa-user-slash text-white" style="font-size: 16px;"></i>
-            </div>
-            <div class="flex-grow-1">
-              <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.nonUtilizedResources }}</h5>
-              <p class="text-muted mb-0" style="font-size: 0.75rem;">Non Utilized Resources</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
+
+  <!-- Billability Ratio -->
+  <div class="col-xl col-lg col-md-6 col-sm-6">
+    <div class="card border-0 shadow-sm border-start border-4 border-success h-100">
+      <div class="card-body p-2">
+        <div class="d-flex align-items-center">
+          <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-success"
+            style="width: 40px; height: 40px; flex-shrink: 0;" data-bs-toggle="tooltip" title="Billed / Not Billed">
+            <i class="fas fa-tachometer-alt text-white" style="font-size: 16px;"></i>
+          </div>
+          <div class="flex-grow-1">
+            <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.billedNotBilled.billed }} / {{
+              kpiData.billedNotBilled.notBilled }}</h5>
+            <p class="text-muted mb-0" style="font-size: 0.75rem;">Billability</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Customer Utilization -->
+  <div class="col-xl col-lg col-md-6 col-sm-6">
+    <div class="card border-0 shadow-sm border-start border-4 border-info h-100">
+      <div class="card-body p-2">
+        <div class="d-flex align-items-center">
+          <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-info"
+            style="width: 40px; height: 40px; flex-shrink: 0;" data-bs-toggle="tooltip" title="Actual / Planned">
+            <i class="fas fa-briefcase text-white" style="font-size: 16px;"></i>
+          </div>
+          <div class="flex-grow-1">
+            <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.customerActualUtilization }} / {{
+              kpiData.customerPlannedUtilization }}</h5>
+            <p class="text-muted mb-0" style="font-size: 0.75rem;">Customer Utilized</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Non-Customer Utilization -->
+  <div class="col-xl col-lg col-md-6 col-sm-6">
+    <div class="card border-0 shadow-sm border-start border-4 border-warning h-100">
+      <div class="card-body p-2">
+        <div class="d-flex align-items-center">
+          <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-warning"
+            style="width: 40px; height: 40px; flex-shrink: 0;" data-bs-toggle="tooltip" title="Actual / Planned">
+            <i class="fas fa-tools text-white" style="font-size: 16px;"></i>
+          </div>
+          <div class="flex-grow-1">
+            <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.nonCustomerActualUtilization }} / {{
+              kpiData.nonCustomerPlannedUtilization }}</h5>
+            <p class="text-muted mb-0" style="font-size: 0.75rem;">Non-Customer Utilized</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
 
   <!-- Main Content Area -->
   <div class="row g-4">
