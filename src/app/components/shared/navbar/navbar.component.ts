@@ -73,6 +73,13 @@ isProjectListNavActive(): boolean {
          url.startsWith(`${base}/view-allocations/`);
 }
 
+isMasterDropdownOpen = false;
+
+toggleMasterDropdown() {
+  this.isMasterDropdownOpen = !this.isMasterDropdownOpen;
+}
+
+
 
 
   getInitials(name: string): string {
@@ -142,6 +149,15 @@ isProjectListNavActive(): boolean {
   isDeliveryManager(): boolean {
     return this.router.url.startsWith('/delivery-manager');
   }
+
+
+isMasterNavActive(): boolean {
+  const base = this.getManagerBaseRoute(); // e.g. '/manager'
+  const url = this.router.url;
+
+  return url.startsWith(`${base}/project-type-master`) ||
+         url.startsWith(`${base}/skills-master`);
+}
 
 
 

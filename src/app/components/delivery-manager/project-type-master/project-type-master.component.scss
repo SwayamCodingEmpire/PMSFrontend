@@ -1,9 +1,8 @@
 .project-type-container {
   padding: 2rem;
-  background-color: #f8fbff;
+  // background-color: #f8fbff;
   border-radius: 0.75rem;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.04);
-  font-family: 'Segoe UI', sans-serif;
 }
 
 /* Section Title */
@@ -76,6 +75,8 @@
   background-color: transparent;
   border-radius: 0.75rem;
   overflow: hidden;
+  table-layout: fixed;
+  /* ⬅️ THIS locks column width to <th> */
 }
 
 .project-type-table thead {
@@ -96,12 +97,13 @@
   padding: 0.35em 0.65em;
 }
 
-.project-type-table tbody tr:nth-child(odd) {
-  background-color: #ffffff;
+.project-type-table.table-striped {
+  --bs-table-striped-bg: #f0f8fc !important;
+  /* Light blue rows */
 }
 
-.project-type-table tbody tr:nth-child(even) {
-  background-color: #f0f8fc;
+.project-type-table.table-striped>tbody>tr:nth-of-type(odd)>td {
+  background-color: #f0f8fc !important;
 }
 
 .project-type-table tbody tr:hover {
@@ -168,6 +170,7 @@
   border: 1px solid #ced4da;
   background-color: #fff;
 }
+
 .form-check-input:checked {
   background-color: #2f72f4;
   border-color: #2f72f4;
@@ -175,4 +178,31 @@
 
 .form-check-input:focus {
   box-shadow: 0 0 0 0.2rem rgba(47, 114, 244, 0.25);
+}
+
+.project-type-table td:nth-child(2),
+.project-type-table th:nth-child(2) {
+  // text-align: center;
+  width: 280px;
+  /* Match your <th> min-width */
+  padding-left: 1rem;
+  /* Add spacing from Action column */
+  padding-right: 1rem;
+  text-align: left;
+  word-wrap: break-word;
+
+}
+
+
+.bg-action {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+body,
+html {
+  background-color: #f8fbff !important;
+  min-height: 100vh;
+
 }

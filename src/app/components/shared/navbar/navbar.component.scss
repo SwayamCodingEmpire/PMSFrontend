@@ -30,7 +30,15 @@
   text-decoration: none !important; /* Remove underline */
 }
 
-.nav-link.active {
+.nav-pills .nav-link.active {
   background-color: #3e5172 !important;
+  color: white !important;
 }
+
+.nav-pills .nav-item.dropdown .nav-link.active,
+.nav-pills .nav-item.dropdown.show > .nav-link {
+  background-color: #3e5172 !important;
+  color: white !important;
+}
+
 
