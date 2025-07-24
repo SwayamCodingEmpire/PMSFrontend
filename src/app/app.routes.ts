@@ -15,6 +15,7 @@ import { AssignResourceAllocationComponent } from './components/project-manager/
 import { ViewAllocationsComponent } from './components/project-manager/view-allocations/view-allocations.component';
 import { authGuard } from './guards/auth.guard';
 import { ProjectTypeMasterComponent } from './components/delivery-manager/project-type-master/project-type-master.component';
+import { SkillMasterComponent } from './components/delivery-manager/skill-master/skill-master.component';
 
 export const routes: Routes = [
 
@@ -44,7 +45,8 @@ export const routes: Routes = [
       { path: 'edit-projects/:projectCode', component: AddProjectsComponent, data: { mode: 'edit' } },
        { path: 'allocate-resources/:projectCode', component: AssignResourceAllocationComponent },
       { path : 'view-allocations/:projectCode', component: ViewAllocationsComponent },
-      { path : 'project-type-master', component: ProjectTypeMasterComponent}
+      { path : 'project-type-master', component: ProjectTypeMasterComponent},
+      { path : 'skills-master', component: SkillMasterComponent}
     ]
   },
   {
