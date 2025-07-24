@@ -343,7 +343,7 @@ onSkillSearchChange() {
 
     }));
 
-    this.excelExportService.exportAsExcelWithNestedSheets(data, 'project_resources');
+    this.excelExportService.exportAsExcelWithNestedSheets(data, 'Skill Lists');
   }
 
 
@@ -700,6 +700,18 @@ triggerSkillSearch(): void {
 
     exportDashboard() {
   this.dmDashboardService.fetchAndExportAll();
+}
+
+exportProjectByManager():void{
+  const data = this.selectedManagerProjects.map(res => ({
+ 
+ 
+    Code: res.code,
+    Name: res.name,
+    Customer: res.customer,
+    Resources: res.resources
+  }));
+  this.excelExportService.exportAsExcelWithNestedSheets(data, 'Projects By Manager');
 }
 
 }

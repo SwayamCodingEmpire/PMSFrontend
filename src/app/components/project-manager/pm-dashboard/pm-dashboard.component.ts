@@ -703,4 +703,6 @@ console.log('Chart labels:', this.projectChart.labels);
   exportDashboard() {
   this.dmDashboardService.fetchAndExportAll();
 }
+
+ 
 }

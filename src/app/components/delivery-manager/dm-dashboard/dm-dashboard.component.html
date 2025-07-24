@@ -272,7 +272,7 @@
           <div *ngIf="selectedManager; else noManagerSelected">
             <div class="table-responsive">
               <div class="d-flex justify-content-end mb-2 px-3">
-                <button class="btn btn-sm btn-outline-success" title="Export Manager Projects" >
+                <button class="btn btn-sm btn-outline-success" title="Export Manager Projects" (click)="exportProjectByManager()">
                   <i class="fa-solid fa-file-export"></i>
                 </button>
               </div>
