@@ -27,8 +27,8 @@
               <th>ID</th>
               <th>Email</th>
               <th>Name</th>
-<th style="width: 10rem;">Primary Skill</th>
-<th style="width: 10rem;">Secondary Skill</th>
+              <th style="width: 10rem;">Primary Skill</th>
+              <th style="width: 10rem;">Secondary Skill</th>
 
               <th>Role</th>
               <th>Designation</th>
@@ -96,12 +96,11 @@
                 <td class="py-1 px-2" style="width: 1rem; max-width: 10rem;">
                   <ng-container *ngIf="editingIndex !== i; else editPrimary">
                     <div class="d-flex align-items-center justify-content-between skill-cell">
-<div
-  class="text-truncate text-secondary"
-  style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
-  [attr.title]="getPrimarySkills(emp)">
-  {{ getPrimarySkills(emp) }}
-</div>
+                      <div class="text-truncate text-secondary"
+                        style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+                        [attr.title]="getPrimarySkills(emp)">
+                        {{ getPrimarySkills(emp) }}
+                      </div>
 
                       <!-- <i class="fa-solid fa-cog text-primary flex-shrink-0" (click)="openSkillsModal(emp, true)"></i> -->
                     </div>
@@ -120,12 +119,11 @@
                 <!-- Secondary Skill -->
                 <td class="py-1 px-2">
                   <div class="d-flex align-items-center justify-content-between skill-cell">
-<div
-  class="text-truncate text-secondary"
-  style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
-  [attr.title]="getSecondarySkills(emp)">
-  {{ getSecondarySkills(emp) }}
-</div>
+                    <div class="text-truncate text-secondary"
+                      style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+                      [attr.title]="getSecondarySkills(emp)">
+                      {{ getSecondarySkills(emp) }}
+                    </div>
 
 
                   </div>
@@ -676,137 +674,137 @@
         </div>
       </div>
     </div>
-    </div>
-    <div class="modal fade" id="skillsModal" tabindex="-1" aria-labelledby="skillsModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="skillsModalLabel">
-          Manage Skills - {{ selectedEmployee.name }}
-        </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <h6 class="mb-0">Skills List</h6>
-          <button class="btn btn-primary btn-sm" (click)="addNewSkill()">
-            <i class="fa-solid fa-plus me-1"></i> Add Skill
-          </button>
+  </div>
+  <div class="modal fade" id="skillsModal" tabindex="-1" aria-labelledby="skillsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="skillsModalLabel">
+            Manage Skills - {{ selectedEmployee.name }}
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-        <div class="table-responsive">
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th>Action</th>
-                <th>Skill Name</th>
-                <th>Experience (Years)</th>
-                <th>Skill Level</th>
-              </tr>
-            </thead>
-            <tbody>
-              <ng-container *ngIf="currentEmployeeSkills.length > 0; else noSkills">
-                <tr *ngFor="let skill of currentEmployeeSkills">
-                  <td>
-                    <button type="button" class="btn btn-link p-0 me-2" (click)="
+        <div class="modal-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="mb-0">Skills List</h6>
+            <button class="btn btn-primary btn-sm" (click)="addNewSkill()">
+              <i class="fa-solid fa-plus me-1"></i> Add Skill
+            </button>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Action</th>
+                  <th>Skill Name</th>
+                  <th>Experience (Years)</th>
+                  <th>Skill Level</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngIf="currentEmployeeSkills.length > 0; else noSkills">
+                  <tr *ngFor="let skill of currentEmployeeSkills">
+                    <td>
+                      <button type="button" class="btn btn-link p-0 me-2" (click)="
                         isEditingSkill(skill.skillName)
                           ? saveSkill(skill)
                           : editSkill(skill)
                       ">
-                      <i [class]="
+                        <i [class]="
                           isEditingSkill(skill.skillName)
                             ? 'fa-solid fa-check text-success'
                             : 'fa-regular fa-pen-to-square'
                         "></i>
-                    </button>
-                    <button type="button" class="btn btn-link p-0 me-2" *ngIf="isEditingSkill(skill.skillName)"
-                      (click)="cancelSkillEdit()">
-                      <i class="fa-solid fa-times text-danger"></i>
-                    </button>
-                    <button type="button" class="btn btn-link p-0" (click)="deleteSkill(skill.skillName)"
-                      *ngIf="!isEditingSkill(skill.skillName)">
-                      <i class="fa-solid fa-trash text-danger"></i>
-                    </button>
-                  </td>
-                  <td>
-                    <!-- Dropdown when adding new skill -->
-                    <ng-container *ngIf="isNewSkill && isEditingSkill(skill.skillName)">
-                      <div class="d-flex align-items-center" style="gap: 0.5rem; max-width: 100%">
-                        <select class="form-select form-select-sm" [(ngModel)]="editingSkillData.name"
-                          style="width: 150px">
-                          <option value="">Select Skill</option>
-                          <option *ngFor="let skillName of skillNames" [value]="skillName">
-                            {{ skillName }}
-                          </option>
-                        </select>
+                      </button>
+                      <button type="button" class="btn btn-link p-0 me-2" *ngIf="isEditingSkill(skill.skillName)"
+                        (click)="cancelSkillEdit()">
+                        <i class="fa-solid fa-times text-danger"></i>
+                      </button>
+                      <button type="button" class="btn btn-link p-0" (click)="deleteSkill(skill.skillName)"
+                        *ngIf="!isEditingSkill(skill.skillName)">
+                        <i class="fa-solid fa-trash text-danger"></i>
+                      </button>
+                    </td>
+                    <td>
+                      <!-- Dropdown when adding new skill -->
+                      <ng-container *ngIf="isNewSkill && isEditingSkill(skill.skillName)">
+                        <div class="d-flex align-items-center" style="gap: 0.5rem; max-width: 100%">
+                          <select class="form-select form-select-sm" [(ngModel)]="editingSkillData.name"
+                            style="width: 150px">
+                            <option value="">Select Skill</option>
+                            <option *ngFor="let skillName of skillNames" [value]="skillName">
+                              {{ skillName }}
+                            </option>
+                          </select>
 
-                        <button class="btn btn-outline-primary btn-sm" type="button">
-                          <i class="fa fa-plus"></i>
-                        </button>
-                      </div>
-                    </ng-container>
+                          <button class="btn btn-outline-primary btn-sm" type="button">
+                            <i class="fa fa-plus"></i>
+                          </button>
+                        </div>
+                      </ng-container>
 
-                    <ng-template #newSkillInput>
-                      <div class="d-flex align-items-center">
-                        <input type="text" class="form-control form-control-sm me-2" [(ngModel)]="newSkillName"
-                          placeholder="Enter new skill name" />
-                        <button class="btn btn-success btn-sm me-1" type="button">
-                          <i class="fa fa-check"></i>
-                        </button>
-                        <button class="btn btn-secondary btn-sm" type="button">
-                          <i class="fa fa-times"></i>
-                        </button>
-                      </div>
-                    </ng-template>
+                      <ng-template #newSkillInput>
+                        <div class="d-flex align-items-center">
+                          <input type="text" class="form-control form-control-sm me-2" [(ngModel)]="newSkillName"
+                            placeholder="Enter new skill name" />
+                          <button class="btn btn-success btn-sm me-1" type="button">
+                            <i class="fa fa-check"></i>
+                          </button>
+                          <button class="btn btn-secondary btn-sm" type="button">
+                            <i class="fa fa-times"></i>
+                          </button>
+                        </div>
+                      </ng-template>
 
-                    <!-- Read-only name otherwise -->
-                    <ng-container *ngIf="!isNewSkill || !isEditingSkill(skill.skillName)">
-                      {{ skill.skillName }}
-                    </ng-container>
-                  </td>
+                      <!-- Read-only name otherwise -->
+                      <ng-container *ngIf="!isNewSkill || !isEditingSkill(skill.skillName)">
+                        {{ skill.skillName }}
+                      </ng-container>
+                    </td>
 
-                  <td>
-                    <ng-container *ngIf="!isEditingSkill(skill.skillName)">
-                      {{ skill.skillExperience }}
-                    </ng-container>
-                    <input *ngIf="isEditingSkill(skill.skillName)" type="number" class="form-control form-control-sm"
-                      [(ngModel)]="editingSkillData.experience" min="0" max="20" />
-                  </td>
-                  <td>
-                    <ng-container *ngIf="!isEditingSkill(skill.skillName)">
-                      <span class="badge" [class.bg-danger]="skill.level === 'Beginner'"
-                        [class.bg-warning]="skill.level === 'Intermediate'"
-                        [class.bg-success]="skill.level === 'Advanced'">
-                        {{ skill.level }}
-                      </span>
-                    </ng-container>
-                    <select *ngIf="isEditingSkill(skill.skillName)" class="form-select form-select-sm"
-                      [(ngModel)]="editingSkillData.level">
-                      <option *ngFor="let level of skillLevels" [value]="level">
-                        {{ level }}
-                      </option>
-                    </select>
-                  </td>
-                </tr>
-              </ng-container>
-              <ng-template #noSkills>
-                <tr>
-                  <td colspan="5" class="text-center text-muted py-3">
-                    No skills added yet. Click "Add Skill" to get started.
-                  </td>
-                </tr>
-              </ng-template>
-            </tbody>
-          </table>
+                    <td>
+                      <ng-container *ngIf="!isEditingSkill(skill.skillName)">
+                        {{ skill.skillExperience }}
+                      </ng-container>
+                      <input *ngIf="isEditingSkill(skill.skillName)" type="number" class="form-control form-control-sm"
+                        [(ngModel)]="editingSkillData.experience" min="0" max="20" />
+                    </td>
+                    <td>
+                      <ng-container *ngIf="!isEditingSkill(skill.skillName)">
+                        <span class="badge" [class.bg-danger]="skill.level === 'Beginner'"
+                          [class.bg-warning]="skill.level === 'Intermediate'"
+                          [class.bg-success]="skill.level === 'Advanced'">
+                          {{ skill.level }}
+                        </span>
+                      </ng-container>
+                      <select *ngIf="isEditingSkill(skill.skillName)" class="form-select form-select-sm"
+                        [(ngModel)]="editingSkillData.level">
+                        <option *ngFor="let level of skillLevels" [value]="level">
+                          {{ level }}
+                        </option>
+                      </select>
+                    </td>
+                  </tr>
+                </ng-container>
+                <ng-template #noSkills>
+                  <tr>
+                    <td colspan="5" class="text-center text-muted py-3">
+                      No skills added yet. Click "Add Skill" to get started.
+                    </td>
+                  </tr>
+                </ng-template>
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="close()">
-          Close
-        </button>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="close()">
+            Close
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </div>
-    </div>
 
-    <!-- Skills Management Modal -->
+<!-- Skills Management Modal -->

@@ -1,177 +1,108 @@
+/* Global page background */
+body,
+html {
+  background-color: #f8fbff !important;
+  min-height: 100vh;
+}
+
+/* Main container styles */
 .skill-type-container {
-  padding: 2rem;
-  background-color: #f8fbff;
-  border-radius: 0.75rem;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.04);
-  font-family: 'Segoe UI', sans-serif;
-}
- 
-/* Section Title */
-.section-title {
-  font-size: 1.35rem;
-  font-weight: 600;
-  color: #2e3c54;
-  margin-bottom: 1.25rem;
-}
- 
-/* Form Layout */
-.skill-type-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.25rem;
-  align-items: end;
-  margin-bottom: 1.5rem;
-}
- 
-.skill-type-form input,
-.skill-type-form select {
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
-  border: 1px solid #ced4da;
-  font-size: 1rem;
-  width: 100%;
-  max-width: 300px;
-  background-color: #ffffff;
-  transition: border-color 0.3s ease;
-}
- 
-.skill-type-form input:focus,
-.skill-type-form select:focus {
-  border-color: #2f72f4;
-  outline: none;
-}
- 
-.skill-type-form .btn {
-  min-width: 100px;
-}
- 
-/* Button styles */
-.btn-primary {
-  background-color: #2f72f4;
-  border-color: #2f72f4;
-  color: white;
-  font-weight: 500;
-}
- 
-.btn-primary:hover {
-  background-color: #255edc;
-  border-color: #255edc;
-}
- 
-.btn-primary:disabled {
-  background-color: #6c757d;
-  border-color: #6c757d;
-  opacity: 0.6;
-}
- 
-.btn-secondary {
-  background-color: #dee2e6;
-  border: none;
-  color: #212529;
-}
- 
-.btn-secondary:hover {
-  background-color: #cfd4d9;
-  color: #000;
-}
- 
-/* Table Styles */
-.skill-type-table {
-  width: 100%;
-  border-collapse: collapse;
   background-color: transparent;
-  border-radius: 0.75rem;
-  overflow: hidden;
-}
- 
-.skill-type-table thead {
-  background-color: #f8fbff;
-}
- 
-.skill-type-table th,
-.skill-type-table td {
-  padding: 0.75rem 1rem;
-  text-align: left;
-  font-size: 0.95rem;
-  color: #333;
-  vertical-align: middle;
-}
- 
-.skill-type-table tbody tr:nth-child(odd) {
-  background-color: #ffffff;
-}
- 
-.skill-type-table tbody tr:nth-child(even) {
-  background-color: #f0f8fc;
-}
- 
-.skill-type-table tbody tr:hover {
-  background-color: #e6f0ff;
-}
- 
-/* Edit Button */
-.edit-button {
-  background-color: transparent;
-  border: none;
-  color: #2f72f4;
-  cursor: pointer;
-  font-size: 1rem;
-}
- 
-.edit-button:hover {
-  text-decoration: underline;
-}
- 
-/* Pagination Controls */
-.pagination {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 1rem;
-  flex-wrap: wrap;
-}
- 
-.pagination-info {
-  font-size: 0.875rem;
-  color: #6c757d;
-}
- 
-.page-nav {
-  display: flex;
-  gap: 0.35rem;
-}
- 
-.page-link {
-  padding: 0.35rem 0.75rem;
-  border: 1px solid #dee2e6;
-  border-radius: 0.4rem;
-  background-color: white;
-  color: #2e3c54;
-  font-size: 0.9rem;
-  cursor: pointer;
-}
- 
-.page-link:hover {
-  background-color: #f0f4ff;
-}
- 
-.page-item.active .page-link {
-  background-color: #2f72f4;
-  color: white;
-  border-color: #2f72f4;
-}
- 
-.page-size-select {
-  padding: 0.25rem 0.5rem;
-  font-size: 0.9rem;
-  margin-left: 0.75rem;
-  border-radius: 0.4rem;
-  border: 1px solid #ced4da;
-  background-color: #fff;
-}
- 
-/* Loading spinner */
-.spinner-border {
-  width: 2rem;
-  height: 2rem;
+  /* Inherit page-level background */
+  min-height: 100vh;
+
+  .resource-card {
+    margin-top: 10px;
+    padding: 20px;
+    border-radius: 6px;
+    border: 1px solid #d7d7d7;
+    background-color: #ffffff;
+    /* Optional: white card surface */
+  }
+
+  .project-type-table {
+    border: 1px solid #dadada;
+    font-size: 15px;
+
+    th {
+      font-weight: 600;
+      background-color: #f9f9f9;
+    }
+
+    td {
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    tbody tr:nth-of-type(odd) {
+      background-color: #f0f8fc !important;
+      /* Light blue striping */
+    }
+
+    tbody tr:hover {
+      background-color: #e5ecf6;
+    }
+
+    .btn-sm {
+      padding: 0.25rem 0.5rem;
+    }
+
+    .btn-outline-primary,
+    .btn-outline-danger {
+      font-size: 14px;
+      padding: 4px 8px;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.4em 0.6em;
+    }
+  }
+
+  .form-label {
+    font-weight: 600;
+    color: #343a40;
+  }
+
+  .add-resource-btn {
+    padding: 6px 16px;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 4px;
+  }
+
+  .pagination-controls {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+
+    select {
+      width: 70px;
+      height: 30px;
+      font-size: 14px;
+    }
+
+    .btn {
+      font-size: 14px;
+      padding: 5px 10px;
+    }
+  }
+
+  .form-control:focus,
+  .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  }
+
+  .btn:disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .project-type-table.table-striped {
+    --bs-table-striped-bg: #f0f8fc !important;
+    /* Light blue rows */
+  }
 }

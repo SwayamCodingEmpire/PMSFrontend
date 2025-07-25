@@ -250,26 +250,31 @@
 }
 
 ::ng-deep .custom-multiselect .p-multiselect-panel {
-  width: 100% !important; /* Match the multiselect width */
+  width: 100% !important;
   min-width: unset;
   box-sizing: border-box;
 }
- 
+
 ::ng-deep .custom-multiselect .p-multiselect-header {
   box-sizing: border-box;
   padding: 0.5rem;
 }
- 
+
 ::ng-deep .custom-multiselect .p-multiselect-filter-container {
-  width: calc(100% + 1rem); /* Stretch to cover scrollbar space */
-  margin-right: -0.5rem;     /* Pulls it over the scrollbar */
+  width: calc(100% + 1rem);
+  margin-right: -0.5rem;
   box-sizing: border-box;
 }
- 
+
 ::ng-deep .custom-multiselect .p-multiselect-filter {
   width: 100% !important;
   padding: 0.45rem 0.75rem;
   border-radius: 6px;
   border: 1px solid #ced4da;
   box-sizing: border-box;
+}
+
+/*Remove the search icon */
+::ng-deep .custom-multiselect .p-multiselect-filter-icon {
+  display: none !important;
 }
