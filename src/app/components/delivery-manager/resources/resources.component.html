@@ -23,12 +23,12 @@
         <table class="table table-borderless table-striped">
           <thead>
             <tr>
-              <th>Acion</th>
+              <th>Action</th>
               <th>ID</th>
               <th>Email</th>
               <th>Name</th>
-              <th style="width: 10rem;">Primary Skill</th>
-              <th style="width: 10rem;">Secondary Skill</th>
+              <th style="width: 9rem;">Primary Skill</th>
+              <th style="width: 9rem;">Secondary Skill</th>
 
               <th>Role</th>
               <th>Designation</th>
@@ -40,11 +40,24 @@
           <tbody>
             <ng-container *ngIf="totalItems > 0; else noResults">
               <tr *ngFor="let emp of employees; let i = index" [ngClass]="{ 'zebra-row': i % 2 === 1 }">
-                <td class="py-1 px-2">
-                  <button type="button" class="btn btn-link p-0 me-2" (click)="editEmployee(i)" title="Edit"
+                <td class="py-2 ps-0">
+                  <button type="button" class="btn btn-link p-0 me-1" (click)="editEmployee(i)" title="Edit"
                     *ngIf="editingIndex !== i">
                     <i class="fa-regular fa-pencil"></i>
                   </button>
+
+                  <button type="button" class="btn btn-link position-relative p-0 me-1"
+                    (click)="viewProjectDetails(emp)" title="View Project Allocations" *ngIf="editingIndex !== i">
+                    <i class="fa-regular fa-eye"></i>
+
+                    <span *ngIf="getTotalProjects(emp.allocation) > 0"
+                      class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                      style="font-size: 0.6rem;">
+                      {{ getTotalProjects(emp.allocation) }}
+                      <span class="visually-hidden">project count</span>
+                    </span>
+                  </button>
+
 
                   <button type="button" class="btn btn-link p-0 me-2" (click)="saveEmployee()" title="Edit"
                     *ngIf="editingIndex === i">
@@ -143,17 +156,43 @@
                 <td>{{ emp.designation }}</td>
                 <td>{{ emp.experience }}</td>
                 <td>{{ emp.reportingManagerName || "N/A" }}</td>
-                <td>
-                  <ng-container>
-                    <button class="project-link d-flex align-items-center btn btn-sm cozentus-bg text-white"
-                      (click)="viewProjectDetails(emp)" style="cursor: pointer; text-decoration: none !important">
-                      <span class="me-2 text-white">View</span>
+                                    <!-- <span class="me-2 text-white">View</span>
                       <span class="badge bg-light text-dark rounded-pill">
                         {{ getTotalProjects(emp.allocation) }}
-                      </span>
-                    </button>
-                  </ng-container>
-                </td>
+
+                      </span> -->
+<!-- Deallocate button (multiple of 7) -->
+               <td>
+  <ng-container>
+    <!-- Deallocate -->
+    <button
+      *ngIf="i % 7 === 0"
+      class="d-flex align-items-center justify-content-center btn btn-sm text-white bg-danger fixed-button-size px-2 rounded"
+      (click)="deallocateProject(emp)"
+    >
+      Deallocate
+    </button>
+
+    <!-- Unavailable -->
+    <button
+      *ngIf="i % 2 === 0 && i % 7 !== 0"
+      class="d-flex align-items-center justify-content-center btn btn-sm text-white cozentus-bg fixed-button-size px-2 rounded"
+      (click)="markUnavailable(emp)"
+    >
+      Unavailable
+    </button>
+
+    <!-- Allocate -->
+    <button
+      *ngIf="i % 3 === 0 && i % 5 !== 0 && i % 7 !== 0"
+      class="d-flex align-items-center justify-content-center btn btn-sm text-white bg-success fixed-button-size px-2 rounded"
+      (click)="allocateProject(emp)"
+    >
+      Allocate
+    </button>
+  </ng-container>
+</td>
+
               </tr>
             </ng-container>
 

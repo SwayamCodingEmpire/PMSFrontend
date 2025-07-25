@@ -137,7 +137,7 @@ select:focus {
 
 
 
- 
+
 .copy-tooltip {
   position: absolute;
   top: -1.5rem;
@@ -154,11 +154,22 @@ select:focus {
   opacity: 0.95;
   animation: fadeInOut 1.5s ease-in-out;
 }
- 
+
 @keyframes fadeInOut {
   0%   { opacity: 0; transform: translateY(-5px); }
   20%  { opacity: 1; transform: translateY(0); }
   80%  { opacity: 1; }
   100% { opacity: 0; transform: translateY(-5px); }
 }
- 
+
+.fixed-button-size {
+  width: 7rem;      // force uniform width
+  height: 2rem;      // matches Bootstrap's btn-sm height
+  padding: 0.375rem 0.75rem;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+

@@ -326,6 +326,45 @@ export class ResourcesComponent implements OnInit {
 
   }
 
+  getButtonClass(i: number): string {
+
+
+  if (i % 7 === 0) return 'bg-danger';
+  if (i % 5 === 0) return 'cozentus-bg';
+  if (i % 3 === 0) return 'bg-success';
+
+  return 'bg-secondary'; // fallback
+}
+
+getButtonText(i: number): string {
+
+
+  if (i % 7 === 0) return 'Deallocate';
+  if (i % 5 === 0) return 'Unavailable';
+  if (i % 3 === 0) return 'Allocate';
+
+  return 'Unavailable'; // fallback
+}
+
+allocateProject(emp: any): void {
+  // Your allocation logic here
+  console.log('Allocating', emp);
+}
+
+markUnavailable(emp: any): void {
+  // Your unavailable logic here
+  console.log('Marking unavailable', emp);
+}
+
+deallocateProject(emp: any): void {
+  // Your deallocation logic here
+  console.log('Deallocating', emp);
+}
+
+
+
+
+
 
 
   Math = Math;
