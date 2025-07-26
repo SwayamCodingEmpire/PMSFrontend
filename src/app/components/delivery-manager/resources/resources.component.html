@@ -40,34 +40,39 @@
           <tbody>
             <ng-container *ngIf="totalItems > 0; else noResults">
               <tr *ngFor="let emp of employees; let i = index" [ngClass]="{ 'zebra-row': i % 2 === 1 }">
-                <td class="py-2 ps-0">
-                  <button type="button" class="btn btn-link p-0 me-1" (click)="editEmployee(i)" title="Edit"
-                    *ngIf="editingIndex !== i">
-                    <i class="fa-regular fa-pencil"></i>
-                  </button>
+                <td class="py-1 px-2">
+                  <div class="d-flex gap-0">
+                    <button type="button" class="btn btn-sm icon-button" (click)="editEmployee(i)" title="Edit"
+                      *ngIf="editingIndex !== i">
+                      <i class="fa-regular fa-pen-to-square"></i>
+                    </button>
 
-                  <button type="button" class="btn btn-link position-relative p-0 me-1"
-                    (click)="viewProjectDetails(emp)" title="View Project Allocations" *ngIf="editingIndex !== i">
-                    <i class="fa-regular fa-eye"></i>
+                    <button type="button" class="btn btn-sm icon-button position-relative"
+                      (click)="viewProjectDetails(emp)" title="View Project Allocations" *ngIf="editingIndex !== i">
+                      <i class="fa-regular fa-eye"></i>
 
-                    <span *ngIf="getTotalProjects(emp.allocation) > 0"
-                      class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                      style="font-size: 0.6rem;">
-                      {{ getTotalProjects(emp.allocation) }}
-                      <span class="visually-hidden">project count</span>
-                    </span>
-                  </button>
+                      <span *ngIf="getTotalProjects(emp.allocation) > 0"
+                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                        style="font-size: 0.6rem;">
+                        {{ getTotalProjects(emp.allocation) }}
+                        <span class="visually-hidden">project count</span>
+                      </span>
+                    </button>
 
+                    <!-- Save button -->
+                    <button type="button" 
+                            class="btn btn-sm icon-button" 
+                            (click)="saveEmployee()" 
+                            title="Save"
+                            *ngIf="editingIndex === i">
+                      <i class="fa-solid fa-check"></i>
+                    </button>
 
-                  <button type="button" class="btn btn-link p-0 me-2" (click)="saveEmployee()" title="Edit"
-                    *ngIf="editingIndex === i">
-                    <i class="fa-solid fa-check"></i>
-                  </button>
-
-                  <button type="button" class="btn btn-link p-0 me-2" (click)="cancelEdit()" title="Edit"
-                    *ngIf="editingIndex === i">
-                    <i class="fa-solid fa-xmark"></i>
-                  </button>
+                    <button type="button" class="btn btn-sm icon-button" (click)="cancelEdit()" title="Cancel"
+                      *ngIf="editingIndex === i">
+                      <i class="fa-solid fa-xmark"></i>
+                    </button>
+                  </div>
                 </td>
 
                 <!-- Copy ID -->
@@ -162,34 +167,43 @@
 
                       </span> -->
 <!-- Deallocate button (multiple of 7) -->
-               <td>
+               <td class="allocation-column">
   <ng-container>
     <!-- Deallocate -->
-    <button
-      *ngIf="i % 7 === 0"
-      class="d-flex align-items-center justify-content-center btn btn-sm text-white bg-danger fixed-button-size px-2 rounded"
-      (click)="deallocateProject(emp)"
-    >
-      Deallocate
-    </button>
+    <div *ngIf="i % 7 === 0" class="allocation-action-card deallocate-card" (click)="confirmDeallocate(emp)">
+      <div class="d-flex align-items-center justify-content-center">
+        <i class="fa-solid fa-user-minus me-1"></i>
+        <span class="action-text">Deallocate</span>
+      </div>
+      <div class="card-indicator bg-danger"></div>
+    </div>
 
     <!-- Unavailable -->
-    <button
-      *ngIf="i % 2 === 0 && i % 7 !== 0"
-      class="d-flex align-items-center justify-content-center btn btn-sm text-white cozentus-bg fixed-button-size px-2 rounded"
-      (click)="markUnavailable(emp)"
-    >
-      Unavailable
-    </button>
+    <div *ngIf="i % 2 === 0 && i % 7 !== 0" class="allocation-action-card unavailable-card" (click)="markUnavailable(emp)">
+      <div class="d-flex align-items-center justify-content-center">
+        <i class="fa-solid fa-user-clock me-1"></i>
+        <span class="action-text">Unavailable</span>
+      </div>
+      <div class="card-indicator cozentus-bg"></div>
+    </div>
 
     <!-- Allocate -->
-    <button
-      *ngIf="i % 3 === 0 && i % 5 !== 0 && i % 7 !== 0"
-      class="d-flex align-items-center justify-content-center btn btn-sm text-white bg-success fixed-button-size px-2 rounded"
-      (click)="allocateProject(emp)"
-    >
-      Allocate
-    </button>
+    <div *ngIf="i % 3 === 0 && i % 5 !== 0 && i % 7 !== 0" class="allocation-action-card allocate-card" (click)="confirmAllocate(emp)">
+      <div class="d-flex align-items-center justify-content-center">
+        <i class="fa-solid fa-user-plus me-1"></i>
+        <span class="action-text">Allocate</span>
+      </div>
+      <div class="card-indicator bg-success"></div>
+    </div>
+
+    <!-- Available (fallback for other cases) -->
+    <div *ngIf="i % 2 !== 0 && i % 3 !== 0 && i % 5 === 0 && i % 7 !== 0" class="allocation-action-card available-card">
+      <div class="d-flex align-items-center justify-content-center">
+        <i class="fa-solid fa-user-check me-1"></i>
+        <span class="action-text">Available</span>
+      </div>
+      <div class="card-indicator bg-info"></div>
+    </div>
   </ng-container>
 </td>
 
@@ -842,6 +856,55 @@
           </button>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Allocation Confirmation Modal -->
+<div class="modal fade" id="allocationConfirmModal" tabindex="-1" aria-labelledby="allocationConfirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow-lg rounded-4">
+      
+      <div class="modal-header border-0 rounded-top-4 px-4 py-3" [ngClass]="confirmationAction === 'allocate' ? 'bg-success' : 'bg-danger'">
+        <h5 class="modal-title fw-semibold text-white" id="allocationConfirmModalLabel">
+          <i class="fas" [ngClass]="confirmationAction === 'allocate' ? 'fa-user-plus' : 'fa-user-minus'" class="me-2"></i>
+          Confirm {{ confirmationAction === 'allocate' ? 'Allocation' : 'Deallocation' }}
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body px-4 py-4">
+        <div class="text-center">
+          <div class="mb-3">
+            <i class="fas fa-question-circle fa-3x" [ngClass]="confirmationAction === 'allocate' ? 'text-success' : 'text-danger'"></i>
+          </div>
+          <h6 class="fw-semibold mb-3">
+            Are you sure you want to {{ confirmationAction === 'allocate' ? 'allocate' : 'deallocate' }} this resource?
+          </h6>
+          <div class="bg-light p-3 rounded-3" *ngIf="selectedEmployeeForAction">
+            <p class="mb-1"><strong>Employee:</strong> {{ selectedEmployeeForAction.name }}</p>
+            <p class="mb-1"><strong>ID:</strong> {{ selectedEmployeeForAction.id }}</p>
+            <p class="mb-0"><strong>Designation:</strong> {{ selectedEmployeeForAction.designation }}</p>
+          </div>
+          <div class="alert alert-warning mt-3" *ngIf="confirmationAction === 'deallocate'">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            This action will remove the resource from their current project assignments.
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer bg-light border-0 rounded-bottom-4 px-4 py-3">
+        <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" 
+                class="btn px-4"
+                [ngClass]="confirmationAction === 'allocate' ? 'btn-success' : 'btn-danger'"
+                (click)="executeAllocationAction()"
+                data-bs-dismiss="modal">
+          <i class="fas" [ngClass]="confirmationAction === 'allocate' ? 'fa-check' : 'fa-trash'" class="me-2"></i>
+          {{ confirmationAction === 'allocate' ? 'Allocate' : 'Deallocate' }}
+        </button>
+      </div>
+
     </div>
   </div>
 </div>

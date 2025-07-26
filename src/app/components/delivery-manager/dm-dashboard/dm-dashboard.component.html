@@ -18,13 +18,17 @@
         <div class="card-body p-2">
           <div class="d-flex align-items-center">
             <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-primary"
-              style="width: 40px; height: 40px; flex-shrink: 0;" data-bs-toggle="tooltip"
-              title="Includes all active & bench">
+              style="width: 40px; height: 40px; flex-shrink: 0;">
               <i class="fas fa-users text-white" style="font-size: 16px;"></i>
             </div>
-            <div class="flex-grow-1">
-              <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.totalResources }}</h5>
-              <p class="text-muted mb-0" style="font-size: 0.75rem;">Total Resources</p>
+            <div class="flex-grow-1 d-flex justify-content-between align-items-center">
+              <div>
+                <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.totalResources }}</h5>
+                <p class="text-muted mb-0" style="font-size: 0.75rem;">Total Resources</p>
+              </div>
+              <i class="fas fa-info-circle text-muted" style="cursor: pointer; font-size: 14px;" 
+                 data-bs-toggle="tooltip" data-bs-placement="top" 
+                 title="Total number of resources including active, bench, and allocated resources. Formula: Active + Bench + Allocated"></i>
             </div>
           </div>
         </div>
@@ -37,13 +41,18 @@
         <div class="card-body p-2">
           <div class="d-flex align-items-center">
             <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-success"
-              style="width: 40px; height: 40px; flex-shrink: 0;" data-bs-toggle="tooltip" title="Billed / Not Billed">
+              style="width: 40px; height: 40px; flex-shrink: 0;">
               <i class="fas fa-tachometer-alt text-white" style="font-size: 16px;"></i>
             </div>
-            <div class="flex-grow-1">
-              <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.billedNotBilled.billed }} / {{
-                kpiData.billedNotBilled.notBilled }}</h5>
-              <p class="text-muted mb-0" style="font-size: 0.75rem;">Billability</p>
+            <div class="flex-grow-1 d-flex justify-content-between align-items-center">
+              <div>
+                <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.billedNotBilled.billed }} / {{
+                  kpiData.billedNotBilled.notBilled }}</h5>
+                <p class="text-muted mb-0" style="font-size: 0.75rem;">Billability</p>
+              </div>
+              <i class="fas fa-info-circle text-muted" style="cursor: pointer; font-size: 14px;" 
+                 data-bs-toggle="tooltip" data-bs-placement="top" 
+                 title="Ratio of billed vs non-billed resources. Formula: (Billed Resources / Total Resources) × 100"></i>
             </div>
           </div>
         </div>
@@ -56,13 +65,18 @@
         <div class="card-body p-2">
           <div class="d-flex align-items-center">
             <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-info"
-              style="width: 40px; height: 40px; flex-shrink: 0;" data-bs-toggle="tooltip" title="Actual / Planned">
+              style="width: 40px; height: 40px; flex-shrink: 0;">
               <i class="fas fa-briefcase text-white" style="font-size: 16px;"></i>
             </div>
-            <div class="flex-grow-1">
-              <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.customerActualUtilization }} / {{
-                kpiData.customerPlannedUtilization }}</h5>
-              <p class="text-muted mb-0" style="font-size: 0.75rem;">Customer Utilized</p>
+            <div class="flex-grow-1 d-flex justify-content-between align-items-center">
+              <div>
+                <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.customerActualUtilization }} / {{
+                  kpiData.customerPlannedUtilization }}</h5>
+                <p class="text-muted mb-0" style="font-size: 0.75rem;">Customer Utilized</p>
+              </div>
+              <i class="fas fa-info-circle text-muted" style="cursor: pointer; font-size: 14px;" 
+                 data-bs-toggle="tooltip" data-bs-placement="top" 
+                 title="Customer project utilization. Formula: (Actual Hours on Customer Projects / Planned Hours on Customer Projects) × 100"></i>
             </div>
           </div>
         </div>
@@ -75,13 +89,18 @@
         <div class="card-body p-2">
           <div class="d-flex align-items-center">
             <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-warning"
-              style="width: 40px; height: 40px; flex-shrink: 0;" data-bs-toggle="tooltip" title="Actual / Planned">
+              style="width: 40px; height: 40px; flex-shrink: 0;">
               <i class="fas fa-tools text-white" style="font-size: 16px;"></i>
             </div>
-            <div class="flex-grow-1">
-              <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.nonCustomerActualUtilization }} / {{
-                kpiData.nonCustomerPlannedUtilization }}</h5>
-              <p class="text-muted mb-0" style="font-size: 0.75rem;">Non-Customer Utilized</p>
+            <div class="flex-grow-1 d-flex justify-content-between align-items-center">
+              <div>
+                <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.nonCustomerActualUtilization }} / {{
+                  kpiData.nonCustomerPlannedUtilization }}</h5>
+                <p class="text-muted mb-0" style="font-size: 0.75rem;">Non-Customer Utilized</p>
+              </div>
+              <i class="fas fa-info-circle text-muted" style="cursor: pointer; font-size: 14px;" 
+                 data-bs-toggle="tooltip" data-bs-placement="top" 
+                 title="Non-customer project utilization (internal projects, training, etc.). Formula: (Actual Hours on Internal Projects / Planned Hours on Internal Projects) × 100"></i>
             </div>
           </div>
         </div>
@@ -90,16 +109,23 @@
 
     <!-- Non Utilized Resources -->
     <div class="col-xl col-lg col-md-6 col-sm-6">
-      <div class="card border-0 shadow-sm border-start border-4 border-danger h-100">
+      <div class="card border-0 shadow-sm border-start border-4 border-danger h-100 kpi-clickable" 
+           style="cursor: pointer;" (click)="openBenchResourcesModal()">
         <div class="card-body p-2">
           <div class="d-flex align-items-center">
             <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-danger"
-              style="width: 40px; height: 40px; flex-shrink: 0;" data-bs-toggle="tooltip" title="Currently on bench">
+              style="width: 40px; height: 40px; flex-shrink: 0;">
               <i class="fas fa-user-slash text-white" style="font-size: 16px;"></i>
             </div>
-            <div class="flex-grow-1">
-              <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.nonUtilizedResources }}</h5>
-              <p class="text-muted mb-0" style="font-size: 0.75rem;">Non Utilized Resources</p>
+            <div class="flex-grow-1 d-flex justify-content-between align-items-center">
+              <div>
+                <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.nonUtilizedResources }}</h5>
+                <p class="text-muted mb-0" style="font-size: 0.75rem;">Non Utilized Resources</p>
+              </div>
+              <i class="fas fa-info-circle text-muted" style="cursor: pointer; font-size: 14px;" 
+                 data-bs-toggle="tooltip" data-bs-placement="top" 
+                 title="Resources currently on bench (not assigned to any project). Formula: Total Resources - Allocated Resources. Click to view details."
+                 (click)="$event.stopPropagation()"></i>
             </div>
           </div>
         </div>
@@ -509,6 +535,74 @@
           </ng-template>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bench Resources Modal -->
+<div class="modal fade" id="benchResourcesModal" tabindex="-1" aria-labelledby="benchResourcesModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content shadow-lg rounded-4">
+      
+      <div class="modal-header border-0 rounded-top-4 px-4 py-3 cozentus-bg text-white">
+        <h5 class="modal-title fw-semibold text-light" id="benchResourcesModalLabel">
+          <i class="fas fa-user-slash me-2"></i>Non Utilized Resources (Bench)
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body px-4 py-4">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead class="table-light">
+              <tr>
+                <th class="text-uppercase small fw-semibold text-center">Status</th>
+                <th class="text-uppercase small fw-semibold">ID</th>
+                <th class="text-uppercase small fw-semibold">Name</th>
+                <th class="text-uppercase small fw-semibold">Previous Project</th>
+                <th class="text-uppercase small fw-semibold text-center">Days on Bench</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let resource of benchResources" class="animate_animated animate_fadeIn bench-row">
+                <td class="text-center">
+                  <ng-container [ngSwitch]="true">
+                    <i *ngSwitchCase="resource.daysOnBench <= 7" class="fas fa-check-circle text-success" title="1-7 days on bench"></i>
+                    <i *ngSwitchCase="resource.daysOnBench > 7 && resource.daysOnBench <= 30" class="fas fa-exclamation-triangle text-warning" title="8-30 days on bench"></i>
+                    <i *ngSwitchCase="resource.daysOnBench > 30" class="fas fa-times-circle text-danger" title="30+ days on bench"></i>
+                  </ng-container>
+                </td>
+                <td class="fw-semibold">{{ resource.id }}</td>
+                <td>{{ resource.name }}</td>
+                <td>{{ resource.previousProject }}</td>
+                <td class="text-center">
+                  <span class="badge rounded-pill px-3 py-2 bench-days-badge">
+                    {{ resource.daysOnBench }} {{ resource.daysOnBench === 1 ? 'day' : 'days' }}
+                  </span>
+                </td>
+              </tr>
+              <tr *ngIf="benchResources.length === 0">
+                <td colspan="5" class="text-center py-4 text-muted">
+                  <i class="fas fa-user-check fa-2x mb-3"></i>
+                  <p class="mb-0">All resources are currently allocated!</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal-footer bg-light border-0 rounded-bottom-4 px-4 py-3">
+        <div class="d-flex justify-content-between w-100 align-items-center">
+          <div class="bench-legend">
+            <span class="badge bg-success me-2">1-7 days</span>
+            <span class="badge bg-warning me-2">8-30 days</span>
+            <span class="badge bg-danger">30+ days</span>
+          </div>
+          <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>

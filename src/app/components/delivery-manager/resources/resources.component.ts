@@ -39,7 +39,11 @@ export class ResourcesComponent implements OnInit {
   private deleteModal: any;
   private projectModal: any;
   private addModal: any;
-  private skillsModal: any
+  private skillsModal: any;
+  private allocationConfirmModal: any;
+  
+  confirmationAction: 'allocate' | 'deallocate' = 'allocate';
+  selectedEmployeeForAction: Employee | null = null;
   editingEmployeeId: string | null = null;
   editingData: { primarySkill: string; secondarySkill: string } = { primarySkill: '', secondarySkill: '' };
   currentEmployeeSkills: SkillDTO[] = [];
@@ -727,5 +731,40 @@ deallocateProject(emp: any): void {
     this.newSkillName = '';
   }
 
+  // Allocation Confirmation Methods
+  confirmAllocate(emp: Employee): void {
+    this.selectedEmployeeForAction = emp;
+    this.confirmationAction = 'allocate';
+    this.openAllocationConfirmModal();
+  }
+
+  confirmDeallocate(emp: Employee): void {
+    this.selectedEmployeeForAction = emp;
+    this.confirmationAction = 'deallocate';
+    this.openAllocationConfirmModal();
+  }
+
+  openAllocationConfirmModal(): void {
+    setTimeout(() => {
+      const modalEl = document.getElementById('allocationConfirmModal');
+      if (modalEl) {
+        this.allocationConfirmModal = new (window as any).bootstrap.Modal(modalEl);
+        this.allocationConfirmModal.show();
+      }
+    }, 0);
+  }
+
+  executeAllocationAction(): void {
+    if (!this.selectedEmployeeForAction) return;
+
+    if (this.confirmationAction === 'allocate') {
+      this.allocateProject(this.selectedEmployeeForAction);
+    } else {
+      this.deallocateProject(this.selectedEmployeeForAction);
+    }
+
+    // Reset selection
+    this.selectedEmployeeForAction = null;
+  }
 
 }

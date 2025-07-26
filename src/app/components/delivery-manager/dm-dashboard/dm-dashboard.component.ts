@@ -109,6 +109,13 @@ export interface ResourceDetail {
   utilization: number;
 }
 
+interface BenchResource {
+  id: string;
+  name: string;
+  previousProject: string;
+  daysOnBench: number;
+}
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -131,6 +138,40 @@ export class DmDashboardComponent implements OnInit {
     nonCustomerActualUtilization: 10,
     nonUtilizedResources: 5
   };
+
+  // Bench Resources Data
+  benchResources: BenchResource[] = [
+    {
+      id: 'EMP001',
+      name: 'John Doe',
+      previousProject: 'Project Alpha',
+      daysOnBench: 5
+    },
+    {
+      id: 'EMP002',
+      name: 'Jane Smith',
+      previousProject: 'Project Beta',
+      daysOnBench: 15
+    },
+    {
+      id: 'EMP003',
+      name: 'Mike Johnson',
+      previousProject: 'Project Gamma',
+      daysOnBench: 45
+    },
+    {
+      id: 'EMP004',
+      name: 'Sarah Wilson',
+      previousProject: 'Project Delta',
+      daysOnBench: 22
+    },
+    {
+      id: 'EMP005',
+      name: 'David Brown',
+      previousProject: 'Project Epsilon',
+      daysOnBench: 60
+    }
+  ];
 
  ngAfterViewInit(): void {
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -713,5 +754,34 @@ exportProjectByManager():void{
   }));
   this.excelExportService.exportAsExcelWithNestedSheets(data, 'Projects By Manager');
 }
+
+  // Bench Resources Modal Methods
+  openBenchResourcesModal(): void {
+    const modalEl = document.getElementById('benchResourcesModal');
+    if (modalEl) {
+      const modal = new bootstrap.Modal(modalEl);
+      modal.show();
+    }
+  }
+
+  getBenchStatusBadgeClass(daysOnBench: number): string {
+    if (daysOnBench <= 7) {
+      return 'bg-success'; // 1-7 days - green
+    } else if (daysOnBench <= 30) {
+      return 'bg-warning'; // 8-30 days - yellow
+    } else {
+      return 'bg-danger'; // 30+ days - red (high stress)
+    }
+  }
+
+  getBenchRowClass(daysOnBench: number): string {
+    if (daysOnBench <= 7) {
+      return 'bench-row-success'; // 1-7 days - light green row
+    } else if (daysOnBench <= 30) {
+      return 'bench-row-warning'; // 8-30 days - light yellow row
+    } else {
+      return 'bench-row-danger'; // 30+ days - light red row (high stress)
+    }
+  }
 
 }
