@@ -19,6 +19,13 @@
         </button>
       </div>
 
+      <!-- Total Skills Count Display (Shown only if form is hidden) -->
+      <div class="mb-3" *ngIf="!formVisible && skills.length > 0">
+        <div class="alert alert-info py-2 px-3 mb-0 skill-count-box">
+          <strong>Total Skills:</strong> {{ skills.length }}
+        </div>
+      </div>
+
       <!-- Form -->
       <form
         *ngIf="formVisible"
@@ -83,16 +90,18 @@
             <tr *ngFor="let skill of pagedSkills">
               <td class="text-start align-middle">
                 <button
-                  class="btn btn-sm btn-outline-primary me-2"
+                  class="btn btn-sm icon-button me-2"
                   (click)="onEdit(skill)"
+                  title="Edit"
                 >
-                  <i class="fa fa-pencil-alt"></i>
+                  <i class="fa-regular fa-pen-to-square"></i>
                 </button>
                 <button
-                  class="btn btn-sm btn-outline-danger"
+                  class="btn btn-sm icon-button"
                   (click)="promptDelete(skill)"
+                  title="Delete"
                 >
-                  <i class="fa fa-trash"></i>
+                  <i class="fa-regular fa-trash"></i>
                 </button>
               </td>
               <td class="text-start align-middle">{{ skill.skillName }}</td>
@@ -161,10 +170,11 @@
             (change)="onPageSizeChange()"
             style="width: 70px"
           >
-            <option [value]="5">5</option>
-            <option [value]="10">10</option>
-            <option [value]="15">15</option>
-            <option [value]="20">20</option>
+            <option [ngValue]="10">10</option>
+            <option [ngValue]="15">15</option>
+            <option [ngValue]="20">20</option>
+            <option [ngValue]="25">25</option>
+            <option [ngValue]="30">30</option>
           </select>
         </div>
       </div>

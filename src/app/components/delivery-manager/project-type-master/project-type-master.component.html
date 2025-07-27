@@ -11,41 +11,68 @@
     <div class="card-body">
       <!-- Add Project Type Button -->
       <div class="text-end mb-3" *ngIf="!formVisible">
-        <button class="btn cozentus-bg text-white no-hover add-resource-btn" (click)="showAddForm()">
+        <button
+          class="btn cozentus-bg text-white no-hover add-resource-btn"
+          (click)="showAddForm()"
+        >
           Add Project Type
         </button>
       </div>
 
       <!-- Form -->
-      <form *ngIf="formVisible" [formGroup]="form" (ngSubmit)="onSubmit()" class="mb-4">
+      <form
+        *ngIf="formVisible"
+        [formGroup]="form"
+        (ngSubmit)="onSubmit()"
+        class="mb-4"
+      >
         <div class="row align-items-end g-3">
           <!-- Project Type Input -->
           <div class="col-md-4">
-            <label for="projectType" class="form-label fw-semibold">Project Type</label>
-            <input id="projectType" type="text" class="form-control" formControlName="projectType"
-              placeholder="Enter name" />
+            <label for="projectType" class="form-label fw-semibold"
+              >Project Type</label
+            >
+            <input
+              id="projectType"
+              type="text"
+              class="form-control"
+              formControlName="projectType"
+              placeholder="Enter name"
+            />
           </div>
 
           <!-- Is Customer Project Switch -->
           <div class="col-md-4">
             <label class="form-label fw-semibold">Customer Project ?</label>
             <div class="form-check form-switch mt-1">
-              <input type="checkbox" class="form-check-input" id="customerSwitch" formControlName="isCustomerProject" />
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="customerSwitch"
+                formControlName="isCustomerProject"
+              />
               <label class="form-check-label ms-2" for="customerSwitch">
                 {{ form.get("isCustomerProject")?.value ? "Yes" : "No" }}
               </label>
             </div>
           </div>
 
-
           <!-- Save/Update + Cancel Buttons -->
           <div class="col-md-4 text-end">
             <div class="d-flex justify-content-end gap-2">
-              <button type="submit" class="btn btn-primary cozentus-bg text-white" style="min-width: 140px">
+              <button
+                type="submit"
+                class="btn btn-primary cozentus-bg text-white"
+                style="min-width: 140px"
+              >
                 <i class="fa fa-save me-1"></i>
                 {{ editMode ? "Update" : "Save" }}
               </button>
-              <button type="button" class="btn btn-secondary" (click)="cancelEdit()">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                (click)="cancelEdit()"
+              >
                 Cancel
               </button>
             </div>
@@ -54,37 +81,45 @@
       </form>
 
       <!-- Table -->
-<div class="table-responsive">
-  <table class="table table-striped align-middle text-nowrap project-type-table">
-    <thead class="table-light">
-      <tr>
-        <th class="text-start" style="width: 40%">Action</th>
-        <th class="text-start" style="width: 50%">Project Type</th>
-        <th class="text-center" style="width: 20%">Customer Project</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let type of pagedProjectTypes">
-        <td class="text-start align-middle">
-          <button class="btn btn-sm btn-outline-primary" (click)="onEdit(type)">
-            <i class="fa fa-pencil-alt"></i>
-          </button>
-        </td>
+      <div class="table-responsive">
+        <table
+          class="table table-striped align-middle text-nowrap project-type-table"
+        >
+          <thead class="table-light">
+            <tr>
+              <th class="text-start" style="width: 40%">Action</th>
+              <th class="text-start" style="width: 50%">Project Type</th>
+              <th class="text-center" style="width: 20%">Customer Project</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let type of pagedProjectTypes">
+              <td class="text-start align-middle">
+                <button
+                  class="btn btn-sm icon-button"
+                  (click)="onEdit(type)"
+                  title="Edit"
+                >
+                  <i class="fa-regular fa-pen-to-square"></i>
+                </button>
+              </td>
 
-        <td class="text-start align-middle">
-          {{ type.projectType }}
-        </td>
+              <td class="text-start align-middle">
+                {{ type.projectType }}
+              </td>
 
-        <td class="text-center align-middle">
-          <span class="badge" [ngClass]="type.customer ? 'bg-success' : 'bg-secondary'">
-            {{ type.customer ? 'Yes' : 'No' }}
-          </span>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
+              <td class="text-center align-middle">
+                <span
+                  class="badge"
+                  [ngClass]="type.customer ? 'bg-success' : 'bg-secondary'"
+                >
+                  {{ type.customer ? "Yes" : "No" }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <!-- Pagination -->
       <div class="d-flex justify-content-end align-items-center mt-3">
@@ -94,30 +129,47 @@
             {{ (currentPage - 1) * pageSize + pagedProjectTypes.length }} of
             {{ projectTypes.length }} entries
           </span>
-          <button class="btn btn-outline-secondary btn-sm me-1" (click)="goToFirstPage()"
-            [disabled]="currentPage === 1">
+          <button
+            class="btn btn-outline-secondary btn-sm me-1"
+            (click)="goToFirstPage()"
+            [disabled]="currentPage === 1"
+          >
             <i class="fa fa-angle-double-left"></i>
           </button>
-          <button class="btn btn-outline-secondary btn-sm me-1" (click)="prevPage()" [disabled]="currentPage === 1">
+          <button
+            class="btn btn-outline-secondary btn-sm me-1"
+            (click)="prevPage()"
+            [disabled]="currentPage === 1"
+          >
             <i class="fa fa-angle-left"></i>
           </button>
           <button class="btn btn-outline-secondary btn-sm me-1" disabled>
             {{ currentPage }}
           </button>
-          <button class="btn btn-outline-secondary btn-sm me-1" (click)="nextPage()"
-            [disabled]="currentPage === totalPages">
+          <button
+            class="btn btn-outline-secondary btn-sm me-1"
+            (click)="nextPage()"
+            [disabled]="currentPage === totalPages"
+          >
             <i class="fa fa-angle-right"></i>
           </button>
-          <button class="btn btn-outline-secondary btn-sm me-2" (click)="goToLastPage()"
-            [disabled]="currentPage === totalPages">
+          <button
+            class="btn btn-outline-secondary btn-sm me-2"
+            (click)="goToLastPage()"
+            [disabled]="currentPage === totalPages"
+          >
             <i class="fa fa-angle-double-right"></i>
           </button>
-          <select class="form-select form-select-sm" [(ngModel)]="pageSize" (change)="onPageSizeChange()"
-            style="width: 70px">
-            <option [value]="5">5</option>
-            <option [value]="10">10</option>
-            <option [value]="15">15</option>
-            <option [value]="20">20</option>
+          <select
+            class="form-select form-select-sm"
+            [(ngModel)]="pageSize"
+            (change)="onPageSizeChange()"
+            style="width: 70px"
+          >
+            <option [ngValue]="5">5</option>
+            <option [ngValue]="10">10</option>
+            <option [ngValue]="15">15</option>
+            <option [ngValue]="20">20</option>
           </select>
         </div>
       </div>

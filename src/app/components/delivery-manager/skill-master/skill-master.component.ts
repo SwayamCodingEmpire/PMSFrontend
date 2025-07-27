@@ -26,7 +26,7 @@ export class SkillMasterComponent implements OnInit, AfterViewInit {
   editMode = false;
   editId: number | null = null;
   currentPage = 1;
-  pageSize = 5;
+  pageSize = 10;
   saving = false;
   loading = false;
   formVisible = false;
@@ -105,10 +105,13 @@ export class SkillMasterComponent implements OnInit, AfterViewInit {
   onSubmit(): void {
     if (this.form.invalid) return;
 
-    const skillName = this.form.value.skillName.toUpperCase();
-    const duplicate = this.skills.some(s => s.skillName.toUpperCase() === skillName);
+    const skillName = this.form.value.skillName.trim().toUpperCase();
+    const duplicate = this.skills.some(s =>
+      s.skillName.toUpperCase() === skillName &&
+      (!this.editMode || s.id !== this.editId) // ignore current editing item in duplicate check
+    );
 
-    if (!this.editMode && duplicate) {
+    if (duplicate) {
       this.toastr.warning('Skill already exists');
       this.saving = false;
       return;
@@ -118,7 +121,16 @@ export class SkillMasterComponent implements OnInit, AfterViewInit {
 
     if (this.editMode && this.editId !== null) {
       const originalSkill = this.skills.find(s => s.id === this.editId);
+
       if (originalSkill) {
+        // If skill name is same as original, show success without update
+        if (originalSkill.skillName.toUpperCase() === skillName) {
+          this.toastr.info('No changes detected');
+          this.resetForm();
+          this.saving = false;
+          return;
+        }
+
         this.skillService.updateSkill(originalSkill.skillName, skillName).subscribe({
           next: () => {
             this.toastr.success('Skill updated successfully');
@@ -126,13 +138,8 @@ export class SkillMasterComponent implements OnInit, AfterViewInit {
 
             this.publicService.getAllSkills().subscribe({
               next: (data: string[]) => {
-                // this.skills = [...new Set(data.map(name => name.trim().toUpperCase()))]
-                //   .sort()
-                //   .map((skillName, index) => ({ id: index + 1, skillName }));
-
                 const cleanedSkills = [...new Set(data.map(name => name.trim().toUpperCase()))].sort();
-                this.skills = cleanedSkills.map((skillName, index) => ({ id: index + 1, skillName })); // fresh copy
-
+                this.skills = cleanedSkills.map((skillName, index) => ({ id: index + 1, skillName }));
                 this.currentPage = 1;
                 this.updatePagination();
               },
@@ -158,13 +165,8 @@ export class SkillMasterComponent implements OnInit, AfterViewInit {
 
           this.publicService.getAllSkills().subscribe({
             next: (data: string[]) => {
-              // this.skills = [...new Set(data.map(name => name.trim().toUpperCase()))]
-              //   .sort()
-              //   .map((skillName, index) => ({ id: index + 1, skillName }));
-
               const cleanedSkills = [...new Set(data.map(name => name.trim().toUpperCase()))].sort();
-              this.skills = cleanedSkills.map((skillName, index) => ({ id: index + 1, skillName })); // fresh copy
-
+              this.skills = cleanedSkills.map((skillName, index) => ({ id: index + 1, skillName }));
               this.currentPage = 1;
               this.updatePagination();
             },
@@ -183,6 +185,7 @@ export class SkillMasterComponent implements OnInit, AfterViewInit {
       });
     }
   }
+
 
   onEdit(skill: SkillItem): void {
     this.editMode = true;
@@ -261,3 +264,4 @@ export class SkillMasterComponent implements OnInit, AfterViewInit {
     this.setPage(this.currentPage);
   }
 }
+ 
