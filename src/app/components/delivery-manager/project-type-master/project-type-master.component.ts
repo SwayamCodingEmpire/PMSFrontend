@@ -56,13 +56,24 @@ export class ProjectTypeMasterComponent implements OnInit {
     });
   }
 
-
   onSubmit(): void {
     if (this.form.invalid) return;
 
-    this.saving = true;
     const payload = this.form.value;
     const isEditMode = this.editMode;
+
+    // Prevent duplicate projectType (case-insensitive)
+    const isDuplicate = this.projectTypes.some(type =>
+      type.projectType.trim().toLowerCase() === payload.projectType.trim().toLowerCase() &&
+      (!isEditMode || (isEditMode && type.id !== this.editId)) // Allow if editing the same one
+    );
+
+    if (isDuplicate) {
+      this.toastr.error('Project type name already exists!');
+      return;
+    }
+
+    this.saving = true;
 
     const request$ = isEditMode && this.editId !== null
       ? this.projectTypeService.update({ id: this.editId, ...payload })
@@ -78,10 +89,8 @@ export class ProjectTypeMasterComponent implements OnInit {
             this.projectTypes = data.sort((a, b) => a.id - b.id);
 
             if (isEditMode) {
-              // Stay on current page after update
               this.setPage(this.currentPage);
             } else {
-              // Go to last page after add
               const lastPage = Math.ceil(this.projectTypes.length / this.pageSize);
               this.setPage(lastPage);
             }
@@ -101,7 +110,6 @@ export class ProjectTypeMasterComponent implements OnInit {
       }
     });
   }
-
 
   onEdit(project: ProjectTypeDTO): void {
     this.editMode = true;
@@ -185,3 +193,4 @@ export class ProjectTypeMasterComponent implements OnInit {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }
+
