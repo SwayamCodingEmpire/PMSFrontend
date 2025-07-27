@@ -18,6 +18,8 @@
         <div class="card-body p-2">
           <div class="d-flex align-items-center">
             <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-primary"
+            data-bs-toggle="tooltip" data-bs-placement="top"
+                 title="Total Resources"
               style="width: 40px; height: 40px; flex-shrink: 0;">
               <i class="fas fa-users text-white" style="font-size: 16px;"></i>
             </div>
@@ -26,8 +28,8 @@
                 <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.totalResources }}</h5>
                 <p class="text-muted mb-0" style="font-size: 0.75rem;">Total Resources</p>
               </div>
-              <i class="fas fa-info-circle text-muted" style="cursor: pointer; font-size: 14px;" 
-                 data-bs-toggle="tooltip" data-bs-placement="top" 
+              <i class="fas fa-info-circle text-muted" style="cursor: pointer; font-size: 14px;"
+                 data-bs-toggle="tooltip" data-bs-placement="top"
                  title="Total number of resources including active, bench, and allocated resources. Formula: Active + Bench + Allocated"></i>
             </div>
           </div>
@@ -41,7 +43,8 @@
         <div class="card-body p-2">
           <div class="d-flex align-items-center">
             <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-success"
-              style="width: 40px; height: 40px; flex-shrink: 0;">
+              style="width: 40px; height: 40px; flex-shrink: 0;"   data-bs-toggle="tooltip" data-bs-placement="top"
+                 title="Billed / Not Billed">
               <i class="fas fa-tachometer-alt text-white" style="font-size: 16px;"></i>
             </div>
             <div class="flex-grow-1 d-flex justify-content-between align-items-center">
@@ -50,8 +53,8 @@
                   kpiData.billedNotBilled.notBilled }}</h5>
                 <p class="text-muted mb-0" style="font-size: 0.75rem;">Billability</p>
               </div>
-              <i class="fas fa-info-circle text-muted" style="cursor: pointer; font-size: 14px;" 
-                 data-bs-toggle="tooltip" data-bs-placement="top" 
+              <i class="fas fa-info-circle text-muted" style="cursor: pointer; font-size: 14px;"
+                 data-bs-toggle="tooltip" data-bs-placement="top"
                  title="Ratio of billed vs non-billed resources. Formula: (Billed Resources / Total Resources) × 100"></i>
             </div>
           </div>
@@ -65,6 +68,8 @@
         <div class="card-body p-2">
           <div class="d-flex align-items-center">
             <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-info"
+              data-bs-toggle="tooltip" data-bs-placement="top"
+                 title="Actual / Planned "
               style="width: 40px; height: 40px; flex-shrink: 0;">
               <i class="fas fa-briefcase text-white" style="font-size: 16px;"></i>
             </div>
@@ -74,8 +79,8 @@
                   kpiData.customerPlannedUtilization }}</h5>
                 <p class="text-muted mb-0" style="font-size: 0.75rem;">Customer Utilized</p>
               </div>
-              <i class="fas fa-info-circle text-muted" style="cursor: pointer; font-size: 14px;" 
-                 data-bs-toggle="tooltip" data-bs-placement="top" 
+              <i class="fas fa-info-circle text-muted" style="cursor: pointer; font-size: 14px;"
+                 data-bs-toggle="tooltip" data-bs-placement="top"
                  title="Customer project utilization. Formula: (Actual Hours on Customer Projects / Planned Hours on Customer Projects) × 100"></i>
             </div>
           </div>
@@ -89,6 +94,8 @@
         <div class="card-body p-2">
           <div class="d-flex align-items-center">
             <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-warning"
+                          data-bs-toggle="tooltip" data-bs-placement="top"
+                 title="Actual / Planned "
               style="width: 40px; height: 40px; flex-shrink: 0;">
               <i class="fas fa-tools text-white" style="font-size: 16px;"></i>
             </div>
@@ -98,8 +105,8 @@
                   kpiData.nonCustomerPlannedUtilization }}</h5>
                 <p class="text-muted mb-0" style="font-size: 0.75rem;">Non-Customer Utilized</p>
               </div>
-              <i class="fas fa-info-circle text-muted" style="cursor: pointer; font-size: 14px;" 
-                 data-bs-toggle="tooltip" data-bs-placement="top" 
+              <i class="fas fa-info-circle text-muted" style="cursor: pointer; font-size: 14px;"
+                 data-bs-toggle="tooltip" data-bs-placement="top"
                  title="Non-customer project utilization (internal projects, training, etc.). Formula: (Actual Hours on Internal Projects / Planned Hours on Internal Projects) × 100"></i>
             </div>
           </div>
@@ -109,11 +116,13 @@
 
     <!-- Non Utilized Resources -->
     <div class="col-xl col-lg col-md-6 col-sm-6">
-      <div class="card border-0 shadow-sm border-start border-4 border-danger h-100 kpi-clickable" 
+      <div class="card border-0 shadow-sm border-start border-4 border-danger h-100 kpi-clickable"
            style="cursor: pointer;" (click)="openBenchResourcesModal()">
         <div class="card-body p-2">
           <div class="d-flex align-items-center">
             <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-danger"
+                          data-bs-toggle="tooltip" data-bs-placement="top"
+                 title="Total Non Utilized Resources "
               style="width: 40px; height: 40px; flex-shrink: 0;">
               <i class="fas fa-user-slash text-white" style="font-size: 16px;"></i>
             </div>
@@ -122,8 +131,8 @@
                 <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.nonUtilizedResources }}</h5>
                 <p class="text-muted mb-0" style="font-size: 0.75rem;">Non Utilized Resources</p>
               </div>
-              <i class="fas fa-info-circle text-muted" style="cursor: pointer; font-size: 14px;" 
-                 data-bs-toggle="tooltip" data-bs-placement="top" 
+              <i class="fas fa-info-circle text-muted" style="cursor: pointer; font-size: 14px;"
+                 data-bs-toggle="tooltip" data-bs-placement="top"
                  title="Resources currently on bench (not assigned to any project). Formula: Total Resources - Allocated Resources. Click to view details."
                  (click)="$event.stopPropagation()"></i>
             </div>
@@ -543,7 +552,7 @@
 <div class="modal fade" id="benchResourcesModal" tabindex="-1" aria-labelledby="benchResourcesModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content shadow-lg rounded-4">
-      
+
       <div class="modal-header border-0 rounded-top-4 px-4 py-3 cozentus-bg text-white">
         <h5 class="modal-title fw-semibold text-light" id="benchResourcesModalLabel">
           <i class="fas fa-user-slash me-2"></i>Non Utilized Resources (Bench)
@@ -552,8 +561,9 @@
       </div>
 
       <div class="modal-body px-4 py-4">
-        <div class="table-responsive">
-          <table class="table table-hover align-middle">
+<div class="table-responsive bench-table-scroll">
+  <table class="table table-hover align-middle mb-0">
+
             <thead class="table-light">
               <tr>
                 <th class="text-uppercase small fw-semibold text-center">Status</th>

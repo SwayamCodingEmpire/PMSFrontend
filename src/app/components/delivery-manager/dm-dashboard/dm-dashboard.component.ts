@@ -109,7 +109,7 @@ export interface ResourceDetail {
   utilization: number;
 }
 
-interface BenchResource {
+export interface BenchResource {
   id: string;
   name: string;
   previousProject: string;
@@ -757,11 +757,24 @@ exportProjectByManager():void{
 
   // Bench Resources Modal Methods
   openBenchResourcesModal(): void {
+    this.loadBenchedResources();
     const modalEl = document.getElementById('benchResourcesModal');
     if (modalEl) {
       const modal = new bootstrap.Modal(modalEl);
       modal.show();
     }
+  }
+
+  loadBenchedResources(){
+    this.dmDashboardService.getBenchedResources().subscribe({
+      next: (data: BenchResource[]) => {
+        this.benchResources = data;
+        console.log('Benched resources loaded:', this.benchResources);
+      },
+      error: (err) => {
+        console.error('Error loading benched resources:', err);
+      }
+    });
   }
 
   getBenchStatusBadgeClass(daysOnBench: number): string {

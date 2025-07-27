@@ -28,9 +28,10 @@ interface Skill {
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, FormsModule],
   templateUrl: './resources.component.html',
-  styleUrl: './resources.component.scss'
+  styleUrl: './resources.component.scss',
 })
 export class ResourcesComponent implements OnInit {
+  loggedInUserEmpId: string = '';
   isCreatingNewSkill: boolean = false;
   newSkillName: string = '';
   role: string = '';
@@ -40,16 +41,36 @@ export class ResourcesComponent implements OnInit {
   private projectModal: any;
   private addModal: any;
   private skillsModal: any;
-  private allocationConfirmModal: any;
-  
+  private allocationConfirmModal: any;  
+  Math = Math;
+
+
   confirmationAction: 'allocate' | 'deallocate' = 'allocate';
   selectedEmployeeForAction: Employee | null = null;
   editingEmployeeId: string | null = null;
-  editingData: { primarySkill: string; secondarySkill: string } = { primarySkill: '', secondarySkill: '' };
+  editingData: { primarySkill: string; secondarySkill: string } = {
+    primarySkill: '',
+    secondarySkill: '',
+  };
   currentEmployeeSkills: SkillDTO[] = [];
   editingSkillId: string | null = null;
-  editingSkillData: { name: string; experience: number; level: string } = { name: '', experience: 0, level: '' };
-  skillNames = ['Java', 'Angular', 'React', 'Python', 'Node.js', 'MySQL', 'MongoDB', 'Docker', 'AWS', 'Kubernetes'];
+  editingSkillData: { name: string; experience: number; level: string } = {
+    name: '',
+    experience: 0,
+    level: '',
+  };
+  skillNames = [
+    'Java',
+    'Angular',
+    'React',
+    'Python',
+    'Node.js',
+    'MySQL',
+    'MongoDB',
+    'Docker',
+    'AWS',
+    'Kubernetes',
+  ];
   skillLevels = ['Beginner', 'Intermediate', 'Advanced'];
 
   loadSkillNames(): void {
@@ -59,7 +80,7 @@ export class ResourcesComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error loading skills:', err);
-      }
+      },
     });
   }
 
@@ -68,7 +89,12 @@ export class ResourcesComponent implements OnInit {
     this.selectedEmployee = { ...emp };
     this.loadEmployeeSkills(emp.id);
     this.isPrimary = isPrimary;
-    console.log('Opening skills modal for employee:', emp.name, 'Primary:', isPrimary);
+    console.log(
+      'Opening skills modal for employee:',
+      emp.name,
+      'Primary:',
+      isPrimary
+    );
     setTimeout(() => {
       const modalEl = document.getElementById('skillsModal');
       if (modalEl) {
@@ -76,22 +102,25 @@ export class ResourcesComponent implements OnInit {
         this.skillsModal.show();
 
         if (isPrimary) {
-          this.currentEmployeeSkills = (emp.primarySkill ?? []).map(skill => ({
-            skillName: skill.skillName,
-            skillExperience: skill.skillExperience,
-            level: skill.level
-          }));
+          this.currentEmployeeSkills = (emp.primarySkill ?? []).map(
+            (skill) => ({
+              skillName: skill.skillName,
+              skillExperience: skill.skillExperience,
+              level: skill.level,
+            })
+          );
         } else {
-          this.currentEmployeeSkills = (emp.secondarySkill ?? []).map(skill => ({
-            skillName: skill.skillName,
-            skillExperience: skill.skillExperience,
-            level: skill.level
-          }));
+          this.currentEmployeeSkills = (emp.secondarySkill ?? []).map(
+            (skill) => ({
+              skillName: skill.skillName,
+              skillExperience: skill.skillExperience,
+              level: skill.level,
+            })
+          );
         }
       }
     }, 0);
   }
-
 
   loadEmployeeSkills(empId: string): void {
     // Static data for now - in real implementation, this would come from API
@@ -117,7 +146,7 @@ export class ResourcesComponent implements OnInit {
     this.editingSkillData = {
       name: skill.skillName,
       experience: skill.skillExperience,
-      level: skill.level
+      level: skill.level,
     };
   }
 
@@ -136,9 +165,10 @@ export class ResourcesComponent implements OnInit {
       return;
     }
 
-    const isDuplicate = this.currentEmployeeSkills.some(s =>
-      s.skillName === this.editingSkillData.name &&
-      s.skillName !== skill.skillName // only if editing
+    const isDuplicate = this.currentEmployeeSkills.some(
+      (s) =>
+        s.skillName === this.editingSkillData.name &&
+        s.skillName !== skill.skillName // only if editing
     );
 
     if (!this.isNewSkill && isDuplicate) {
@@ -149,47 +179,48 @@ export class ResourcesComponent implements OnInit {
     const upsertData: SkillUpsertDTO = {
       experience: this.editingSkillData.experience,
       skillLevel: this.editingSkillData.level,
-      skillPriority: this.isPrimary ? 'PRIMARY' : 'SECONDARY'
+      skillPriority: this.isPrimary ? 'PRIMARY' : 'SECONDARY',
     };
-
-
 
     const empId = this.selectedEmployee.id;
 
     if (this.isNewSkill) {
       // Call ADD
-      this.resourceService.addSkillForResource(empId, upsertData, this.editingSkillData.name).subscribe({
-        next: (response) => {
-          console.log('Skill added successfully:', response);
-          this.cancelSkillEdit();
-          this.skillsModal.hide();
-          this.loadResources();
-          this.showSuccessToast('Skill added successfully');
-        },
-        error: (error) => {
-          console.error('Error adding skill:', error);
-          this.showErrorToast('Error adding skill');
-          this.cancelSkillEdit();
-        }
-      });
+      this.resourceService
+        .addSkillForResource(empId, upsertData, this.editingSkillData.name)
+        .subscribe({
+          next: (response) => {
+            console.log('Skill added successfully:', response);
+            this.cancelSkillEdit();
+            this.skillsModal.hide();
+            this.loadResources();
+            this.showSuccessToast('Skill added successfully');
+          },
+          error: (error) => {
+            console.error('Error adding skill:', error);
+            this.showErrorToast('Error adding skill');
+            this.cancelSkillEdit();
+          },
+        });
     } else {
       // Call UPDATE
-      this.resourceService.updateSkillForResource(empId, upsertData, skill.skillName).subscribe({
-        next: (response) => {
-          console.log('Skill updated successfully:', response);
-          this.cancelSkillEdit();
-          this.loadResources();
-          this.showSuccessToast('Skill updated successfully');
-        },
-        error: (error) => {
-          console.error('Error updating skill:', error);
-          this.showErrorToast('Error updating skill');
-          this.cancelSkillEdit();
-        }
-      });
+      this.resourceService
+        .updateSkillForResource(empId, upsertData, skill.skillName)
+        .subscribe({
+          next: (response) => {
+            console.log('Skill updated successfully:', response);
+            this.cancelSkillEdit();
+            this.loadResources();
+            this.showSuccessToast('Skill updated successfully');
+          },
+          error: (error) => {
+            console.error('Error updating skill:', error);
+            this.showErrorToast('Error updating skill');
+            this.cancelSkillEdit();
+          },
+        });
     }
   }
-
 
   cancelSkillEdit(): void {
     this.editingSkillId = null;
@@ -198,35 +229,41 @@ export class ResourcesComponent implements OnInit {
 
   copiedItem: string | null = null;
   copyToClipboard(text: string, label: string) {
-  navigator.clipboard.writeText(text).then(() => {
-    this.copiedItem = text;
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        this.copiedItem = text;
 
-    setTimeout(() => {
-      this.copiedItem = null;
-    }, 1500);
-  }).catch(err => {
-    console.error(`Copy failed for ${label}:`, err);
-  });
-}
-
+        setTimeout(() => {
+          this.copiedItem = null;
+        }, 1500);
+      })
+      .catch((err) => {
+        console.error(`Copy failed for ${label}:`, err);
+      });
+  }
 
   isEditingSkill(skillId: string): boolean {
     return this.editingSkillId === skillId;
   }
 
   deleteSkill(skillName: string): void {
-    this.currentEmployeeSkills = this.currentEmployeeSkills.filter(s => s.skillName !== skillName);
-    this.resourceService.deleteSkillForResource(this.selectedEmployee.id, skillName).subscribe({
-      next: (response) => {
-        console.log('Skill deleted successfully:', response);
-        this.loadResources();
-        this.showSuccessToast('Skill deleted successfully');
-      },
-      error: (error) => {
-        console.error('Error deleting skill:', error);
-        this.showErrorToast('Error deleting skill');
-      }
-    });
+    this.currentEmployeeSkills = this.currentEmployeeSkills.filter(
+      (s) => s.skillName !== skillName
+    );
+    this.resourceService
+      .deleteSkillForResource(this.selectedEmployee.id, skillName)
+      .subscribe({
+        next: (response) => {
+          console.log('Skill deleted successfully:', response);
+          this.loadResources();
+          this.showSuccessToast('Skill deleted successfully');
+        },
+        error: (error) => {
+          console.error('Error deleting skill:', error);
+          this.showErrorToast('Error deleting skill');
+        },
+      });
   }
 
   addNewSkill(): void {
@@ -234,20 +271,17 @@ export class ResourcesComponent implements OnInit {
     const newSkill: SkillDTO = {
       skillName: tempId, // temporarily set a unique skillName
       skillExperience: 0,
-      level: 'Beginner'
+      level: 'Beginner',
     };
     this.isNewSkill = true;
     this.editingSkillId = tempId; // match with temporary ID
     this.editingSkillData = {
       name: '',
       experience: 0,
-      level: 'Beginner'
+      level: 'Beginner',
     };
     this.currentEmployeeSkills.push(newSkill);
   }
-
-
-
 
   // --- Save All Skills to Main Form (on modal close) ---
   close(): void {
@@ -270,13 +304,9 @@ export class ResourcesComponent implements OnInit {
   totalItems = 0;
   editForm: FormGroup;
 
-
   isEditing(empId: string): boolean {
     return this.editingEmployeeId === empId;
   }
-
-
-
 
   // Modal references
   // private deleteModal: any;
@@ -291,89 +321,136 @@ export class ResourcesComponent implements OnInit {
 
   toastMessage: string = '';
 
-
   formatSkillArray(skills: SkillDTO[] | null): string {
     if (!skills || skills.length === 0) return '';
     return skills
-      .map(skill => `${skill.skillName} (${skill.skillExperience}y, ${skill.level})`)
+      .map(
+        (skill) =>
+          `${skill.skillName} (${skill.skillExperience}y, ${skill.level})`
+      )
       .join(', ');
   }
 
-
   getPrimarySkills(employee: Employee): string {
-    return (employee.primarySkill ?? []).map(skill => skill.skillName).join(', ');
+    return (employee.primarySkill ?? [])
+      .map((skill) => skill.skillName)
+      .join(', ');
   }
 
   getSecondarySkills(employee: Employee): string {
-    return (employee.secondarySkill ?? []).map(skill => skill.skillName).join(', ');
+    return (employee.secondarySkill ?? [])
+      .map((skill) => skill.skillName)
+      .join(', ');
   }
 
-
-  constructor(private fb: FormBuilder, private resourceService: ResourceService, private usersService: UsersService, private publicService: PublicService, private reesourceAllocation: ResourceAllocationService) {
-        this.resourceForm = this.fb.group({
+  constructor(
+    private fb: FormBuilder,
+    private resourceService: ResourceService,
+    private usersService: UsersService,
+    private publicService: PublicService,
+    private reesourceAllocation: ResourceAllocationService
+  ) {
+    this.resourceForm = this.fb.group({
       id: ['', Validators.required],
       name: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]+$')]],
       emailId: ['', [Validators.required, Validators.email]],
 
-      phoneNumber: ['', [Validators.required, Validators.pattern('^(\\+91[-\\s]?)?[6-9]\\d{9}$')]],
-      designation: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]+$')]],
-      experience: ['', [Validators.required, Validators.min(0), Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]],
+      phoneNumber: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern('^(\\+91[-\\s]?)?[6-9]\\d{9}$'),
+        ],
+      ],
+      designation: [
+        '',
+        [Validators.required, Validators.pattern('^[a-zA-Z ]+$')],
+      ],
+      experience: [
+        '',
+        [
+          Validators.required,
+          Validators.min(0),
+          Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$'),
+        ],
+      ],
       role: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]+$')]],
-      reportingManager: ['', Validators.required]
+
+      reportingManager: ['', Validators.required],
+      resourceRole: ['RESOURCE', Validators.required], // Default to RESOURCE
     });
     this.editForm = this.fb.group({
       id: ['', Validators.required],
-      primarySkill: ['', Validators.required],
-      secondarySkill: [''],
       role: ['', Validators.required],
+      designation:['', Validators.required],
+       experience: [
+        '',
+        [
+          Validators.required,
+          Validators.min(0),
+          Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$'),
+        ],
+      ],
+      reportingManager:['', Validators.required]
     });
-
   }
 
   getButtonClass(i: number): string {
+    if (i % 7 === 0) return 'bg-danger';
+    if (i % 5 === 0) return 'cozentus-bg';
+    if (i % 3 === 0) return 'bg-success';
+
+    return 'bg-secondary'; // fallback
+  }
+
+  getButtonText(i: number): string {
+    if (i % 7 === 0) return 'Deallocate';
+    if (i % 5 === 0) return 'Unavailable';
+    if (i % 3 === 0) return 'Allocate';
+
+    return 'Unavailable'; // fallback
+  }
+
+  allocateProject(emp: any): void {
+    // Your allocation logic here
+    console.log('Allocating', emp);
+    this.reesourceAllocation.allocateToDM(emp.id).subscribe({
+      next: (response) => {
+        console.log('Allocation successful:', response);
+        this.showSuccessToast('Successfully allocated to DM');
+        this.loadResources();
+      },
+      error: (error) => {
+        console.error('Error during allocation:', error);
+        this.showErrorToast('Failed to allocate to DM');
+      },
+    });
+  }
+
+  markUnavailable(emp: any): void {
+    // Your unavailable logic here
+    console.log('Marking unavailable', emp);
+  }
+
+  deallocateProject(emp: any): void {
+    // Your deallocation logic here
+    this.reesourceAllocation.deAllocateFromDM(emp.id).subscribe({
+      next: (response) => {
+        console.log('Deallocation successful:', response);
+        this.showSuccessToast('Successfully deallocated from DM');
+        this.loadResources();
+      },
+      error: (error) => {
+        console.error('Error during deallocation:', error);
+        this.showErrorToast('Failed to deallocate from DM');
+      },
+    });
+  }
 
 
-  if (i % 7 === 0) return 'bg-danger';
-  if (i % 5 === 0) return 'cozentus-bg';
-  if (i % 3 === 0) return 'bg-success';
-
-  return 'bg-secondary'; // fallback
-}
-
-getButtonText(i: number): string {
-
-
-  if (i % 7 === 0) return 'Deallocate';
-  if (i % 5 === 0) return 'Unavailable';
-  if (i % 3 === 0) return 'Allocate';
-
-  return 'Unavailable'; // fallback
-}
-
-allocateProject(emp: any): void {
-  // Your allocation logic here
-  console.log('Allocating', emp);
-}
-
-markUnavailable(emp: any): void {
-  // Your unavailable logic here
-  console.log('Marking unavailable', emp);
-}
-
-deallocateProject(emp: any): void {
-  // Your deallocation logic here
-  console.log('Deallocating', emp);
-}
-
-
-
-
-
-
-
-  Math = Math;
 
   ngOnInit(): void {
+    this.loggedInUserEmpId = localStorage.getItem('empId') || '';
     this.role = localStorage.getItem('role') || '';
     this.loadSkillNames();
     this.loadRMs();
@@ -390,7 +467,9 @@ deallocateProject(emp: any): void {
   }
 
   ngAfterViewInit(): void {
-    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    const tooltipTriggerList = [].slice.call(
+      document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    );
     tooltipTriggerList.forEach((tooltipTriggerEl) => {
       new bootstrap.Tooltip(tooltipTriggerEl);
     });
@@ -403,11 +482,29 @@ deallocateProject(emp: any): void {
       },
       error: (error) => {
         console.error('Error loading reporting managers:', error);
-      }
+      },
     });
   }
 
+  showManagerDropdown: { [key: number]: boolean } = {};
 
+
+toggleManagerDropdown(index: number, event: Event): void {
+  event.preventDefault();
+  this.showManagerDropdown[index] = true;
+}
+prepareManagerModal(emp: any): void {
+  this.managerSearchText = ''; // reset search box if needed
+
+  // Set the current reporting manager into the form control
+
+}
+
+
+hideManagerDropdown(index: number): void {
+  // Optional: auto-close the dropdown on blur
+  this.showManagerDropdown[index] = false;
+}
 
 
   // Pagination controls
@@ -456,7 +553,10 @@ deallocateProject(emp: any): void {
     this.oldId = emp.id;
     this.selectedEmployee = { ...emp };
     this.editForm.patchValue(emp);
-    this.resourceForm.get('reportingManager')?.setValue(emp.reportingManagerId || '');
+    this.editForm
+      .get('reportingManager')
+      ?.setValue(emp.reportingManagerId || '');
+        this.editForm.get('reportingManager')?.setValue(emp.reportingManagerId || '');
   }
 
   cancelEdit(): void {
@@ -465,11 +565,20 @@ deallocateProject(emp: any): void {
     this.selectedEmployee = this.getEmptyEmployee();
   }
 
+
+closeRmModal() {
+  const modalEl = document.getElementById('editEmployeeModal');
+  if (modalEl) {
+    const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+    modalInstance.hide();
+  }
+}
+
+
   saveEmployee(): void {
     if (this.editForm.invalid) {
       return;
     }
-
 
     const updatedEmployee: ResourceEditPayload = this.editForm.value;
 
@@ -482,26 +591,19 @@ deallocateProject(emp: any): void {
           console.log('Resource updated successfully:', response);
           this.showSuccessToast('Resource details updated successfully');
 
-          const modalEl = document.getElementById('editEmployeeModal');
-          (window as any).bootstrap.Modal.getInstance(modalEl)?.hide();
+          
           this.loadResources();
           this.loadManagers();
           this.applySearch();
           this.resourceForm.reset(this.getEmptyEmployee());
-        }
-        ,
+        },
         error: (error) => {
           console.error('Error updating resource:', error);
           this.showSuccessToast('Error updating resource details');
-        }
+        },
       });
     }
-
-
-
   }
-
-
 
   openDeleteModal(emp: Employee): void {
     this.selectedEmployee = { ...emp };
@@ -515,7 +617,9 @@ deallocateProject(emp: any): void {
   }
 
   confirmDelete(): void {
-    this.employees = this.employees.filter(e => e.id !== this.selectedEmployee.id);
+    this.employees = this.employees.filter(
+      (e) => e.id !== this.selectedEmployee.id
+    );
     this.selectedEmployee = this.getEmptyEmployee();
 
     this.applySearch();
@@ -555,27 +659,28 @@ deallocateProject(emp: any): void {
       experience: 0,
       role: '',
       reportingManagerId: '',
+      resourceRole: '',
       allocation: new Array<ProjectAllocation>(),
     };
   }
 
   loadResources() {
     const page = this.currentPage - 1;
-    this.resourceService.getAllResources(page, this.pageSize, this.searchTerm).subscribe({
-      next: (paginatedData: PaginatedResourcesPayload) => {
-        console.log('Paginated Data:', paginatedData);
-        this.employees = paginatedData.content || [];
-        this.totalPages = paginatedData.totalPages || 1;
-        this.totalItems = paginatedData.totalElements || 0;
-        console.log('Resources loaded:', this.employees);
-      },
-      error: (error) => {
-        console.error('Error loading resources:', error);
-        this.employees = []; // Ensure employees is always an array even on error
-      }
-    });
-
-
+    this.resourceService
+      .getAllResources(page, this.pageSize, this.searchTerm)
+      .subscribe({
+        next: (paginatedData: PaginatedResourcesPayload) => {
+          console.log('Paginated Data:', paginatedData);
+          this.employees = paginatedData.content || [];
+          this.totalPages = paginatedData.totalPages || 1;
+          this.totalItems = paginatedData.totalElements || 0;
+          console.log('Resources loaded:', this.employees);
+        },
+        error: (error) => {
+          console.error('Error loading resources:', error);
+          this.employees = []; // Ensure employees is always an array even on error
+        },
+      });
   }
 
   showSuccessToast(message: string): void {
@@ -598,9 +703,7 @@ deallocateProject(emp: any): void {
     }, 0);
   }
 
-
   // saveNewEmployee(): void {
-
 
   //   if (this.resourceForm.valid) {
 
@@ -651,8 +754,12 @@ deallocateProject(emp: any): void {
         experience: form.experience,
         role: form.role,
         reportingManagerId: form.reportingManager,
-        reportingManagerName: this.getReportingManagerName(form.reportingManager),
-        allocation: [] // default empty allocation
+        reportingManagerName: this.getReportingManagerName(
+        form.reportingManager,
+        
+        ),
+        resourceRole: form.resourceRole,
+        allocation: [], // default empty allocation
       };
 
       console.log('Resource Payload Sent:', resourcePayload);
@@ -668,62 +775,62 @@ deallocateProject(emp: any): void {
         error: (err) => {
           console.error('Error adding resource:', err);
           this.showErrorToast('Failed to add resource: ' + err.error?.message);
-        }
+        },
       });
     }
   }
 
-
-
   private getReportingManagerName(empId: string): string {
-    const manager = this.reportingManagers.find(m => m.empId === empId);
+    const manager = this.reportingManagers.find((m) => m.empId === empId);
     return manager?.name || '';
   }
-
 
   selectManager(id: string) {
     this.resourceForm.get('reportingManager')?.setValue(id);
   }
 
-
   reportingManagers: ReportingManagerPayload[] = [
     { empId: 'EMP1003', name: 'Manager 1', emailId: 'mdkf@email.com' },
     { empId: 'EMP1003', name: 'Manager 2', emailId: 'dkm@exkf.com' },
     { empId: 'EMP1003', name: 'Manager 3', emailId: 'kksmf@exskdple.com' },
-    { empId: 'EMP1003', name: 'Manager 4', emailId: 'sfnsj@ksfk.com' }
+    { empId: 'EMP1003', name: 'Manager 4', emailId: 'sfnsj@ksfk.com' },
   ];
 
-
-
-  loadManagers() {
-
-  }
+  loadManagers() {}
 
   get filteredManagers() {
     const search = this.managerSearchText.toLowerCase();
-    return this.reportingManagers.filter(m =>
-      m.name.toLowerCase().includes(search) ||
-      m.emailId.toLowerCase().includes(search)
+    return this.reportingManagers.filter(
+      (m) =>
+        m.name.toLowerCase().includes(search) ||
+        m.emailId.toLowerCase().includes(search)
     );
   }
 
   deallocateFromProject(project: ProjectAllocation) {
     console.log('Deallocating from project:', project);
-    console.log('Selected Employee before deallocation:', this.selectedEmployee);
-    this.reesourceAllocation.deleteAllocation(project.projectCode, this.selectedEmployee.id).subscribe({
-      next: (response) => {
-        console.log('Deallocation successful:', response);
-        this.selectedEmployee.allocation = this.selectedEmployee.allocation.filter(a => a.projectCode !== project.projectCode);
-        this.showSuccessToast('Successfully deallocated from project');
-        this.loadResources();
-        this.projectModal.hide();
-      },
-      error: (error) => {
-        console.error('Error during deallocation:', error);
-        this.showErrorToast('Failed to deallocate from project');
-      }
-    });
-
+    console.log(
+      'Selected Employee before deallocation:',
+      this.selectedEmployee
+    );
+    this.reesourceAllocation
+      .deleteAllocation(project.projectCode, this.selectedEmployee.id)
+      .subscribe({
+        next: (response) => {
+          console.log('Deallocation successful:', response);
+          this.selectedEmployee.allocation =
+            this.selectedEmployee.allocation.filter(
+              (a) => a.projectCode !== project.projectCode
+            );
+          this.showSuccessToast('Successfully deallocated from project');
+          this.loadResources();
+          this.projectModal.hide();
+        },
+        error: (error) => {
+          console.error('Error during deallocation:', error);
+          this.showErrorToast('Failed to deallocate from project');
+        },
+      });
   }
 
   openNewSkillInput(): void {
@@ -748,7 +855,9 @@ deallocateProject(emp: any): void {
     setTimeout(() => {
       const modalEl = document.getElementById('allocationConfirmModal');
       if (modalEl) {
-        this.allocationConfirmModal = new (window as any).bootstrap.Modal(modalEl);
+        this.allocationConfirmModal = new (window as any).bootstrap.Modal(
+          modalEl
+        );
         this.allocationConfirmModal.show();
       }
     }, 0);
@@ -767,4 +876,19 @@ deallocateProject(emp: any): void {
     this.selectedEmployeeForAction = null;
   }
 
+canBeAllocated(empId: string | undefined | null): boolean {
+  return empId == null;
+}
+
+  canBeUnAllocated(empId: string | undefined): boolean {
+    return this.loggedInUserEmpId === empId;
+  }
+
+  isUnAvailable(empId: string | undefined): boolean {
+    return this.loggedInUserEmpId !== empId;
+  }
+
+  getOthermanagerDetails(empId:string | undefined, name:string | undefined):string{
+    return `DM -> ${empId} (${name})`;
+  }
 }

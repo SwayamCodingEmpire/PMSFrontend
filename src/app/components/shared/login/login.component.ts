@@ -49,7 +49,7 @@ export class LoginComponent {
     this.publicService.login(credentials).subscribe({
       next: (response) => {
         this.toastr.success('Login Successful');
-        this.publicService.storeTokenAndRole(response.token, response.role, response.name);
+        this.publicService.storeTokenAndRole(response.token, response.role, response.name, response.empId);
         localStorage.setItem('user', JSON.stringify(credentials));
         if (this.rememberMe) {
 

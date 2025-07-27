@@ -25,9 +25,10 @@ getAllSkills(): Observable<string[]> {
     return this.http.post(`${this.baseUrl}/login`, credentials, { responseType: 'json' });
   }
 
-    storeTokenAndRole(token: string, role: string, name:string): void {
+    storeTokenAndRole(token: string, role: string, name:string, empId:string): void {
     localStorage.setItem('token', token);
     localStorage.setItem('role', role);
     localStorage.setItem('name', name);
+    localStorage.setItem('empId', empId);
   }
 }

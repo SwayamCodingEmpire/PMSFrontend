@@ -1,4 +1,4 @@
-import { ProjectData, ProjectManager, ProjectMinimalData } from './../../components/delivery-manager/dm-dashboard/dm-dashboard.component';
+import { BenchResource, ProjectData, ProjectManager, ProjectMinimalData } from './../../components/delivery-manager/dm-dashboard/dm-dashboard.component';
 import { Injectable } from '@angular/core';
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
@@ -163,6 +163,10 @@ getKPICardsData(): Observable<KPIData> {
       FileSaver.saveAs(blob, `Manager_Dashboard_Export_${new Date().toISOString()}.xlsx`);
 
     });
+  }
+
+  getBenchedResources(): Observable<BenchResource[]> {
+    return this.httpClient.get<BenchResource[]>(`${this.baseUrl}/bench-resources`);
   }
 
   // Gets summary list (outer structure)

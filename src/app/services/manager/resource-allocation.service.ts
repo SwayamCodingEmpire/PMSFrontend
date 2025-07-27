@@ -7,6 +7,7 @@ import { AllocationPayload } from '../../models/AllocationPayload';
 import { PaginatedResourceAllocationPayload } from '../../models/PaginatedResourceAllocationPayload';
 import { ResourceFilterPayload } from '../../models/ResourceFilterPayload';
 import { ProjectAllocationViewPayload } from '../../models/ProjectAllocationViewPayload';
+import { ProjectDetailsPayload } from '../../models/ProjectDetailsPayload ';
 
 @Injectable({
   providedIn: 'root'
@@ -41,5 +42,28 @@ export class ResourceAllocationService {
     console.log(`Deleting allocation for empId: ${empId} in project: ${projectCode}`);
     return this.http.delete(`${this.baseUrl}/project/${projectCode}/resource/${empId}`, { responseType: 'text' as 'json' });
   }
+
+allocateToDM(empId: string): Observable<any> {
+  console.log(`Allocating employee with ID: ${empId} to DM`);
+  let params = new HttpParams().set('resourceEmpId', empId);
+
+  return this.http.put(`${this.baseUrl}/allocate-to-dm`, null, {
+    params: params,
+    responseType: 'text' as 'json',
+  });
+}
+
+
+deAllocateFromDM(empId: string): Observable<any> {
+  console.log(`Deallocating employee with ID: ${empId} from DM`);
+  let params = new HttpParams().set('resourceEmpId', empId);
+
+  return this.http.delete(`${this.baseUrl}/deAllocate-from-dm`, {
+    params: params,
+    responseType: 'text' as 'json',
+  });
+}
+
+
 
 }

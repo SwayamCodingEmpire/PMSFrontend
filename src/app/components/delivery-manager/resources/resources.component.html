@@ -60,11 +60,8 @@
                     </button>
 
                     <!-- Save button -->
-                    <button type="button" 
-                            class="btn btn-sm icon-button" 
-                            (click)="saveEmployee()" 
-                            title="Save"
-                            *ngIf="editingIndex === i">
+                    <button type="button" class="btn btn-sm icon-button" (click)="saveEmployee()" title="Save"
+                      *ngIf="editingIndex === i">
                       <i class="fa-solid fa-check"></i>
                     </button>
 
@@ -135,7 +132,8 @@
                 </td>
 
                 <!-- Secondary Skill -->
-                <td class="py-1 px-2">
+                <td class="py-1 px-2" style="width: 1rem; max-width: 11rem;">
+                   <ng-container *ngIf="editingIndex !== i; else ediSecondary">
                   <div class="d-flex align-items-center justify-content-between skill-cell">
                     <div class="text-truncate text-secondary"
                       style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
@@ -145,6 +143,17 @@
 
 
                   </div>
+                </ng-container>
+
+                
+                  <ng-template #ediSecondary>
+                    <div class="position-relative" style="width: 100%">
+                      <input type="text" class="form-control form-control-sm pe-5" [value]="getPrimarySkills(emp)"
+                        disabled />
+                      <i class="fa-solid fa-cog position-absolute top-50 end-0 translate-middle-y me-2 text-primary"
+                        (click)="openSkillsModal(emp, false)" style="cursor: pointer"></i>
+                    </div>
+                  </ng-template>
                 </td>
 
                 <td>
@@ -158,54 +167,98 @@
                     <input type="text" formControlName="role" class="form-control edit-mode" placeholder="Enter role" />
                   </form>
                 </td>
-                <td>{{ emp.designation }}</td>
-                <td>{{ emp.experience }}</td>
-                <td>{{ emp.reportingManagerName || "N/A" }}</td>
-                                    <!-- <span class="me-2 text-white">View</span>
+                <td>
+                  <ng-container *ngIf="editingIndex !== i">
+                  {{ emp.designation }}
+                  </ng-container>
+                    <form [formGroup]="editForm" *ngIf="editingIndex === i">
+                    <input type="text" formControlName="designation" class="form-control edit-mode" placeholder="Enter Designation" />
+                  </form>
+                </td>
+                <td>
+                  <ng-container *ngIf="editingIndex !== i">
+                  {{ emp.experience }}
+                  </ng-container>
+                    <form [formGroup]="editForm" *ngIf="editingIndex === i">
+                    <input type="text" formControlName="experience" class="form-control edit-mode" placeholder="Enter experience" />
+                  </form>
+                </td>
+<td>
+  <ng-container *ngIf="editingIndex !== i">
+    {{ emp.reportingManagerName || 'N/A' }}
+  </ng-container>
+
+  <ng-container *ngIf="editingIndex === i">
+    <a href="#" data-bs-toggle="modal" data-bs-target="#editEmployeeModal" (click)="prepareManagerModal(emp)">
+      {{emp.reportingManagerName || 'Select Manager' }}
+    </a>
+  </ng-container>
+</td>
+
+
+
+                <!-- <span class="me-2 text-white">View</span>
                       <span class="badge bg-light text-dark rounded-pill">
                         {{ getTotalProjects(emp.allocation) }}
 
                       </span> -->
-<!-- Deallocate button (multiple of 7) -->
-               <td class="allocation-column">
-  <ng-container>
-    <!-- Deallocate -->
-    <div *ngIf="i % 7 === 0" class="allocation-action-card deallocate-card" (click)="confirmDeallocate(emp)">
-      <div class="d-flex align-items-center justify-content-center">
-        <i class="fa-solid fa-user-minus me-1"></i>
-        <span class="action-text">Deallocate</span>
-      </div>
-      <div class="card-indicator bg-danger"></div>
-    </div>
+                <!-- Deallocate button (multiple of 7) -->
+                <td class="allocation-column">
+                  <ng-container *ngIf="canBeUnAllocated(emp.deliveryManagerEmpId); else checkAllocate">
+                    <!-- Deallocate -->
+                    <div class="allocation-action-card deallocate-card" (click)="confirmDeallocate(emp)">
+                      <div class="d-flex align-items-center justify-content-center">
+                        <i class="fa-solid fa-user-minus me-1"></i>
+                        <span class="action-text">Deallocate</span>
+                      </div>
+                      <div class="card-indicator bg-danger"></div>
+                    </div>
+                  </ng-container>
 
-    <!-- Unavailable -->
-    <div *ngIf="i % 2 === 0 && i % 7 !== 0" class="allocation-action-card unavailable-card" (click)="markUnavailable(emp)">
-      <div class="d-flex align-items-center justify-content-center">
-        <i class="fa-solid fa-user-clock me-1"></i>
-        <span class="action-text">Unavailable</span>
-      </div>
-      <div class="card-indicator cozentus-bg"></div>
-    </div>
+                  <ng-template #checkAllocate>
+                    <ng-container *ngIf="canBeAllocated(emp.deliveryManagerEmpId); else checkUnavailable">
+                      <!-- Allocate -->
+                      <div class="allocation-action-card allocate-card" (click)="confirmAllocate(emp)">
+                        <div class="d-flex align-items-center justify-content-center">
+                          <i class="fa-solid fa-user-plus me-1"></i>
+                          <span class="action-text">Allocate</span>
+                        </div>
+                        <div class="card-indicator bg-success"></div>
+                      </div>
+                    </ng-container>
+                  </ng-template>
 
-    <!-- Allocate -->
-    <div *ngIf="i % 3 === 0 && i % 5 !== 0 && i % 7 !== 0" class="allocation-action-card allocate-card" (click)="confirmAllocate(emp)">
-      <div class="d-flex align-items-center justify-content-center">
-        <i class="fa-solid fa-user-plus me-1"></i>
-        <span class="action-text">Allocate</span>
-      </div>
-      <div class="card-indicator bg-success"></div>
-    </div>
+                  <ng-template #checkUnavailable>
+                    <ng-container *ngIf="isUnAvailable(emp.deliveryManagerEmpId); else checkAvailable">
+                      <!-- Unavailable -->
+                      <div class="allocation-action-card unavailable-card" (click)="markUnavailable(emp)"
+                        data-bs-toggle="tooltip" data-bs-placement="top"
+                        title="{{getOthermanagerDetails(emp.deliveryManagerEmpId, emp.deliveryManagerName)}}">
+                        <div class="d-flex align-items-center justify-content-center">
+                          <i class="fa-solid fa-user-clock me-1"></i>
+                          <span class="action-text">Unavailable</span>
+                        </div>
+                        <div class="card-indicator cozentus-bg"></div>
+                      </div>
+                    </ng-container>
+                  </ng-template>
 
-    <!-- Available (fallback for other cases) -->
-    <div *ngIf="i % 2 !== 0 && i % 3 !== 0 && i % 5 === 0 && i % 7 !== 0" class="allocation-action-card available-card">
-      <div class="d-flex align-items-center justify-content-center">
-        <i class="fa-solid fa-user-check me-1"></i>
-        <span class="action-text">Available</span>
-      </div>
-      <div class="card-indicator bg-info"></div>
-    </div>
-  </ng-container>
-</td>
+
+
+                  <ng-template #checkAvailable>
+                    <ng-container *ngIf="i % 5 === 0">
+                      <!-- Available -->
+                      <div class="allocation-action-card available-card">
+                        <div class="d-flex align-items-center justify-content-center">
+                          <i class="fa-solid fa-user-check me-1"></i>
+                          <span class="action-text">Available</span>
+                        </div>
+                        <div class="card-indicator bg-info"></div>
+                      </div>
+                    </ng-container>
+                  </ng-template>
+                </td>
+
 
               </tr>
             </ng-container>
@@ -305,45 +358,9 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <form [formGroup]="resourceForm">
+          <form [formGroup]="editForm">
             <!-- Employee Details Form -->
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label>Name</label>
-                <input type="text" class="form-control" formControlName="name" />
-              </div>
 
-              <div class="col-md-6 mb-3">
-                <label>Email</label>
-                <input type="email" class="form-control" formControlName="emailId" />
-              </div>
-
-              <div class="col-md-6 mb-3">
-                <label>Phone Number</label>
-                <input type="text" class="form-control" formControlName="phoneNumber" />
-              </div>
-              <!-- <div class="col-md-6 mb-3">
-                <label>Primary Skill</label>
-                <input type="text" class="form-control" formControlName="primarySkill" />
-              </div>
-              <div class="col-md-6 mb-3">
-                <label>Secondary Skill</label>
-                <input type="text" class="form-control" formControlName="secondarySkill" />
-              </div> -->
-              <div class="col-md-6 mb-3">
-                <label>Designation</label>
-                <input type="text" class="form-control" formControlName="designation" />
-              </div>
-              <div class="col-md-6 mb-3">
-                <label>Experience (Years)</label>
-                <input type="number" class="form-control" formControlName="experience" />
-              </div>
-
-              <div class="col-md-6 mb-3">
-                <label>Role</label>
-                <input type="text" class="form-control" formControlName="role" />
-              </div>
-            </div>
 
             <!-- Accordion for Project Manager -->
             <div class="accordion mt-4" id="managerAccordion">
@@ -351,7 +368,7 @@
                 <h2 class="accordion-header" id="headingManager">
                   <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                     data-bs-target="#collapseManager" aria-expanded="false" aria-controls="collapseManager">
-                    Select Project Manager
+                    Select Reporting Manager
                   </button>
                 </h2>
                 <div id="collapseManager" class="accordion-collapse collapse" aria-labelledby="headingManager"
@@ -365,10 +382,10 @@
                     <!-- Manager List (Inside Accordion Body or Any Container) -->
                     <div class="manager-list overflow-auto" style="max-height: 300px">
                       <div *ngFor="let manager of filteredManagers" class="card p-2 mb-2 manager-card" [class.bg-info]="
-                          resourceForm.get('reportingManager')?.value ===
+                          editForm.get('reportingManager')?.value ===
                           manager.empId
                         " (click)="
-                          resourceForm
+                          editForm
                             .get('reportingManager')
                             ?.setValue(manager.empId)
                         " style="cursor: pointer">
@@ -381,8 +398,7 @@
                           </div>
                           <input class="form-check-input" type="radio" name="reportingManager" [value]="manager.empId"
                             [checked]="
-                              resourceForm.get('reportingManager')?.value ===
-                              manager.empId
+                              editForm.get('reportingManager')?.value === manager.empId
                             " (click)="$event.stopPropagation()" />
                         </div>
                       </div>
@@ -394,7 +410,7 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-primary" (click)="saveEmployee()">Save</button>
+          <button class="btn btn-primary" (click)="closeRmModal()">Save</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
             Cancel
           </button>
@@ -459,7 +475,7 @@
                           {{ project.description || "N/A" }}
                         </p>
                         <!-- Button aligned to bottom right -->
-                        <div class="text-end">
+                        <div class="text-end" *ngIf="!isUnAvailable(selectedEmployee.deliveryManagerEmpId);">
                           <button class="btn btn-danger" (click)="deallocateFromProject(project)">
                             Deallocate from Project
                           </button>
@@ -672,6 +688,26 @@
                   Only alphabets allowed
                 </div>
               </div>
+
+              <div class="col-md-6 mb-3">
+                <label>Resource Role <span class="text-danger">*</span></label>
+                <select class="form-select" formControlName="resourceRole" [ngClass]="{
+      'is-invalid':
+        resourceForm.get('resourceRole')?.invalid &&
+        resourceForm.get('resourceRole')?.touched
+    }">
+                  <option value="" disabled selected>Select a role</option>
+                  <option value="DELIVERY_MANAGER">Delivery Manager</option>
+                  <option value="PROJECT_MANAGER">Project Manager</option>
+                  <option value="RESOURCE">Resource</option>
+                </select>
+
+                <div class="invalid-feedback"
+                  *ngIf="resourceForm.get('resourceRole')?.errors?.['required'] && resourceForm.get('resourceRole')?.touched">
+                  Resource Role is required
+                </div>
+              </div>
+
             </div>
 
             <!-- Reporting Manager -->
@@ -861,13 +897,16 @@
 </div>
 
 <!-- Allocation Confirmation Modal -->
-<div class="modal fade" id="allocationConfirmModal" tabindex="-1" aria-labelledby="allocationConfirmModalLabel" aria-hidden="true">
+<div class="modal fade" id="allocationConfirmModal" tabindex="-1" aria-labelledby="allocationConfirmModalLabel"
+  aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content shadow-lg rounded-4">
-      
-      <div class="modal-header border-0 rounded-top-4 px-4 py-3" [ngClass]="confirmationAction === 'allocate' ? 'bg-success' : 'bg-danger'">
+
+      <div class="modal-header border-0 rounded-top-4 px-4 py-3"
+        [ngClass]="confirmationAction === 'allocate' ? 'bg-success' : 'bg-danger'">
         <h5 class="modal-title fw-semibold text-white" id="allocationConfirmModalLabel">
-          <i class="fas" [ngClass]="confirmationAction === 'allocate' ? 'fa-user-plus' : 'fa-user-minus'" class="me-2"></i>
+          <i class="fas" [ngClass]="confirmationAction === 'allocate' ? 'fa-user-plus' : 'fa-user-minus'"
+            class="me-2"></i>
           Confirm {{ confirmationAction === 'allocate' ? 'Allocation' : 'Deallocation' }}
         </h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -876,7 +915,8 @@
       <div class="modal-body px-4 py-4">
         <div class="text-center">
           <div class="mb-3">
-            <i class="fas fa-question-circle fa-3x" [ngClass]="confirmationAction === 'allocate' ? 'text-success' : 'text-danger'"></i>
+            <i class="fas fa-question-circle fa-3x"
+              [ngClass]="confirmationAction === 'allocate' ? 'text-success' : 'text-danger'"></i>
           </div>
           <h6 class="fw-semibold mb-3">
             Are you sure you want to {{ confirmationAction === 'allocate' ? 'allocate' : 'deallocate' }} this resource?
@@ -895,11 +935,9 @@
 
       <div class="modal-footer bg-light border-0 rounded-bottom-4 px-4 py-3">
         <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Cancel</button>
-        <button type="button" 
-                class="btn px-4"
-                [ngClass]="confirmationAction === 'allocate' ? 'btn-success' : 'btn-danger'"
-                (click)="executeAllocationAction()"
-                data-bs-dismiss="modal">
+        <button type="button" class="btn px-4"
+          [ngClass]="confirmationAction === 'allocate' ? 'btn-success' : 'btn-danger'"
+          (click)="executeAllocationAction()" data-bs-dismiss="modal">
           <i class="fas" [ngClass]="confirmationAction === 'allocate' ? 'fa-check' : 'fa-trash'" class="me-2"></i>
           {{ confirmationAction === 'allocate' ? 'Allocate' : 'Deallocate' }}
         </button>
