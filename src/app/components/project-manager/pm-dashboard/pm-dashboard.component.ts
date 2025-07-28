@@ -704,5 +704,41 @@ console.log('Chart labels:', this.projectChart.labels);
   this.dmDashboardService.fetchAndExportAll();
 }
 
+exportProjectList() {
+  const data = this.projects.map(res => ({
+      Code: res.code,
+      Name: res.name,
+      Customer: res.customer,
+      Manager: res.manager,
+      'Total Resources': res.totalResources,
+      'Planned Utilization': res.plannedUtilization,
+      'Actual Utilization': res.actualUtilization
+    }));
+ 
+    this.excelExportService.exportAsExcelWithNestedSheets(data, 'project_resources');
+  }
+ 
+  exportProjectByManager() {
+  const data = this.selectedProjectSummary?.resources?.map((res: any) => ({
+    Code: res.code,
+    Name: res.name,
+    Role: res.role,
+    Utilization: `${res.utilization}%`
+  })) ?? [];
+ 
+  this.excelExportService.exportAsExcelWithNestedSheets(data, 'project_resources');
+}
+exportSkillResources(){
+  const data = this.paginatedSkillResources.map((res: any) => ({
+    Name: res.name,
+    EmployeeID: res.employeeId,
+    Designation: res.designation,
+    Experience: `${res.experience} years`,
+    Utilization: `${res.utilization}%`
+  }));
+  this.excelExportService.exportAsExcelWithNestedSheets(data, 'project_skills');
+}
+ 
+
  
 }

@@ -133,7 +133,7 @@
                 <input type="text" class="form-control form-control-sm" placeholder="Search..." [(ngModel)]="searchTerm"
                   (input)="onSearchChange()" />
               </div>
-              <button class="btn btn-sm btn-outline-primary" title="Export Project List">
+              <button class="btn btn-sm btn-outline-primary" title="Export Project List" (click)="exportProjectList()">
                 <i class="fa-solid fa-file-export"></i>
               </button>
             </div>
@@ -268,7 +268,7 @@
       <div *ngIf="selectedProjectSummary; else noProjectSelected">
         <div class="table-responsive">
           <div class="d-flex justify-content-end mb-2 px-3">
-            <button class="btn btn-sm btn-outline-success" title="Export Manager Projects" >
+            <button class="btn btn-sm btn-outline-success" title="Export Manager Projects" (click)="exportProjectByManager()" >
               <i class="fa-solid fa-file-export"></i>
             </button>
           </div>
@@ -405,7 +405,7 @@
             </div>
             <div class="table-responsive">
               <div class="d-flex justify-content-end mb-2 px-3">
-                <button class="btn btn-sm btn-outline-success" title="Export Manager Projects">
+                <button class="btn btn-sm btn-outline-success" title="Export Resources by Skill" (click)="exportSkillResources()">
                   <i class="fa-solid fa-file-export"></i>
                 </button>
               </div>
