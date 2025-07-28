@@ -140,7 +140,7 @@
           </div>
         </div>
 
-        <div class="card-body p-0">
+        <div class="card-body p-0 kpi-clickable">
           <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
               <thead class="table-light">
@@ -235,7 +235,7 @@
   <div class="row g-4 mt-4">
     <!-- Project Resource Chart -->
     <div class="col-xl-6 d-flex" *ngIf="projectResourceSummaries.length > 0">
-      <div class="card shadow-sm border-0 h-100 flex-fill">
+      <div class="card shadow-sm border-0 h-100 flex-fill kpi-clickable">
         <div class="card-header bg-white pb-0 border-0">
           <h5 class="card-title mb-0 fw-semibold text-dark">
             <i class="bi bi-pie-chart-fill me-2 text-primary"></i>
@@ -254,7 +254,7 @@
 
     <!-- Selected Project Resources -->
 <div class="col-xl-6 d-flex">
-  <div class="card shadow-sm border-0 h-100 flex-fill">
+  <div class="card shadow-sm border-0 h-100 flex-fill kpi-clickable">
     <div class="card-header bg-white pb-0 border-0">
       <h5 class="card-title mb-0 fw-semibold text-dark">
         <i class="bi bi-people-fill me-2 text-success"></i>
@@ -313,7 +313,7 @@
   <div class="row g-4 mt-4">
     <!-- Skills Chart -->
     <div class="col-xl-6 d-flex" *ngIf="skills.length > 0">
-      <div class="card shadow-sm border-0 h-100 flex-fill">
+      <div class="card shadow-sm border-0 h-100 flex-fill kpi-clickable">
         <div class="card-header bg-white pb-0 border-0">
           <h5 class="card-title mb-0 fw-semibold text-dark">
             <i class="bi bi-bar-chart-fill me-2 text-info"></i>
@@ -374,12 +374,11 @@
 
     <!-- Selected Skill Resources -->
     <div class="col-xl-6 d-flex">
-      <div class="card shadow-sm border-0 h-100 flex-fill">
+      <div class="card shadow-sm border-0 h-100 flex-fill kpi-clickable">
         <div class="card-header bg-white pb-0 border-0">
           <h5 class="card-title mb-0 fw-semibold text-dark">
             <i class="bi bi-code-slash me-2 text-warning"></i>
-            {{ selectedSkill && selectedSkillLevel ? selectedSkill.name + ' - ' + selectedSkillLevel + ' Level' : "Skill
-            Resources" }}
+            {{ selectedSkill && selectedSkillLevel ? selectedSkill.name + ' - ' + selectedSkillLevel + ' Level' : "Skill Resources" }}
           </h5>
           <p class="text-muted small mb-0" *ngIf="!selectedSkill">Select a skill level from the chart to view resources
           </p>
@@ -486,6 +485,4 @@
       </div>
     </div>
   </div>
-
-
 </div>
