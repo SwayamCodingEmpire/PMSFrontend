@@ -70,7 +70,9 @@ isProjectListNavActive(): boolean {
 
   return url.startsWith(`${base}/project-list`) ||
          url.startsWith(`${base}/allocate-resources/`) ||
-         url.startsWith(`${base}/view-allocations/`);
+         url.startsWith(`${base}/view-allocations/`) ||
+         url.startsWith(`${base}/add-projects`) ||
+         url.startsWith(`${base}/edit-projects`)
 }
 
 isMasterDropdownOpen = false;
