@@ -32,9 +32,10 @@
 
               <th>Role</th>
               <th>Designation</th>
-              <th>Experience (Years)</th>
+              <th>Exp (Years)</th>
               <th>Reporting Manager</th>
-              <th>Allocation</th>
+              <th *ngIf="isAllowedForDML()">Allocation</th>
+               <th *ngIf="!isAllowedForDML()">Delivery Manager</th>
             </tr>
           </thead>
           <tbody>
@@ -114,7 +115,7 @@
                       <div class="text-truncate text-secondary"
                         style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
                         [attr.title]="getPrimarySkills(emp)">
-                        {{ getPrimarySkills(emp) }}
+                        {{ getPrimarySkills(emp) || "N/A" }}
                       </div>
 
                       <!-- <i class="fa-solid fa-cog text-primary flex-shrink-0" (click)="openSkillsModal(emp, true)"></i> -->
@@ -138,14 +139,14 @@
                     <div class="text-truncate text-secondary"
                       style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
                       [attr.title]="getSecondarySkills(emp)">
-                      {{ getSecondarySkills(emp) }}
+                      {{ getSecondarySkills(emp) || "N/A" }}
                     </div>
 
 
                   </div>
                 </ng-container>
 
-                
+
                   <ng-template #ediSecondary>
                     <div class="position-relative" style="width: 100%">
                       <input type="text" class="form-control form-control-sm pe-5" [value]="getPrimarySkills(emp)"
@@ -203,13 +204,13 @@
 
                       </span> -->
                 <!-- Deallocate button (multiple of 7) -->
-                <td class="allocation-column">
+                <td class="allocation-column" *ngIf="isAllowedForDML()">
                   <ng-container *ngIf="canBeUnAllocated(emp.deliveryManagerEmpId); else checkAllocate">
                     <!-- Deallocate -->
                     <div class="allocation-action-card deallocate-card" (click)="confirmDeallocate(emp)">
                       <div class="d-flex align-items-center justify-content-center">
                         <i class="fa-solid fa-user-minus me-1"></i>
-                        <span class="action-text">Deallocate</span>
+                        <span class="action-text">Remove</span>
                       </div>
                       <div class="card-indicator bg-danger"></div>
                     </div>
@@ -221,7 +222,7 @@
                       <div class="allocation-action-card allocate-card" (click)="confirmAllocate(emp)">
                         <div class="d-flex align-items-center justify-content-center">
                           <i class="fa-solid fa-user-plus me-1"></i>
-                          <span class="action-text">Allocate</span>
+                          <span class="action-text">Acquire</span>
                         </div>
                         <div class="card-indicator bg-success"></div>
                       </div>
@@ -258,6 +259,15 @@
                     </ng-container>
                   </ng-template>
                 </td>
+
+                <td *ngIf="!isAllowedForDML()">
+                  <ng-container *ngIf="emp.deliveryManagerName">
+                    {{ emp.deliveryManagerName }}
+                  </ng-container>
+                  <ng-container *ngIf="!emp.deliveryManagerName">
+                    <span class="text-muted">Not Assigned</span>
+                </ng-container>
+              </td>
 
 
               </tr>

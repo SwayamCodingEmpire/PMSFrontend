@@ -81,7 +81,7 @@
               </div>
               <i class="fas fa-info-circle text-muted" style="cursor: pointer; font-size: 14px;"
                  data-bs-toggle="tooltip" data-bs-placement="top"
-                 title="Customer project utilization. Formula: (Actual Hours on Customer Projects / Planned Hours on Customer Projects) × 100"></i>
+                 title="Sum of all Utilization % of Customer Projects / 100"></i>
             </div>
           </div>
         </div>
@@ -107,7 +107,7 @@
               </div>
               <i class="fas fa-info-circle text-muted" style="cursor: pointer; font-size: 14px;"
                  data-bs-toggle="tooltip" data-bs-placement="top"
-                 title="Non-customer project utilization (internal projects, training, etc.). Formula: (Actual Hours on Internal Projects / Planned Hours on Internal Projects) × 100"></i>
+                 title="Sum of all Utilization % of Non-Customer Projects / 100"></i>
             </div>
           </div>
         </div>
@@ -133,7 +133,7 @@
               </div>
               <i class="fas fa-info-circle text-muted" style="cursor: pointer; font-size: 14px;"
                  data-bs-toggle="tooltip" data-bs-placement="top"
-                 title="Resources currently on bench (not assigned to any project). Formula: Total Resources - Allocated Resources. Click to view details."
+                 title="No. of unutilized resources (bench)"
                  (click)="$event.stopPropagation()"></i>
             </div>
           </div>
@@ -203,7 +203,7 @@
                   <td class="align-middle">
                     <div class="d-flex align-items-center">
                       <div class="avatar-sm me-2">
-                        <span class="avatar-title rounded-circle bg-light text-dark">
+                        <span class="avatar-title rounded-circle bg-light text-dark ">
                           {{ project.manager.charAt(0) }}
                         </span>
                       </div>

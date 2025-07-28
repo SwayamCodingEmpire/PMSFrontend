@@ -81,15 +81,29 @@
               <td>
                 <span class="fw-semibold text-primary">{{ res.name }}</span>
               </td>
-  <td style="width: 10%;">
-  <div class="text-truncate text-secondary" [attr.title]="getPrimarySkills(res)">
-    {{ getPrimarySkills(res) }}
-  </div>
+  <td class="py-1 px-2" style="width: 1rem; max-width: 10rem;" role="button">
+                    <div class="d-flex align-items-center justify-content-between skill-cell">
+                      <div class="text-truncate text-secondary"
+                        style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+                        [attr.title]="getPrimarySkills(res)">
+                        {{ getPrimarySkills(res) }}
+                      </div>
+
+                      
+                    </div>
+
 </td>
-<td style="width: 10%;">
-  <div class="text-truncate text-secondary" [attr.title]="getSecondarySkills(res)">
-    {{ getSecondarySkills(res) }}
-  </div>
+  <td class="py-1 px-2" style="width: 1rem; max-width: 10rem;" role="button">
+                    <div class="d-flex align-items-center justify-content-between skill-cell">
+                      <div class="text-truncate text-secondary"
+                        style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+                        [attr.title]="getSecondarySkills(res)">
+                        {{ getSecondarySkills(res) }}
+                      </div>
+
+                     
+                    </div>
+
 </td>
 
               <td style="width: 2rem;">{{ res.designation }}</td>
