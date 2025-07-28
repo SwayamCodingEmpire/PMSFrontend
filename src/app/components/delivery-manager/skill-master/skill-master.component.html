@@ -5,12 +5,24 @@
       <label class="mt-3 h4">Manage Skills</label>
     </div>
   </div>
-
+ 
   <!-- Card Starts -->
   <div class="card shadow-sm resource-card">
     <div class="card-body">
-      <!-- Add Skill Button -->
-      <div class="text-end mb-3" *ngIf="!formVisible">
+      <!-- Combined Add Skill and Total Skills Display -->
+      <div
+        class="d-flex justify-content-between align-items-center mb-3"
+        *ngIf="!formVisible"
+      >
+        <!-- Total Skills Count -->
+        <div
+          *ngIf="skills.length > 0"
+          class="alert alert-info py-2 px-3 mb-0 skill-count-box"
+        >
+          <strong>Total Skills:</strong> {{ skills.length }}
+        </div>
+ 
+        <!-- Add Skill Button -->
         <button
           class="btn cozentus-bg text-white no-hover add-resource-btn"
           (click)="showAddForm()"
@@ -18,14 +30,7 @@
           Add Skill
         </button>
       </div>
-
-      <!-- Total Skills Count Display (Shown only if form is hidden) -->
-      <div class="mb-3" *ngIf="!formVisible && skills.length > 0">
-        <div class="alert alert-info py-2 px-3 mb-0 skill-count-box">
-          <strong>Total Skills:</strong> {{ skills.length }}
-        </div>
-      </div>
-
+ 
       <!-- Form -->
       <form
         *ngIf="formVisible"
@@ -47,7 +52,7 @@
               placeholder="Enter skill name"
             />
           </div>
-
+ 
           <!-- Save/Update + Cancel Buttons -->
           <div class="col-md-6 text-end">
             <div class="d-flex justify-content-end gap-2">
@@ -74,7 +79,7 @@
           </div>
         </div>
       </form>
-
+ 
       <!-- Table -->
       <div class="table-responsive" *ngIf="!loading">
         <table
@@ -114,14 +119,14 @@
           </tbody>
         </table>
       </div>
-
+ 
       <!-- Loading Spinner -->
       <div *ngIf="loading" class="text-center py-4">
         <div class="spinner-border text-primary" role="status">
           <span class="visually-hidden">Loading...</span>
         </div>
       </div>
-
+ 
       <!-- Pagination -->
       <div
         class="d-flex justify-content-end align-items-center mt-3"
@@ -180,7 +185,7 @@
       </div>
     </div>
   </div>
-
+ 
   <!-- Delete Confirmation Modal -->
   <div
     class="modal fade"
@@ -201,12 +206,12 @@
             aria-label="Close"
           ></button>
         </div>
-
+ 
         <!-- Modal Body -->
         <div class="modal-body">
           Are you sure you want to delete the skill ?
         </div>
-
+ 
         <!-- Modal Footer Buttons -->
         <div class="modal-footer">
           <button

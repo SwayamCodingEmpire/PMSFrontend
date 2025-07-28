@@ -10,11 +10,11 @@
   </div>
 
   <!-- KPI Cards Section -->
-  <div class="row g-3 mb-4">
-
+<div class="row g-3 mb-4">
+ 
     <!-- Total Resources -->
     <div class="col-xl col-lg col-md-6 col-sm-6">
-      <div class="card border-0 shadow-sm border-start border-4 border-primary h-100">
+      <div class="card border-0 shadow-sm border-start border-4 border-primary h-100 kpi-clickable">
         <div class="card-body p-2">
           <div class="d-flex align-items-center">
             <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-primary"
@@ -25,21 +25,22 @@
             </div>
             <div class="flex-grow-1 d-flex justify-content-between align-items-center">
               <div>
-                <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.totalResources }}</h5>
+<h5 class="fs-5 fw-bold mb-1 text-dark" data-bs-toggle="tooltip" title="Total Resources under DM">
+  {{ kpiData.totalResources }}
+</h5>
                 <p class="text-muted mb-0" style="font-size: 0.75rem;">Total Resources</p>
               </div>
-              <i class="fas fa-info-circle text-muted" style="cursor: pointer; font-size: 14px;"
-                 data-bs-toggle="tooltip" data-bs-placement="top"
-                 title="Total number of resources including active, bench, and allocated resources. Formula: Active + Bench + Allocated"></i>
+             
+             
             </div>
           </div>
         </div>
       </div>
     </div>
-
+ 
     <!-- Billability Ratio -->
     <div class="col-xl col-lg col-md-6 col-sm-6">
-      <div class="card border-0 shadow-sm border-start border-4 border-success h-100">
+      <div class="card border-0 shadow-sm border-start border-4 border-success h-100 kpi-clickable">
         <div class="card-body p-2">
           <div class="d-flex align-items-center">
             <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-success"
@@ -49,22 +50,28 @@
             </div>
             <div class="flex-grow-1 d-flex justify-content-between align-items-center">
               <div>
-                <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.billedNotBilled.billed }} / {{
-                  kpiData.billedNotBilled.notBilled }}</h5>
+                <h5 class="fs-5 fw-bold mb-1 text-dark">
+  <span data-bs-toggle="tooltip" title="Billed = Sum of all billability of resources under DM ÷ 100">
+    {{ kpiData.billedNotBilled.billed }}
+  </span>
+  /
+  <span data-bs-toggle="tooltip" title="Not Billed = Total resources under DM - Billed">
+    {{ kpiData.billedNotBilled.notBilled }}
+  </span>
+</h5>
+ 
                 <p class="text-muted mb-0" style="font-size: 0.75rem;">Billability</p>
               </div>
-              <i class="fas fa-info-circle text-muted" style="cursor: pointer; font-size: 14px;"
-                 data-bs-toggle="tooltip" data-bs-placement="top"
-                 title="Ratio of billed vs non-billed resources. Formula: (Billed Resources / Total Resources) × 100"></i>
+             
             </div>
           </div>
         </div>
       </div>
     </div>
-
+ 
     <!-- Customer Utilization -->
     <div class="col-xl col-lg col-md-6 col-sm-6">
-      <div class="card border-0 shadow-sm border-start border-4 border-info h-100">
+      <div class="card border-0 shadow-sm border-start border-4 border-info h-100 kpi-clickable">
         <div class="card-body p-2">
           <div class="d-flex align-items-center">
             <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-info"
@@ -75,22 +82,26 @@
             </div>
             <div class="flex-grow-1 d-flex justify-content-between align-items-center">
               <div>
-                <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.customerActualUtilization }} / {{
-                  kpiData.customerPlannedUtilization }}</h5>
+                <h5 class="fs-5 fw-bold mb-1 text-dark">
+  <span data-bs-toggle="tooltip" title=" Sum of actual utilization across all customer projects under DM / 100">
+    {{ kpiData.customerActualUtilization }}
+  </span>
+  /
+  <span data-bs-toggle="tooltip" title=" Sum of planned utilization across all customer projects under DM / 100">
+    {{ kpiData.customerPlannedUtilization }}
+  </span>
+</h5>
+ 
                 <p class="text-muted mb-0" style="font-size: 0.75rem;">Customer Utilized</p>
-              </div>
-              <i class="fas fa-info-circle text-muted" style="cursor: pointer; font-size: 14px;"
-                 data-bs-toggle="tooltip" data-bs-placement="top"
-                 title="Sum of all Utilization % of Customer Projects / 100"></i>
-            </div>
+              </div> </div>
           </div>
         </div>
       </div>
     </div>
-
+ 
     <!-- Non-Customer Utilization -->
     <div class="col-xl col-lg col-md-6 col-sm-6">
-      <div class="card border-0 shadow-sm border-start border-4 border-warning h-100">
+      <div class="card border-0 shadow-sm border-start border-4 border-warning h-100 kpi-clickable">
         <div class="card-body p-2">
           <div class="d-flex align-items-center">
             <div class="d-flex align-items-center justify-content-center rounded-circle me-2 bg-warning"
@@ -101,19 +112,27 @@
             </div>
             <div class="flex-grow-1 d-flex justify-content-between align-items-center">
               <div>
-                <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.nonCustomerActualUtilization }} / {{
-                  kpiData.nonCustomerPlannedUtilization }}</h5>
+ 
+              <h5 class="fs-5 fw-bold mb-1 text-dark">
+  <span data-bs-toggle="tooltip" title="Sum of actual utilization for non-customer projects under DM / 100">
+    {{ kpiData.nonCustomerActualUtilization }}
+  </span>
+  /
+  <span data-bs-toggle="tooltip" title="Sum of planned utilization for non-customer projects under DM / 100">
+    {{ kpiData.nonCustomerPlannedUtilization }}
+  </span>
+</h5>
+ 
+ 
                 <p class="text-muted mb-0" style="font-size: 0.75rem;">Non-Customer Utilized</p>
               </div>
-              <i class="fas fa-info-circle text-muted" style="cursor: pointer; font-size: 14px;"
-                 data-bs-toggle="tooltip" data-bs-placement="top"
-                 title="Sum of all Utilization % of Non-Customer Projects / 100"></i>
+             
             </div>
           </div>
         </div>
       </div>
     </div>
-
+ 
     <!-- Non Utilized Resources -->
     <div class="col-xl col-lg col-md-6 col-sm-6">
       <div class="card border-0 shadow-sm border-start border-4 border-danger h-100 kpi-clickable"
@@ -128,19 +147,20 @@
             </div>
             <div class="flex-grow-1 d-flex justify-content-between align-items-center">
               <div>
-                <h5 class="fs-5 fw-bold mb-1 text-dark">{{ kpiData.nonUtilizedResources }}</h5>
+<h5 class="fs-5 fw-bold mb-1 text-dark">
+  <span data-bs-toggle="tooltip" title=" Total resources under DM with 0% utilization">
+    {{ kpiData.nonUtilizedResources }}
+  </span>
+</h5>
                 <p class="text-muted mb-0" style="font-size: 0.75rem;">Non Utilized Resources</p>
               </div>
-              <i class="fas fa-info-circle text-muted" style="cursor: pointer; font-size: 14px;"
-                 data-bs-toggle="tooltip" data-bs-placement="top"
-                 title="No. of unutilized resources (bench)"
-                 (click)="$event.stopPropagation()"></i>
+             
             </div>
           </div>
         </div>
       </div>
     </div>
-
+ 
   </div>
 
 
@@ -326,7 +346,7 @@
                     <td class="fw-semibold">{{ project.code }}</td>
                     <td>{{ project.name }}</td>
                     <td>{{ project.customer }}</td>
-                    <td class="text-center">
+                    <td class="text-start">
                       <span class="badge bg-primary rounded-pill">{{ project.resources }}</span>
                     </td>
                   </tr>
