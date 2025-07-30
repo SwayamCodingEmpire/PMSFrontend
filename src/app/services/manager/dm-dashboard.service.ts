@@ -57,15 +57,15 @@ export class DmDashboardService {
   constructor(private httpClient: HttpClient) { }
 
   // Get KPI summary data for dashboard cards
-  getKPIData(): Observable<KPIData> {
-    const mockData: KPIData = {
-      totalActiveResources: 24,
-      totalActiveProjects: 8,
-      upcomingDeadlines: 3,
-      unallocatedResources: 5
-    };
-    return of(mockData);
-  }
+  // getKPIData(): Observable<KPIData> {
+  //   const mockData: KPIData = {
+  //     totalActiveResources: 24,
+  //     totalActiveProjects: 8,
+  //     upcomingDeadlines: 3,
+  //     unallocatedResources: 5
+  //   };
+  //   return of(mockData);
+  // }
 
 
 getAllSkillCounts(search: string | null): Observable<Skill[]> {
@@ -142,20 +142,19 @@ getKPICardsData(): Observable<KPIData> {
         (projects as any[]).forEach(project => {
           combinedPmProjects.push({
             projectManagerEmpId: pmEmpId,
-            projectId: project.projectId,
             name: project.name,
-            startDate: project.startDate,
-            endDate: project.endDate,
-            status: project.status
+           
           });
         });
       }
 
+      const role = localStorage.getItem('role');
+      if(role=='DELIVERY_MANAGER'){
       const combinedPmSheet = XLSX.utils.json_to_sheet(combinedPmProjects, {
-        header: ["projectManagerEmpId", "projectId", "name", "startDate", "endDate", "status"]
+        header: ["projectManagerEmpId",  "name"]
       });
       XLSX.utils.book_append_sheet(workbook, combinedPmSheet, 'Projects By PM');
-
+    }
 
       // Export final file
       const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });

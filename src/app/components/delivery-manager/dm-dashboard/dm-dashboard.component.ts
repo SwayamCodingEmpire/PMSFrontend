@@ -130,13 +130,13 @@ export class DmDashboardComponent implements OnInit {
 
   // KPI Data
   kpiData: KPIData = {
-    totalResources: 34,
-    billedNotBilled: { billed: 23, notBilled: 11 },
-    customerActualUtilization: 75,
-    customerPlannedUtilization: 80,
-    nonCustomerPlannedUtilization: 15,
-    nonCustomerActualUtilization: 10,
-    nonUtilizedResources: 5
+    totalResources: 0,
+    billedNotBilled: { billed: 0, notBilled: 0 },
+    customerActualUtilization: 0,
+    customerPlannedUtilization: 0,
+    nonCustomerPlannedUtilization: 0,
+    nonCustomerActualUtilization: 0,
+    nonUtilizedResources: 0
   };
 
   // Bench Resources Data
@@ -745,8 +745,8 @@ triggerSkillSearch(): void {
 
 exportProjectByManager():void{
   const data = this.selectedManagerProjects.map(res => ({
- 
- 
+
+
     Code: res.code,
     Name: res.name,
     Customer: res.customer,
