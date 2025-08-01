@@ -41,7 +41,7 @@ export class ResourcesComponent implements OnInit {
   private projectModal: any;
   private addModal: any;
   private skillsModal: any;
-  private allocationConfirmModal: any;  
+  private allocationConfirmModal: any;
   Math = Math;
 
 
@@ -337,6 +337,18 @@ export class ResourcesComponent implements OnInit {
       .join(', ');
   }
 
+  deliveryManagers: ReportingManagerPayload[] = [];
+  loadAllDeliveryManagers(): void {
+    this.usersService.getDeliveryManagers().subscribe({
+      next: (data: ReportingManagerPayload[]) => {
+        this.deliveryManagers = data;
+      },
+      error: (error) => {
+        console.error('Error loading delivery managers:', error);
+      },
+    });
+  }
+
   getSecondarySkills(employee: Employee): string {
     return (employee.secondarySkill ?? [])
       .map((skill) => skill.skillName)
@@ -391,7 +403,8 @@ export class ResourcesComponent implements OnInit {
           Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$'),
         ],
       ],
-      reportingManager:['', Validators.required]
+      reportingManager:['', Validators.required],
+      deliveryManager:['', Validators.required]
     });
   }
 
@@ -557,6 +570,10 @@ hideManagerDropdown(index: number): void {
       .get('reportingManager')
       ?.setValue(emp.reportingManagerId || '');
         this.editForm.get('reportingManager')?.setValue(emp.reportingManagerId || '');
+    this.editForm
+      .get('deliveryManager')
+      ?.setValue(emp.deliveryManagerEmpId || '');
+        this.editForm.get('deliveryManager')?.setValue(emp.deliveryManagerEmpId || '');
   }
 
   cancelEdit(): void {
@@ -577,6 +594,7 @@ closeRmModal() {
 
   saveEmployee(): void {
     if (this.editForm.invalid) {
+      console.error('Form is invalid');
       return;
     }
 
@@ -591,7 +609,7 @@ closeRmModal() {
           console.log('Resource updated successfully:', response);
           this.showSuccessToast('Resource details updated successfully');
 
-          
+
           this.loadResources();
           this.loadManagers();
           this.applySearch();
@@ -756,7 +774,7 @@ closeRmModal() {
         reportingManagerId: form.reportingManager,
         reportingManagerName: this.getReportingManagerName(
         form.reportingManager,
-        
+
         ),
         resourceRole: form.resourceRole,
         allocation: [], // default empty allocation

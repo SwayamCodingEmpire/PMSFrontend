@@ -34,8 +34,8 @@
               <th>Designation</th>
               <th>Exp (Years)</th>
               <th>Reporting Manager</th>
-              <th *ngIf="isAllowedForDML()">Allocation</th>
-               <th *ngIf="!isAllowedForDML()">Delivery Manager</th>
+              <!-- <th *ngIf="isAllowedForDML()">Allocation</th> -->
+               <th>Delivery Manager</th>
             </tr>
           </thead>
           <tbody>
@@ -206,7 +206,7 @@
                 <!-- Deallocate button (multiple of 7) -->
                 <!-- <td class="allocation-column" *ngIf="isAllowedForDML()">
                   <ng-container *ngIf="canBeUnAllocated(emp.deliveryManagerEmpId); else checkAllocate">
-                    
+
                     <div class="allocation-action-card deallocate-card" (click)="confirmDeallocate(emp)">
                       <div class="d-flex align-items-center justify-content-center">
                         <i class="fa-solid fa-user-minus me-1"></i>
@@ -218,7 +218,7 @@
 
                   <ng-template #checkAllocate>
                     <ng-container *ngIf="canBeAllocated(emp.deliveryManagerEmpId); else checkUnavailable">
-                      
+
                       <div class="allocation-action-card allocate-card" (click)="confirmAllocate(emp)">
                         <div class="d-flex align-items-center justify-content-center">
                           <i class="fa-solid fa-user-plus me-1"></i>
@@ -231,7 +231,7 @@
 
                   <ng-template #checkUnavailable>
                     <ng-container *ngIf="isUnAvailable(emp.deliveryManagerEmpId); else checkAvailable">
-                      
+
                       <div class="allocation-action-card unavailable-card" (click)="markUnavailable(emp)"
                         data-bs-toggle="tooltip" data-bs-placement="top"
                         title="{{getOthermanagerDetails(emp.deliveryManagerEmpId, emp.deliveryManagerName)}}">
@@ -248,7 +248,7 @@
 
                   <ng-template #checkAvailable>
                     <ng-container *ngIf="i % 5 === 0">
-                      
+
                       <div class="allocation-action-card available-card">
                         <div class="d-flex align-items-center justify-content-center">
                           <i class="fa-solid fa-user-check me-1"></i>
@@ -261,12 +261,20 @@
                 </td> -->
 
                 <td>
+                  <ng-container *ngIf="editingIndex !== i">
                   <ng-container *ngIf="emp.deliveryManagerName">
                     {{ emp.deliveryManagerName }}
                   </ng-container>
                   <ng-container *ngIf="!emp.deliveryManagerName">
                     <span class="text-muted">Not Assigned</span>
                 </ng-container>
+                </ng-container>
+
+                  <ng-container *ngIf="editingIndex === i">
+    <a href="#" data-bs-toggle="modal" data-bs-target="#editEmployeeModalForDM" (click)="prepareManagerModal(emp)">
+      {{emp.deliveryManagerName || 'Select Delivery Manager' }}
+    </a>
+  </ng-container>
               </td>
 
 
@@ -409,6 +417,75 @@
                           <input class="form-check-input" type="radio" name="reportingManager" [value]="manager.empId"
                             [checked]="
                               editForm.get('reportingManager')?.value === manager.empId
+                            " (click)="$event.stopPropagation()" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Save</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="modal fade" id="editEmployeeModalForDM" tabindex="-1" aria-labelledby="editEmployeeLabelDM" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content p-3">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editEmployeeLabel">Edit Delivery Manager</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="editForm">
+            <!-- Employee Details Form -->
+
+
+            <!-- Accordion for Project Manager -->
+            <div class="accordion mt-4" id="managerAccordion">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingManager">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseManager" aria-expanded="false" aria-controls="collapseManager">
+                    Select eliveryrting Manager
+                  </button>
+                </h2>
+                <div id="collapseManager" class="accordion-collapse collapse" aria-labelledby="headingManager"
+                  data-bs-parent="#managerAccordion">
+                  <div class="accordion-body p-3">
+                    <!-- Search -->
+                    <!-- <input type="text" class="form-control mb-3" placeholder="Search managers..."
+                      [value]="managerSearchText" (input)="managerSearchText = $any($event.target).value" /> -->
+
+                    <!-- Manager List -->
+                    <!-- Manager List (Inside Accordion Body or Any Container) -->
+                    <div class="manager-list overflow-auto" style="max-height: 300px">
+                      <div *ngFor="let manager of deliveryManagers" class="card p-2 mb-2 manager-card" [class.bg-info]="
+                          editForm.get('deliveryManager')?.value ===
+                          manager.empId
+                        " (click)="
+                          editForm
+                            .get('deliveryManager')
+                            ?.setValue(manager.empId)
+                        " style="cursor: pointer">
+                        <div class="d-flex justify-content-between align-items-center">
+                          <div>
+                            <h6 class="mb-0">{{ manager.name }}</h6>
+                            <small class="text-muted">{{
+                              manager.emailId
+                              }}</small>
+                          </div>
+                          <input class="form-check-input" type="radio" name="deliveryManager" [value]="manager.empId"
+                            [checked]="
+                              editForm.get('deliveryManager')?.value === manager.empId
                             " (click)="$event.stopPropagation()" />
                         </div>
                       </div>

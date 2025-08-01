@@ -22,6 +22,10 @@ getReportingManagers(): Observable<ReportingManagerPayload[]> {
   return this.http.get<ReportingManagerPayload[]>(`${this.baseUrl}/reporting-managers`);
 }
 
+getDeliveryManagers(): Observable<ReportingManagerPayload[]> {
+  return this.http.get<ReportingManagerPayload[]>(`${this.baseUrl}/delivery-managers`);
+}
+
 
 
 
