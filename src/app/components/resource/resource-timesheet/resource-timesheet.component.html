@@ -43,39 +43,36 @@
                         <tr>
                             <th style="background: #f8fbff;">Project</th>
                             <ng-container *ngFor="let day of days; let d = index">
-                                <th style="background: #f8fbff;" class="px-3">
-                                    <!-- 1st Row: Day + Icon -->
-                                    <div fxLayout="row" fxLayoutAlign="space-between center">
-                                        <span class="day-label">{{ day.date | date: 'EEE' }}</span>
-                                        <button class="btn btn-sm btn-outline-success day-action p-1" (click)="saveDay(d)" [disabled]="isFutureDate(day.date)"
-                                            title="Save this day">
-                                            <i class="pi pi-save text-dark"></i>
-                                        </button>
-                                    </div>
-                                    <!-- 2nd Row: Date + Icon -->
-                                    <div fxLayout="row" fxLayoutAlign="space-between center">
-                                        <span class="date-label">{{ day.date | date: 'd MMM' }}</span>
-                                        <div class="dropdown position-relative" [class.show]="dayDropdownOpen === d">
-                                            <button type="button" class="btn btn-sm btn-outline-warning day-action p-1" [disabled]="isFutureDate(day.date)"
-                                                (click)="toggleDayDropdown(d)" [attr.aria-expanded]="dayDropdownOpen === d">
-                                                <i class="pi pi-calendar-minus text-dark"></i>
-                                            </button>
-                                            <ul class="dropdown-menu" [class.show]="dayDropdownOpen === d">
-                                                <li>
-                                                    <button class="dropdown-item" (click)="markAllLeave(d)">
-                                                        Full Day Leave
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <hr class="dropdown-divider">
-                                                </li>
-                                                <li *ngFor="let project of projects">
-                                                    <button class="dropdown-item"
-                                                        (click)="markProjectLeave(project.code, d)">
-                                                        Leave for {{ project.code }}
-                                                    </button>
-                                                </li>
-                                            </ul>
+                                <th style="background: #f8fbff;" class="px-3 day-header-cell">
+                                    <div class="day-header-content">
+                                        <!-- Day name centered -->
+                                        <div class="day-name-section">
+                                            <span class="day-label">{{ day.date | date: 'EEE' }}</span>
+                                        </div>
+                                        
+                                        <!-- Date centered with compact leave button -->
+                                        <div class="date-section">
+                                            <span class="date-label">{{ day.date | date: 'd MMM' }}</span>
+                                            <div class="leave-button-wrapper dropdown position-relative" [class.show]="dayDropdownOpen === d">
+                                                <button type="button" class="leave-button" [disabled]="isFutureDate(day.date)"
+                                                    (click)="toggleDayDropdown(d)" [attr.aria-expanded]="dayDropdownOpen === d"
+                                                    title="Mark leave">
+                                                    <i class="bi bi-calendar-x"></i>
+                                                </button>
+                                                <ul class="dropdown-menu compact-dropdown dropdown-menu-end" [class.show]="dayDropdownOpen === d">
+                                                    <li>
+                                                        <button class="dropdown-item" (click)="markAllLeaveAndAutoSave(d)">
+                                                            <i class="bi bi-calendar-x-fill me-2"></i>Full Day Leave
+                                                        </button>
+                                                    </li>
+                                                    <li><hr class="dropdown-divider"></li>
+                                                    <li *ngFor="let project of projects">
+                                                        <button class="dropdown-item" (click)="markProjectLeaveAndAutoSave(project.code, d)">
+                                                            <i class="bi bi-briefcase me-2"></i>Leave for {{ project.code }}
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                 </th>
@@ -99,6 +96,8 @@
                                             min="0" max="24" step="0.5"
                                             [formControlName]="getFormControlName(project.code, d)"
                                             (input)="onHoursChange(project.code, d, $event)"
+                                            (focus)="onInputFocus(project.code, d)"
+                                            (blur)="onInputBlur(project.code, d)"
                                             placeholder="0.0" />
                                     </div>
                                 </td>
@@ -118,7 +117,11 @@
                 </table>
             </div>
         </form>
-        <div fxLayout="row" fxLayoutAlign="end center" class="actions">
+        <div fxLayout="row" fxLayoutAlign="space-between center" class="actions">
+            <div class="auto-save-indicator">
+                <i class="bi bi-cloud-check text-success me-2"></i>
+                <small class="text-muted">Changes are automatically saved</small>
+            </div>
             <button class="submit-button" (click)="submitTimesheet()">
                 <i class="pi pi-send pe-2"></i>Submit Timesheet
             </button>

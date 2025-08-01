@@ -55,49 +55,50 @@ export class AssignResourceAllocationComponent implements OnInit, OnDestroy {
   };
   designationSearchTerm = '';
   allDesignations = [
-  { label: 'Developer', value: 'Developer' },
-  { label: 'Senior Developer', value: 'Senior Developer' },
-  { label: 'Lead Engineer', value: 'Lead Engineer' },
-  { label: 'Architect', value: 'Architect' },
-  { label: 'Project Manager', value: 'Project Manager' },
-  { label: 'QA Engineer', value: 'QA Engineer' },
-  { label: 'Business Analyst', value: 'Business Analyst' },
-  { label: 'QA Engineer', value: 'QA Engineer' },
-  { label: 'QA Engineer', value: 'QA Engineer' },
-  { label: 'QA Engineer', value: 'QA Engineer' },
-  { label: 'QA Engineer', value: 'QA Engineer' },
-  { label: 'QA Engineer', value: 'QA Engineer' },
-  { label: 'QA Engineer', value: 'QA Engineer' },
-  { label: 'QA Engineer', value: 'QA Engineer' },
-  { label: 'QA Engineer', value: 'QA Engineer' },
-  { label: 'QA Engineer', value: 'QA Engineer' },
-  { label: 'QA Engineer', value: 'QA ajhfhkhhg' }
-];
+    { label: 'Developer', value: 'Developer' },
+    { label: 'Senior Developer', value: 'Senior Developer' },
+    { label: 'Lead Engineer', value: 'Lead Engineer' },
+    { label: 'Architect', value: 'Architect' },
+    { label: 'Project Manager', value: 'Project Manager' },
+    { label: 'QA Engineer', value: 'QA Engineer' },
+    { label: 'Business Analyst', value: 'Business Analyst' },
+    { label: 'QA Engineer', value: 'QA Engineer' },
+    { label: 'QA Engineer', value: 'QA Engineer' },
+    { label: 'QA Engineer', value: 'QA Engineer' },
+    { label: 'QA Engineer', value: 'QA Engineer' },
+    { label: 'QA Engineer', value: 'QA Engineer' },
+    { label: 'QA Engineer', value: 'QA Engineer' },
+    { label: 'QA Engineer', value: 'QA Engineer' },
+    { label: 'QA Engineer', value: 'QA Engineer' },
+    { label: 'QA Engineer', value: 'QA Engineer' },
+    { label: 'QA Engineer', value: 'QA ajhfhkhhg' }
+  ];
 
 
 
-designations: {label:string, value:string}[] = [];
+  designations: { label: string, value: string }[] = [];
+  selectedDeliveryManagerName: string | null = null;
 
 
-loadDesignations() {
-  this.publicService.getAllDesignations().subscribe(
-    (designations: string[]) => {
-      this.allDesignations = designations.map(d => ({ label: d, value: d }));
-      this.designations = [...this.allDesignations]; // Initialize with all designations
-      this.filterDesignations();
-    },
-    error => {
-      console.error('Error loading designations:', error);
-    }
-  );
-}
+  loadDesignations() {
+    this.publicService.getAllDesignations().subscribe(
+      (designations: string[]) => {
+        this.allDesignations = designations.map(d => ({ label: d, value: d }));
+        this.designations = [...this.allDesignations]; // Initialize with all designations
+        this.filterDesignations();
+      },
+      error => {
+        console.error('Error loading designations:', error);
+      }
+    );
+  }
 
-filterDesignations() {
-  const term = this.designationSearchTerm.toLowerCase();
-  this.designations = this.allDesignations.filter(d =>
-    d.label.toLowerCase().includes(term)
-  );
-}
+  filterDesignations() {
+    const term = this.designationSearchTerm.toLowerCase();
+    this.designations = this.allDesignations.filter(d =>
+      d.label.toLowerCase().includes(term)
+    );
+  }
 
   ngOnInit() {
     this.loadDesignations();
@@ -242,13 +243,13 @@ filterDesignations() {
     );
   }
 
-    getPrimarySkills(employee: ResourceAllocations): string {
-      return employee.primarySkill.map(skill => skill.skillName).join(', ');
-    }
+  getPrimarySkills(employee: ResourceAllocations): string {
+    return employee.primarySkill.map(skill => skill.skillName).join(', ');
+  }
 
-    getSecondarySkills(employee: ResourceAllocations): string {
-      return employee.secondarySkill.map(skill => skill.skillName).join(', ');
-    }
+  getSecondarySkills(employee: ResourceAllocations): string {
+    return employee.secondarySkill.map(skill => skill.skillName).join(', ');
+  }
 
 
   constructor(
@@ -767,7 +768,7 @@ filterDesignations() {
     }
   }
 
-  clearFilters(){
+  clearFilters() {
     this.allocationFilter = 'all';
     this.billableFilter = 100;
     this.plannedUtilFilter = 100;
@@ -797,24 +798,44 @@ filterDesignations() {
     };
 
 
-this.resourceAllocationService.saveResourceAllocations(allocations).subscribe({
-  next: response => {
-    console.log('Resource allocation successful:', response);
-    this.toastr.success('Resource allocation successful', 'Success');
+    this.resourceAllocationService.saveResourceAllocations(allocations).subscribe({
+      next: response => {
+        console.log('Resource allocation successful:', response);
+        this.toastr.success('Resource allocation successful', 'Success');
 
-    this.loadResourceAllocationsData(); // ✅ Only triggered on success
-  },
-  error: err => {
-    this.toastr.error('Error');
-    console.error('Resource allocation failed:', err);
-    // ❌ Do NOT call loadResourceAllocationsData here
-    // Optionally: show toast or error message to user
-  }
-});
+        this.loadResourceAllocationsData(); // ✅ Only triggered on success
+      },
+      error: err => {
+        this.toastr.error('Error');
+        console.error('Resource allocation failed:', err);
+        // ❌ Do NOT call loadResourceAllocationsData here
+        // Optionally: show toast or error message to user
+      }
+    });
 
 
     this.selectedResources = [];
     this.allocationFormArray.clear();
+  }
+
+  openAccessDeniedModal(): void {
+    const modal = new (window as any).bootstrap.Modal(document.getElementById('notAllowedModal'));
+    modal.show();
+  }
+
+  handleCheckboxClick(res: any, projectCode: string): void {
+    const isDisabled = this.isAllocatedToProject(res, projectCode) || !res.deliveryManagerId;
+
+    if (isDisabled) {
+      this.selectedDeliveryManagerName = res.deliveryManagerName ?? 'Not Assigned';
+      this.openAccessDeniedModal();
+    } else {
+      this.toggleResource(res);
+    }
+  }
+
+  closeAccessDeniedModal(): void {
+    this.selectedDeliveryManagerName = null;
   }
 
 

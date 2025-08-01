@@ -96,7 +96,7 @@ interface SkillLevel {
 export interface Skill {
   name: string;
   totalCount: number;
-  levels: { level: string; count: number }[]; // no resources initially
+  levels: { level: string; count: number }[];
 }
 
 export interface ResourceDetail {
@@ -107,6 +107,7 @@ export interface ResourceDetail {
   experience: number;
   currentProject: string;
   utilization: number;
+  projectCount: number;
 }
 
 export interface BenchResource {
@@ -323,6 +324,10 @@ export class DmDashboardComponent implements OnInit {
   selectedSkillLevel: string | null = null;
   selectedSkillResources: ResourceDetail[] = [];
 
+  // Selected resource for projects modal
+  selectedResourceForProjects: ResourceDetail | null = null;
+  selectedResourceProjects: string[] = []; // Store projects separately from the interface
+
   constructor(private cdr: ChangeDetectorRef, private dmDashboardService: DmDashboardService, private excelExportService: ExcelExportService) {}
 
   ngOnInit() {
@@ -380,7 +385,7 @@ onSkillSearchChange() {
       Email: res.email,
       Designation: res.designation,
       Experience: res.experience,
-      Utilization: res.utilization
+      'Project Count': res.projectCount
 
     }));
 
@@ -540,10 +545,10 @@ onSkillSelect(dataPointIndex: number, seriesIndex: number) {
     // Fetch resource details
     this.dmDashboardService.getSkillResourceDetails(skill.name, level, this.skillsSearchTerm).subscribe(
       (resourceDetails: ResourceDetail[]) => {
+        // Use the data as received from the API
         this.selectedSkillResources = resourceDetails;
         this.skillResourceCurrentPage = 1;
-this.skillResourceSearchTerm = ''; // Optional: reset search
-
+        this.skillResourceSearchTerm = ''; // Optional: reset search
 
         // ⚠️ Call detectChanges *after* the data is assigned
         this.cdr.detectChanges();
@@ -620,20 +625,23 @@ get filteredSkillResources(): ResourceDetail[] {
   goToLastPage() { this.currentPage = this.totalPages; }
 
   // Pagination controls for skills resources
-  goToFirstPageSkillResource() { this.skillResourceCurrentPage = 1;
+  goToFirstPageSkillResource() {
+    this.skillResourceCurrentPage = 1;
     this.cdr.detectChanges();
    }
-  goToPreviousPageSkillResource() { if (this.skillResourceCurrentPage > 1) this.skillResourceCurrentPage--;
+  goToPreviousPageSkillResource() {
+    if (this.skillResourceCurrentPage > 1) this.skillResourceCurrentPage--;
     this.cdr.detectChanges();
   }
   goToNextPageSkillResource() {
-  if (this.skillResourceCurrentPage < this.skillResourceTotalPages) {
-    this.skillResourceCurrentPage++;
-    this.cdr.detectChanges(); // <-- Force re-render
+    if (this.skillResourceCurrentPage < this.skillResourceTotalPages) {
+      this.skillResourceCurrentPage++;
+      this.cdr.detectChanges(); // <-- Force re-render
+    }
   }
-}
 
-  goToLastPageSkillResource() { this.skillResourceCurrentPage = this.skillResourceTotalPages;
+  goToLastPageSkillResource() {
+    this.skillResourceCurrentPage = this.skillResourceTotalPages;
     this.cdr.detectChanges();
    }
 
@@ -796,5 +804,31 @@ exportProjectByManager():void{
       return 'bench-row-danger'; // 30+ days - light red row (high stress)
     }
   }
+
+  // Projects Modal Methods
+  openResourceProjectsModal(resource: ResourceDetail): void {
+    this.selectedResourceForProjects = resource;
+    this.selectedResourceProjects = []; // Reset projects array
+
+    // Always fetch fresh projects when modal is opened
+    this.dmDashboardService.getProjectsByEmployeeId(resource.employeeId).subscribe(
+      (projects: string[]) => {
+        this.selectedResourceProjects = projects;
+        this.cdr.detectChanges();
+      },
+      error => {
+        console.error('Error loading projects for resource:', error);
+        this.selectedResourceProjects = []; // Set to empty array on error
+      }
+    );
+
+    const modalEl = document.getElementById('resourceProjectsModal');
+    if (modalEl) {
+      const modal = new bootstrap.Modal(modalEl);
+      modal.show();
+    }
+  }
+
+
 
 }

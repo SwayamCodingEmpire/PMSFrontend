@@ -143,7 +143,7 @@ getKPICardsData(): Observable<KPIData> {
           combinedPmProjects.push({
             projectManagerEmpId: pmEmpId,
             name: project.name,
-           
+
           });
         });
       }
@@ -168,5 +168,12 @@ getKPICardsData(): Observable<KPIData> {
     return this.httpClient.get<BenchResource[]>(`${this.baseUrl}/bench-resources`);
   }
 
-  // Gets summary list (outer structure)
+  // Get projects for a specific employee by employeeId
+  getProjectsByEmployeeId(employeeId: string): Observable<string[]> {
+    let params = new HttpParams()
+    .set('empId', employeeId);
+    return this.httpClient.get<string[]>(`${this.baseUrl}/resource-projects`, { params });
+  }
+
+
 }

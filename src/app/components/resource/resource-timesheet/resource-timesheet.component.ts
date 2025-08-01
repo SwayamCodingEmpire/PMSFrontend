@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -19,9 +19,11 @@ type DayEntry = { hours: number | null; leave: boolean; approvalStatus: string |
   templateUrl: './resource-timesheet.component.html',
   styleUrls: ['./resource-timesheet.component.scss']
 })
-export class ResourceTimesheetComponent {
+export class ResourceTimesheetComponent implements OnInit, OnDestroy {
 
   isButtonDisabled = true;
+  isLoading = false;
+  isSaving = false;
 
   user = { name: localStorage.getItem('name') || '' };
   projects: Project[] = [];
@@ -36,6 +38,13 @@ export class ResourceTimesheetComponent {
   notificationType: 'success' | 'danger' | '' = '';
 
   dayDropdownOpen: number | null = null;
+
+  // Auto-save tracking
+  private lastFocusedDay: number | null = null;
+  private hasUnsavedChanges: Map<number, boolean> = new Map();
+  
+  // Click outside handler
+  private clickOutsideHandler = this.handleClickOutside.bind(this);
 
   constructor(
     private resourceTimesheetService: ResourceTimesheetService,
@@ -61,6 +70,20 @@ export class ResourceTimesheetComponent {
     const today = new Date();
     this.setCurrentWeekStart(); // Ensure week start is set first
     this.loadTimesheetData(today);
+    
+    // Setup auto-save on page unload
+    this.setupAutoSaveOnUnload();
+    
+    // Setup click outside to close dropdowns
+    this.setupClickOutsideHandler();
+  }
+
+  ngOnDestroy() {
+    // Auto-save any pending changes before component destruction
+    this.autoSaveAllPendingChanges();
+    
+    // Clean up event listeners
+    this.removeClickOutsideHandler();
   }
 
   checkButtonDisabled(day: { date: Date }): boolean {
@@ -91,6 +114,8 @@ export class ResourceTimesheetComponent {
 
 
   loadTimesheetData(today: Date) {
+    this.isLoading = true;
+
     // Use the same calculation as setCurrentWeekStart for consistency
     const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
     const daysToSubtract = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
@@ -108,7 +133,8 @@ export class ResourceTimesheetComponent {
     console.log('Week range:', startDateStr, 'to', endDateStr);
 
     // Fetch from API
-    this.resourceTimesheetService.getTimeSheetData(startDateStr, endDateStr).subscribe((timeSheetData) => {
+    this.resourceTimesheetService.getTimeSheetData(startDateStr, endDateStr).subscribe({
+      next: (timeSheetData) => {
       // Generate week dates BEFORE processing data
       this.updateWeekDays();
 
@@ -147,6 +173,18 @@ export class ResourceTimesheetComponent {
       console.log('Days array:', this.days);
 
       this.initializeTimesheetForm();
+      
+      // Reset unsaved changes tracking when new data is loaded
+      this.hasUnsavedChanges.clear();
+      this.lastFocusedDay = null;
+      
+      this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading timesheet data:', error);
+        this.showNotification('Failed to load timesheet data. Please try again.', 'danger');
+        this.isLoading = false;
+      }
     });
   }
 
@@ -385,7 +423,7 @@ export class ResourceTimesheetComponent {
     const controlName = this.getFormControlName(projectCode, dayIdx);
     this.timesheetForm.get(controlName)?.setValue(entry.hours);
   }
-  markAllLeave(dayIdx: number) {
+  markAllLeave(dayIdx: number, suppressNotification: boolean = false) {
     if (this.isWeekend(this.days[dayIdx].date)) return;
 
     const isCurrentlyLeave = this.projects.every(project => {
@@ -420,16 +458,18 @@ export class ResourceTimesheetComponent {
       }
     }
 
-    this.showNotification(
-      isCurrentlyLeave
-        ? 'Removed leave for non-approved projects.'
-        : 'Marked non-approved projects as leave.',
-      'success'
-    );
+    if (!suppressNotification) {
+      this.showNotification(
+        isCurrentlyLeave
+          ? 'Removed leave for non-approved projects.'
+          : 'Marked non-approved projects as leave.',
+        'success'
+      );
+    }
     this.closeDayDropdown();
   }
 
-  markProjectLeave(projectCode: string, dayIdx: number) {
+  markProjectLeave(projectCode: string, dayIdx: number, suppressNotification: boolean = false) {
     if (this.isWeekend(this.days[dayIdx].date)) return;
 
     const entry = this.timesheet[projectCode][dayIdx];
@@ -438,6 +478,8 @@ export class ResourceTimesheetComponent {
     const controlName = this.getFormControlName(projectCode, dayIdx);
     const control = this.timesheetForm.get(controlName);
     if (!control) return;
+
+    const wasOnLeave = entry.leave; // Track previous state
 
     if (!entry.leave) {
       // Mark as leave
@@ -453,12 +495,14 @@ export class ResourceTimesheetComponent {
       control.enable();
     }
 
-    this.showNotification(
-      entry.leave
-        ? `${projectCode} marked as leave.`
-        : `${projectCode} leave removed.`,
-      'success'
-    );
+    if (!suppressNotification) {
+      this.showNotification(
+        entry.leave
+          ? `${projectCode} marked as leave.`
+          : `${projectCode} leave removed.`,
+        'success'
+      );
+    }
     this.closeDayDropdown();
   }
 
@@ -472,6 +516,48 @@ export class ResourceTimesheetComponent {
     const target = event.target as HTMLInputElement;
     const value = target.value;
     this.setHours(projectCode, dayIdx, value);
+    
+    // Mark this day as having unsaved changes
+    this.hasUnsavedChanges.set(dayIdx, true);
+  }
+
+  onInputFocus(projectCode: string, dayIdx: number) {
+    // Auto-save the previously focused day if it has unsaved changes
+    if (this.lastFocusedDay !== null && 
+        this.lastFocusedDay !== dayIdx && 
+        this.hasUnsavedChanges.get(this.lastFocusedDay)) {
+      this.autoSaveDay(this.lastFocusedDay);
+    }
+    
+    // Update the currently focused day
+    this.lastFocusedDay = dayIdx;
+  }
+
+  onInputBlur(projectCode: string, dayIdx: number) {
+    // Auto-save when input loses focus if there are unsaved changes
+    if (this.hasUnsavedChanges.get(dayIdx)) {
+      // Use a small delay to avoid conflicts with focus events
+      setTimeout(() => {
+        this.autoSaveDay(dayIdx);
+      }, 100);
+    }
+  }
+
+  private autoSaveDay(dayIdx: number) {
+    if (!this.hasUnsavedChanges.get(dayIdx) || this.isSaving) {
+      return;
+    }
+
+    // Check if it's a future date
+    if (this.isFutureDate(this.days[dayIdx].date)) {
+      return;
+    }
+
+    // Perform auto-save
+    this.saveDay(dayIdx, true); // Pass true to indicate this is an auto-save
+    
+    // Clear the unsaved changes flag
+    this.hasUnsavedChanges.set(dayIdx, false);
   }
 
   dayTotal(dayIdx: number): number {
@@ -531,17 +617,20 @@ export class ResourceTimesheetComponent {
     }
   }
 
-  saveDay(dayIdx: number) {
+  saveDay(dayIdx: number, isAutoSave: boolean = false) {
+    this.isSaving = true;
     let saved = false;
     const dayDate = this.days[dayIdx].date;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
     if (dayDate > today) {
-      this.showNotification('Cannot save future dates.', 'danger');
+      if (!isAutoSave) {
+        this.showNotification('Cannot save future dates.', 'danger');
+      }
+      this.isSaving = false;
       return;
     }
-
 
     const dayTimeSheet: DayWiseTimesheet[] = [];
 
@@ -576,23 +665,40 @@ export class ResourceTimesheetComponent {
 
     console.log(singularTimesheetPayload);
 
-    this.resourceTimesheetService.saveTimeSheetData(singularTimesheetPayload).subscribe(
-      response => {
+    this.resourceTimesheetService.saveTimeSheetData(singularTimesheetPayload).subscribe({
+      next: (response) => {
         console.log(singularTimesheetPayload);
         console.log('Timesheet saved successfully:', response);
+        this.isSaving = false;
+        
+        // Show different notifications for manual vs auto-save
+        if (!isAutoSave) {
+          this.showNotification(
+            saved
+              ? `Saved entries for ${dayDate.toDateString()}`
+              : `No hours entered for this day`,
+            saved ? 'success' : 'danger'
+          );
+        }
       },
-      error => {
+      error: (error) => {
         console.error('Error saving timesheet:', error);
-        this.showNotification('Failed to save timesheet. Please try again.', 'danger');
+        if (!isAutoSave) {
+          this.showNotification('Failed to save timesheet. Please try again.', 'danger');
+        }
+        this.isSaving = false;
       }
-    );
+    });
 
-    this.showNotification(
-      saved
-        ? `Saved entries for ${dayDate.toDateString()}`
-        : `No hours entered for this day`,
-      saved ? 'success' : 'danger'
-    );
+    // Show notification only for manual saves
+    if (!isAutoSave) {
+      this.showNotification(
+        saved
+          ? `Saved entries for ${dayDate.toDateString()}`
+          : `No hours entered for this day`,
+        saved ? 'success' : 'danger'
+      );
+    }
   }
 
   dayDateToIso(date: Date): string {
@@ -652,8 +758,15 @@ export class ResourceTimesheetComponent {
 
 
   submitTimesheet() {
+    if (this.isSaving) {
+      this.showNotification('Please wait for current save operation to complete.', 'danger');
+      return;
+    }
+
+    this.isSaving = true;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+
     // Validate that all working days have entries
     for (let day = 0; day < 7; day++) {
       if (this.isWeekend(this.days[day].date)) continue;
@@ -664,6 +777,7 @@ export class ResourceTimesheetComponent {
       }
       if (!anyEntry) {
         this.showNotification('Please fill hours or mark leave for all working days.', 'danger');
+        this.isSaving = false;
         return;
       }
     }
@@ -727,16 +841,20 @@ export class ResourceTimesheetComponent {
 
     //use the resourse timesheet service to submit the timesheet data
 
-    this.resourceTimesheetService.submitTimeSheetData(timeSheetPayload).subscribe(
-      response => {
+    this.resourceTimesheetService.submitTimeSheetData(timeSheetPayload).subscribe({
+      next: (response) => {
         console.log('Timesheet submitted successfully:', response);
         this.showNotification('Timesheet submitted successfully!', 'success');
+        this.isSaving = false;
+        // Optionally reload data to reflect new status
+        this.loadTimesheetData(new Date());
       },
-      error => {
+      error: (error) => {
         console.error('Error submitting timesheet:', error);
         this.showNotification('Failed to submit timesheet. Please try again.', 'danger');
+        this.isSaving = false;
       }
-    );
+    });
 
     // Here you would typically call your service to submit the data
     // this.resourceTimesheetService.submitTimeSheetData(timeSheetPayload).subscribe(
@@ -763,11 +881,85 @@ export class ResourceTimesheetComponent {
   showNotification(message: string, type: 'success' | 'danger') {
     this.notification = message;
     this.notificationType = type;
-    setTimeout(() => this.clearNotification(), 3000);
+    setTimeout(() => this.clearNotification(), 5000); // Increased timeout for better UX
   }
 
   clearNotification() {
     this.notification = '';
     this.notificationType = '';
+  }
+
+  private setupAutoSaveOnUnload() {
+    // Auto-save on page unload/refresh
+    window.addEventListener('beforeunload', (event) => {
+      this.autoSaveAllPendingChanges();
+    });
+
+    // Auto-save when user navigates away (for SPA routing)
+    window.addEventListener('pagehide', (event) => {
+      this.autoSaveAllPendingChanges();
+    });
+  }
+
+  private autoSaveAllPendingChanges() {
+    // Auto-save all days that have unsaved changes
+    for (let dayIdx = 0; dayIdx < 7; dayIdx++) {
+      if (this.hasUnsavedChanges.get(dayIdx)) {
+        this.autoSaveDay(dayIdx);
+      }
+    }
+  }
+
+  // Enhanced leave methods with auto-save
+  markAllLeaveAndAutoSave(dayIdx: number) {
+    console.log(`Auto-save wrapper: markAllLeaveAndAutoSave called for day ${dayIdx}`);
+    
+    // Execute the original leave logic
+    this.markAllLeave(dayIdx);
+    
+    // Always mark day as having unsaved changes and trigger auto-save
+    // This works for both applying AND removing leave
+    this.hasUnsavedChanges.set(dayIdx, true);
+    console.log(`Day ${dayIdx} marked as having unsaved changes, triggering auto-save...`);
+    
+    setTimeout(() => {
+      console.log(`Executing auto-save for day ${dayIdx}`);
+      this.autoSaveDay(dayIdx);
+    }, 150); // Slightly longer delay to ensure UI updates complete
+  }
+
+  markProjectLeaveAndAutoSave(projectCode: string, dayIdx: number) {
+    console.log(`Auto-save wrapper: markProjectLeaveAndAutoSave called for ${projectCode} on day ${dayIdx}`);
+    
+    // Execute the original leave logic
+    this.markProjectLeave(projectCode, dayIdx);
+    
+    // Always mark day as having unsaved changes and trigger auto-save
+    // This works for both applying AND removing leave
+    this.hasUnsavedChanges.set(dayIdx, true);
+    console.log(`Day ${dayIdx} marked as having unsaved changes, triggering auto-save...`);
+    
+    setTimeout(() => {
+      console.log(`Executing auto-save for day ${dayIdx} after ${projectCode} leave change`);
+      this.autoSaveDay(dayIdx);
+    }, 150); // Slightly longer delay to ensure UI updates complete
+  }
+
+  // Click outside functionality
+  private setupClickOutsideHandler() {
+    document.addEventListener('click', this.clickOutsideHandler);
+  }
+
+  private removeClickOutsideHandler() {
+    document.removeEventListener('click', this.clickOutsideHandler);
+  }
+
+  private handleClickOutside(event: Event) {
+    const target = event.target as HTMLElement;
+    
+    // Check if click is outside dropdown and dropdown button
+    if (!target.closest('.leave-button-wrapper') && this.dayDropdownOpen !== null) {
+      this.dayDropdownOpen = null;
+    }
   }
 }

@@ -12,4 +12,6 @@ export interface ResourceAllocations {
   billability: number;
   plannedUtil: number;
   actualUtil: number;
+    deliveryManagerId: boolean;
+  deliveryManagerName: string;  
 }

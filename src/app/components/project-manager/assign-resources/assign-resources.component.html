@@ -196,8 +196,14 @@
               <tr *ngFor="let res of resources; let i = index"
                 [class.table-primary]="isSelected(res)">
                 <td>
-                  <input type="checkbox" class="form-check-input" [checked]="isSelected(res) "
-                    (change)="toggleResource(res)" [disabled]="isAllocatedToProject(res, project.code)" />
+                  <div (click)="handleCheckboxClick(res, project.code)">
+                    <input
+                      type="checkbox"
+                      class="form-check-input"
+                      [checked]="isSelected(res)"
+                      [disabled]="isAllocatedToProject(res, project.code) || !res.deliveryManagerId"
+                    />
+                  </div>
                 </td>
                 <td>
                   <span class="fw-semibold text-primary">{{ res.name }}</span>
@@ -383,7 +389,7 @@
                     <input type="text" class="form-control shadow-sm" formControlName="role">
                   </div>
                   <div fxFlex.gt-sm="10" class="mb-0">
-                    <label class="form-label small text-muted mb-1">Billability</label>
+                    <label class="form-label small text-muted mb-1">Billability %</label>
                     <input type="number" min="0" max="100" class="form-control shadow-sm" formControlName="billability">
                   </div>
                   <div fxFlex.gt-sm="14" class="mb-0">
@@ -477,6 +483,37 @@
           <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
 
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal fade" id="notAllowedModal" tabindex="-1" aria-labelledby="notAllowedModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content ">
+        <div class="modal-header cozentus-bg text-light">
+          <h5 class="modal-title" id="notAllowedModalLabel">
+            Access Denied
+          </h5>
+  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+    (click)="closeAccessDeniedModal()"></button>
+        </div>
+        <div class="modal-body px-4 py-4">
+          <div class="text-center">
+            <div class="mb-3">
+              <i class="fas fa-lock fa-3x cozentus-color"></i>
+            </div>
+            <h6 class="fw-semibold mb-3">
+              The resource is not allocated to you or the resource has already been allocated to the same project.
+            </h6>
+
+            <div class="mt-3" *ngIf="selectedDeliveryManagerName">
+    <p><strong>Delivery Manager:</strong> {{ selectedDeliveryManagerName }}</p>
+  </div>
+
+
+          </div>
+        </div>
       </div>
     </div>
   </div>

@@ -67,7 +67,7 @@
   border-color: #ffc107 !important;
 }
 
-.rounded-4 { border-radius: 1.1rem !important; }
+
 
 
 .timesheet-container {
@@ -93,15 +93,113 @@
   font-size: 0.84rem;
   color: #888;
 }
+
+// Enhanced day header styling
+.day-header-cell {
+  position: relative;
+  min-width: 120px;
+  padding: 1rem 0.5rem !important;
+}
+
+.day-header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.day-name-section {
+  display: flex;
+  justify-content: center;
+}
+
 .day-label {
   color: #2e3c54;
   text-transform: uppercase;
   font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
+
+.date-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
 .date-label {
-  color: #888;
-  font-size: 0.97rem;
+  color: #2e3c54;
+  font-size: 0.9rem;
+  font-weight: 500;
 }
+
+.leave-button-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.leave-button {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #ffc107;
+  background: #fff3cd;
+  color: #856404;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.75rem;
+  
+  &:hover:not(:disabled) {
+    background: #ffc107;
+    color: white;
+    transform: scale(1.1);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.compact-dropdown {
+  min-width: 180px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e9ecef;
+  top: 100% !important;
+  left: auto !important;
+  right: 0 !important;
+  margin-top: 4px;
+  z-index: 1000;
+  
+  .dropdown-item {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    
+    &:hover {
+      background: #f8fbff;
+      color: #2e3c54;
+    }
+    
+    i {
+      color: #2e3c54;
+      font-size: 0.9rem;
+    }
+  }
+}
+
 .day-action {
   background: none;
   border: none;
@@ -115,11 +213,16 @@
 }
 .hours-input {
   border-radius: 0.5rem;
-  border: 1px solid #cde4ef;
+  border: 2px solid #cde4ef;
   font-size: 0.97rem;
-  min-width: 70px;
+  min-width: 75px;
   max-width: 110px;
   margin: 0 auto;
+  background: #f8fbff;
+  color: #2e3c54;
+  font-weight: 500;
+  padding: 0.4rem 0.5rem;
+  box-shadow: inset 0 1px 2px rgba(46, 60, 84, 0.05);
 }
 .total-cell, .grand-total {
   font-weight: 700;
@@ -143,9 +246,25 @@
 }
 .actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   padding: 1.5rem;
   border-top: 1px solid #e9ecef;
+}
+
+.auto-save-indicator {
+  display: flex;
+  align-items: center;
+  color: #15b285;
+  font-size: 0.875rem;
+  
+  i {
+    font-size: 1rem;
+  }
+  
+  small {
+    font-weight: 500;
+  }
 }
 .notification {
   background-color: #e4f8ef;
@@ -226,14 +345,19 @@
 .submit-button {
   background: #2e3c54;
   color: #fff;
+  border: none;
   border-radius: 30px;
   font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(46, 60, 84, 0.2);
+  cursor: pointer;
 }
 .submit-button:hover {
   background: #15b285;
   color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(21, 178, 133, 0.3);
 }
 .notification {
   background: #e4f8ef !important;
@@ -254,10 +378,40 @@
   transition: all 0.2s ease-in-out;
 }
 
-// On focus or hover, give inputs a subtle highlight
+// Enhanced input states
+.hours-input:hover {
+  border-color: #2e3c54;
+  background: white;
+  box-shadow: inset 0 1px 2px rgba(46, 60, 84, 0.08);
+}
+
 .hours-input:focus {
+  outline: none;
+  border-color: #2e3c54;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(46, 60, 84, 0.1), inset 0 1px 2px rgba(46, 60, 84, 0.08);
+}
+
+.hours-input:disabled {
+  background: #e6f3f7;
+  color: #888;
+  border-color: #d1d5db;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+// Auto-save visual feedback
+.hours-input.auto-saving {
   border-color: #15b285;
-  box-shadow: 0 0 0 3px rgba(21, 178, 133, 0.1);
+  background: #e4f8ef;
+  box-shadow: 0 0 0 2px rgba(21, 178, 133, 0.2);
+  animation: auto-save-pulse 1s ease-in-out;
+}
+
+@keyframes auto-save-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
 }
 
 // Make action icons feel clickable
@@ -320,14 +474,30 @@
     padding: 1rem;
   }
 
-  .day-label,
-  .date-label {
+  .day-header-cell {
+    min-width: 100px;
+    padding: 0.75rem 0.25rem !important;
+  }
+  
+  .day-label {
     font-size: 0.75rem;
+  }
+  
+  .date-label {
+    font-size: 0.8rem;
+  }
+  
+  .leave-button {
+    width: 20px;
+    height: 20px;
+    font-size: 0.7rem;
   }
 
   .hours-input {
-    min-width: 60px;
+    min-width: 65px;
     max-width: 90px;
+    font-size: 0.9rem;
+    padding: 0.35rem 0.4rem;
   }
 
   .submit-button {
