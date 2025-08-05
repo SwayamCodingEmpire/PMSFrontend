@@ -7,11 +7,14 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { httpErrorInterceptor } from './interceptors/http-error.interceptor';
 import { authInterceptor } from './interceptors/auth.interceptor';
 
-
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
+    
+    // Simple router configuration - no preloading needed since 
+    // each module loads all its components eagerly
     provideRouter(routes),
+    
     provideHttpClient(withInterceptors([authInterceptor, httpErrorInterceptor])),
     provideAnimations(),
     provideToastr({
