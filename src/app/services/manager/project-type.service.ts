@@ -2,13 +2,15 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ProjectTypeDTO } from '../../models/ProjectTypeDTO';
+import { environment } from '../../../Environment/environment';
  // adjust path if needed
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProjectTypeService {
-  private baseUrl = 'http://localhost:8080/project-type';
+   
+  private baseUrl = `${environment.apiUrl}/project-type`;
 
   constructor(private http: HttpClient) {}
 
