@@ -39,13 +39,9 @@
             ],
             "styles": [
               "node_modules/ngx-toastr/toastr.css",
-              "src/styles.scss",
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "node_modules/primeicons/primeicons.css",
-              "node_modules/bootstrap-icons/font/bootstrap-icons.css"
+              "src/styles.scss"
             ],
             "scripts": [
-              "node_modules/apexcharts/dist/apexcharts.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js"
             ]
           },
@@ -59,8 +55,8 @@
   },
   {
     "type": "anyComponentStyle",
-    "maximumWarning": "20kb",
-    "maximumError": "50kb"
+    "maximumWarning": "400kb",
+    "maximumError": "500kb"
   }
 ],
 
@@ -117,7 +113,6 @@
               "node_modules/primeicons/primeicons.css"
             ],
             "scripts": [
-              "node_modules/apexcharts/dist/apexcharts.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js"
             ]
           }

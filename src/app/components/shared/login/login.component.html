@@ -18,7 +18,8 @@
                  class="form-control text-white border-0 px-3 py-1"
                  style="background: #0d0b1a; height: 40px; border-radius: 3px 0 0 3px;"
                  placeholder="Username"
-                 formControlName="username">
+                 formControlName="username"
+                 [disabled]="isLoading">
           <span class="input-group-text border-0"
                 style="background: #0d0b1a; height: 40px; color: #5e5d5d; border-radius: 0 3px 3px 0;">
             <i class="far fa-user"></i>
@@ -33,7 +34,8 @@
                  class="form-control text-white border-0 px-3 py-1"
                  style="background: #0d0b1a; height: 40px; border-radius: 3px 0 0 3px;"
                  placeholder="Password"
-                 formControlName="password">
+                 formControlName="password"
+                 [disabled]="isLoading">
           <span class="input-group-text border-0"
                 style="background: #0d0b1a; height: 40px; color: #5e5d5d; border-radius: 0 3px 3px 0; cursor: pointer;"
                 (click)="togglePassword()">
@@ -56,14 +58,19 @@
           <i class="far" [ngClass]="rememberMe ? 'fa-check-square' : 'fa-square'"></i>
         </span>
         <label (click)="rememberMe = !rememberMe" class="form-check-label text-white" style="cursor: pointer; margin-left: 2px;">
-          Keep me signed in From Today
+          Keep me signed in
         </label>
       </div>
 
       <!-- Login Button -->
-      <button type="submit" class="btn w-100 text-white"
-              style="background: #327dff; border: none; height: 45px; padding: 5px 15px; border-radius: 3px; line-height: normal;">
-        Login
+      <button type="submit" class="btn w-100 text-white position-relative"
+              style="background: #327dff; border: none; height: 45px; padding: 5px 15px; border-radius: 3px; line-height: normal;"
+              [disabled]="isLoading">
+        <span *ngIf="!isLoading">Login</span>
+        <span *ngIf="isLoading" class="d-flex align-items-center justify-content-center">
+          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          Signing in...
+        </span>
       </button>
     </form>
 

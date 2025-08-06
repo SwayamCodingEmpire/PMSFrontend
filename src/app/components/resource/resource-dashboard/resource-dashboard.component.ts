@@ -38,6 +38,11 @@ export class ProjectFilterPipe implements PipeTransform {
 export class ResourceDashboardComponent {
 
   constructor(private resourceDashboardService: ResourceDashboardService) { }
+
+  private async loadApexCharts() {
+    const ApexCharts = (await import('apexcharts')).default;
+    return ApexCharts;
+  }
   private dir = inject(Directionality);
   private doc = inject(DOCUMENT);
   private rtl = this.dir.value === 'rtl';

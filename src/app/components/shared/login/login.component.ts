@@ -23,6 +23,7 @@ export class LoginComponent {
   username: string = 'swayam';
   password: string = 'password';
   loginForm: FormGroup;
+  isLoading: boolean = false;
   constructor(private router: Router, private toastr: ToastrService, private publicService: PublicService) {
     this.loginForm = new FormGroup({
       username: new FormControl('', Validators.required),
@@ -40,6 +41,9 @@ export class LoginComponent {
       return;
     }
 
+    // Start loading
+    this.isLoading = true;
+
     const formValues = this.loginForm.value;
     const credentials: LoginCredentials = {
       username: formValues.username, // use 'username' as input, send 'email' to backend
@@ -48,6 +52,7 @@ export class LoginComponent {
     console.log('Login credentials:', credentials);
     this.publicService.login(credentials).subscribe({
       next: (response) => {
+        this.isLoading = false; // Stop loading on success
         this.toastr.success('Login Successful');
         this.publicService.storeTokenAndRole(response.token, response.role, response.name, response.empId);
         localStorage.setItem('user', JSON.stringify(credentials));
@@ -71,6 +76,7 @@ export class LoginComponent {
         }
       },
       error: (error) => {
+        this.isLoading = false; // Stop loading on error
         if (error.status === 403) {
           this.toastr.error('Invalid email or password.');
         } else {

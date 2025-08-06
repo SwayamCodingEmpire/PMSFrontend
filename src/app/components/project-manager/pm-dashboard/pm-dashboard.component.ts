@@ -320,6 +320,11 @@ export class PmDashboardComponent implements OnInit {
 
   constructor(private cdr: ChangeDetectorRef, private excelExportService: ExcelExportService,private dmDashboardService: DmDashboardService, private pmDashboardService: PmDashboardService) { }
 
+  private async loadApexCharts() {
+    const ApexCharts = (await import('apexcharts')).default;
+    return ApexCharts;
+  }
+
   ngOnInit() {
     this.loadResourceCountPerProject(); // ✅ this correctly sets chart.series and labels
     // ❌ REMOVE this.initializeProjectChart();

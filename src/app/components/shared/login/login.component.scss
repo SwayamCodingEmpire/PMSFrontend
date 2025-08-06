@@ -1,3 +1,6 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
 .container-fluid,
 .card,
 input,
@@ -5,4 +8,29 @@ button,
 label,
 a {
   font-family: 'Montserrat', sans-serif;
+}
+
+// Login button states
+.btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background: #5a8bcf !important;
+}
+
+// Loading spinner customization
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+  border-width: 0.125em;
+}
+
+// Smooth transitions
+.btn {
+  transition: all 0.3s ease;
+}
+
+// Disabled input styling
+.form-control:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

@@ -1,5 +1,5 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withPreloading, PreloadAllModules } from '@angular/router';
 import { provideToastr } from 'ngx-toastr';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { routes } from './app.routes';
@@ -11,9 +11,8 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     
-    // Simple router configuration - no preloading needed since 
-    // each module loads all its components eagerly
-    provideRouter(routes),
+    // Router configuration with preloading for faster navigation
+    provideRouter(routes, withPreloading(PreloadAllModules)),
     
     provideHttpClient(withInterceptors([authInterceptor, httpErrorInterceptor])),
     provideAnimations(),

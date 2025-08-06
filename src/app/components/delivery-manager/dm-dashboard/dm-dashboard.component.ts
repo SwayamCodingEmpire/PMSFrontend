@@ -330,9 +330,12 @@ export class DmDashboardComponent implements OnInit {
 
   constructor(private cdr: ChangeDetectorRef, private dmDashboardService: DmDashboardService, private excelExportService: ExcelExportService) {}
 
-  ngOnInit() {
-    // this.initializeChart();
-    // this.initializeSkillsChart();
+  private async loadApexCharts() {
+    const ApexCharts = (await import('apexcharts')).default;
+    return ApexCharts;
+  }
+
+  async ngOnInit() {
     this.loadProjects();
     this.loadSkillSChartData(null);
     this.loadKPICardsData();
