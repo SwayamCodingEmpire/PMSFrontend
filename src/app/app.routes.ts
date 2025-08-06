@@ -1,6 +1,7 @@
 // app.routes.ts - EVERYTHING is lazy loaded
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
+import { LoginComponent } from './components/shared/login/login.component';
 
 export const routes: Routes = [
   {
@@ -10,7 +11,7 @@ export const routes: Routes = [
   },
   {
     path: 'login',
-    loadComponent: () => import('./components/shared/login/login.component').then(m => m.LoginComponent),
+    component: LoginComponent,
   },
   {
     path: 'delivery-manager',
