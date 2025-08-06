@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
-import { ToastrModule, ToastrService } from 'ngx-toastr';
-import { LoginService } from '../../../services/login/login.service';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 import { LoginCredentials } from '../../../models/LoginCredentials';
 import { PublicService } from '../../../services/public/public.service';
 
@@ -12,9 +11,7 @@ import { PublicService } from '../../../services/public/public.service';
   selector: 'app-login',
   imports: [
     CommonModule,
-    RouterModule,
-    ReactiveFormsModule,
-    ToastrModule],
+    ReactiveFormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
