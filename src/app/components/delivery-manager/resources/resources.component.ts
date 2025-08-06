@@ -223,6 +223,13 @@ export class ResourcesComponent implements OnInit {
   }
 
   cancelSkillEdit(): void {
+    // If cancelling a new skill, remove the temp row
+    if (this.isNewSkill && this.editingSkillId) {
+      this.currentEmployeeSkills = this.currentEmployeeSkills.filter(
+        (s) => s.skillName !== this.editingSkillId
+      );
+      this.isNewSkill=false;
+    }
     this.editingSkillId = null;
     this.editingSkillData = { name: '', experience: 0, level: '' };
   }
