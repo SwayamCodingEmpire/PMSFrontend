@@ -17,8 +17,6 @@ import { PublicService } from '../../../services/public/public.service';
 })
 export class LoginComponent {
   rememberMe: boolean = false;
-  username: string = 'swayam';
-  password: string = 'password';
   loginForm: FormGroup;
   isLoading: boolean = false;
   constructor(private router: Router, private toastr: ToastrService, private publicService: PublicService) {
